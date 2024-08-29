@@ -67,18 +67,19 @@ def guess_word(cArr, mArr, iArr):
                     chars.append(char)
         return chars
     
-    filter = [word for word in all_words if not any(letter in word for letter in iArr)] #removes any word that contains any incorrect letter
     mChars = get_misplaced_characters(mArr)
+
+    filter = [word for word in all_words if not any(letter in word for letter in iArr)] #removes any word that contains any incorrect letter
     filter = [word for word in filter if all(letter in word for letter in mChars)] #removes any word that doesn't contain every unique misplaced character
     filter = [word for word in filter if matches_pattern(word, cArr)] #keeps only words that match the pattern of letters in the correct letters list
     filter = remove_misplaced_matches(mArr, filter) #removes any words that match the regex provided by misplaced words, reducing repetition of same character in same spot
+    
     sort = sort_word_prob(filter)
     sort = sorted(sort, key=unique_char_count, reverse=TRUE) #forces every character to be checked before even thinking about double letters ('shush' as an example)
     # These filters are ordered in such a way to remove as many strings before the next filter
     # This is because the 'correct_filter' requires more computing resources, the more objects it has to iterate through
     print(len(sort))
-    # print(num_unique_sort)
-    return sort[0]
+    return sort[0] #accounting for all filters and sorts, return the first object, (the most likely object)
 
 def window():
     root = Tk()
@@ -100,9 +101,6 @@ def window():
     mlbl = Label(root, fg = "red", text = "Misplaced Letters (In Order)")
     mlbl.grid(row=2)
 
-    # The game only allows for a total of 5 misplaced letters, 
-    # and order doesnt matter here, only in correct
-    # careful with using misplaced letters, specifically when a misplaced letter also exists in the correct letters array
     frames = []
     entries = []
 
