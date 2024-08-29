@@ -5,6 +5,7 @@ rawList = [w.strip() for w in rawList]
 wordList = []
 wordList = [word for word in wordList + rawList if len(word) == 5]
 
+
 def guess_word(game_state):
 
     ### Interpreting the game state
@@ -13,7 +14,7 @@ def guess_word(game_state):
     # "/" means that the character was yellow.
     # "+" means that the character was green.
     # Ex. "+s-h-a/r/e"
-    
+
     greenLetters = [0, 0, 0, 0, 0]
     yellowLetters = []
     yellowLetterIndexes = []
@@ -79,19 +80,45 @@ def guess_word(game_state):
         wordScores.append(score)
 
     # Return the word with the highest score
-    print(max(wordScores))
     return wordList[wordScores.index(max(wordScores))]
 
 # Add up every occurance of a letter in the given index of every word in the word list
 def letterPositionalFrequency(letter, index):
 	score = 0
 	for word in wordList:
-		if letter == word[index]:
+		if word[index] == letter:
 			score += 1
 	return score
 
+# Given the answer, attempts to solve the puzzle without having to input the game state
+def auto_solve(keyword):
+    print()
+    print("Word is " + keyword)
+    state = ""
+    for guess_count in range(6):
+        guess = guess_word(state)
+        print_string = str(guess_count + 1) + ". "
+        for letter_index in range(len(guess)):
+            if guess[letter_index] == keyword[letter_index]:
+                state += "+" + guess[letter_index]
+                print_string += "[" + guess[letter_index] + "] "
+            elif guess[letter_index] in keyword:
+                state += "/" + guess[letter_index]
+                print_string += "<" + guess[letter_index] + "> "
+            else:
+                state += "-" + guess[letter_index]
+                print_string += " " + guess[letter_index] + "  "
+        state += " "
+        print(print_string)
+        if guess == keyword:
+            return True
+    return False
+
 if __name__ == "__main__":
     while True:
-        state = input("Game state?")
-        guess = guess_word(state)
-        print("You should try '" + guess + "'.")
+        state = input("Game state? ")
+        if len(state) == 5:
+            auto_solve(state)
+        else:
+            guess = guess_word(state)
+            print("You should try '" + guess + "'.")
