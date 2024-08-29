@@ -17,55 +17,56 @@ def string_to_arr(sampleString):
     strArr = list(newString)
     return strArr
 
-def unique_char_count(word):
-    return len(set(word))
-
-def matches_pattern(word, cArr):
-    for i in range(5):
-        if cArr[i] and word[i] != cArr[i]:
-            return 0
-    return 1
-
-def remove_misplaced_matches(mArrs, wordList):
-    def matches_positions(word, mArr):
-        for i in range(5):
-            if mArr[i] and word[i] == mArr[i]:
-                return 1
-        return 0
-
-    words_to_remove = []
-    for mArr in mArrs:
-        # Skip the mArr if it is empty (all elements are '')
-        if all(letter == '' for letter in mArr):
-            continue
-        foundWords = [word for word in wordList if matches_positions(word, mArr)]
-        words_to_remove.extend(foundWords)
-    wordList = [word for word in wordList if word not in words_to_remove]
-    return wordList
-
-def sort_word_prob(wordList):
-    def word_value(word, letter_counts):
-        return sum(letter_counts.get(char, 0) for char in word)
-    def process_text(words):
-        for word in words:
-            letters = ''.join(word)
-        letter_counts = Counter(letters)
-        return letter_counts
-    def sort_words_by_value(words, letter_counts):
-        return sorted(words, key=lambda word: word_value(word.lower(), letter_counts), reverse=True)
-        
-    letter_counts = process_text(wordList)
-    return sort_words_by_value(wordList, letter_counts)  
-
-def get_misplaced_characters(mArrs):
-    chars = []
-    for mArr in mArrs:
-        for char in mArr:
-            if char:
-                chars.append(char)
-    return chars
-
 def guess_word(cArr, mArr, iArr):
+    
+    def unique_char_count(word):
+        return len(set(word))
+
+    def matches_pattern(word, cArr):
+        for i in range(5):
+            if cArr[i] and word[i] != cArr[i]:
+                return 0
+        return 1
+
+    def remove_misplaced_matches(mArrs, wordList):
+        def matches_positions(word, mArr):
+            for i in range(5):
+                if mArr[i] and word[i] == mArr[i]:
+                    return 1
+            return 0
+
+        words_to_remove = []
+        for mArr in mArrs:
+            # Skip the mArr if it is empty (all elements are '')
+            if all(letter == '' for letter in mArr):
+                continue
+            foundWords = [word for word in wordList if matches_positions(word, mArr)]
+            words_to_remove.extend(foundWords)
+        wordList = [word for word in wordList if word not in words_to_remove]
+        return wordList
+
+    def sort_word_prob(wordList):
+        def word_value(word, letter_counts):
+            return sum(letter_counts.get(char, 0) for char in word)
+        def process_text(words):
+            for word in words:
+                letters = ''.join(word)
+            letter_counts = Counter(letters)
+            return letter_counts
+        def sort_words_by_value(words, letter_counts):
+            return sorted(words, key=lambda word: word_value(word.lower(), letter_counts), reverse=True)
+            
+        letter_counts = process_text(wordList)
+        return sort_words_by_value(wordList, letter_counts)  
+
+    def get_misplaced_characters(mArrs):
+        chars = []
+        for mArr in mArrs:
+            for char in mArr:
+                if char:
+                    chars.append(char)
+        return chars
+    
     filter = [word for word in all_words if not any(letter in word for letter in iArr)] #removes any word that contains any incorrect letter
     mChars = get_misplaced_characters(mArr)
     filter = [word for word in filter if all(letter in word for letter in mChars)] #removes any word that doesn't contain every unique misplaced character
