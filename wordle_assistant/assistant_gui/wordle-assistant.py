@@ -25,6 +25,23 @@ def matches_pattern(word, cArr):
             return 0
     return 1
 
+def matches_positions(word, mArr):
+    for i in range(5):
+        if mArr[i] and word[i] == mArr[i]:
+            return 1
+    return 0
+
+def remove_misplaced_matches(mArrs, wordList):
+    words_to_remove = []
+    for mArr in mArrs:
+        # Skip the mArr if it is empty (all elements are '')
+        if all(letter == '' for letter in mArr):
+            continue
+        foundWords = [word for word in wordList if matches_positions(word, mArr)]
+        words_to_remove.extend(foundWords)
+    wordList = [word for word in wordList if word not in words_to_remove]
+    return wordList
+
 def get_misplaced_characters(mArrs):
     chars = []
     for mArr in mArrs:
@@ -34,15 +51,17 @@ def get_misplaced_characters(mArrs):
     return chars
 
 def guess_word(cArr, mArr, iArr):
-    filter = [word for word in all_words if not any(letter in word for letter in iArr)]
+    filter = [word for word in all_words if not any(letter in word for letter in iArr)] #removes any word that contains any incorrect letter
     mChars = get_misplaced_characters(mArr)
-    filter = [word for word in filter if all(letter in word for letter in mChars)]
-    filter = [word for word in filter if matches_pattern(word, cArr)]
+    filter = [word for word in filter if all(letter in word for letter in mChars)] #removes any word that doesn't contain every unique misplaced character
+    filter = [word for word in filter if matches_pattern(word, cArr)] #keeps only words that match the pattern of letters in the correct letters list
+    filter = remove_misplaced_matches(mArr, filter) #removes any words that match the regex provided by misplaced words, reducing repetition of same character in same spot
     random.shuffle(filter) #removes alphabetcal order hell
     num_unique_sort = sorted(filter, key=unique_char_count, reverse=TRUE) #forces every character to be checked before even thinking about double letters ('shush' as an example)
     # These filters are ordered in such a way to remove as many strings before the next filter
     # This is because the 'correct_filter' requires more computing resources, the more objects it has to iterate through
-    print(num_unique_sort)
+    print(len(num_unique_sort))
+    # print(num_unique_sort)
     return num_unique_sort[0]
 
 def window():
@@ -96,12 +115,12 @@ def window():
     def clicked():
         # Here we would call the solving function
         cArr = [correct_row[col].get().lower() for col in range(5)]
-        mArr = [[entries[row][col].get().lower() for row in range(5)] for col in range(5)]
+        mArr = [[entries[row][col].get().lower() for col in range(5)] for row in range(5)]
 
         iArr = string_to_arr(incorrect.get())
 
         guess = guess_word(cArr, mArr, iArr)
-        returnlbl.configure(text = "Try this word: '" + guess + "'")
+        returnlbl.configure(text = "Try this word: '" + guess.upper() + "'")
 
     btn = Button(root, text = "Guess", fg = "blue", command=clicked)
     btn.grid(row=11)
