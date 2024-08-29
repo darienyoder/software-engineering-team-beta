@@ -2,6 +2,7 @@
 from tkinter import *
 import re
 import random
+from collections import Counter
 
 # It should be noted that this program uses a text file containing every valid 5 letter word that is used in Wordle
 
@@ -25,13 +26,13 @@ def matches_pattern(word, cArr):
             return 0
     return 1
 
-def matches_positions(word, mArr):
-    for i in range(5):
-        if mArr[i] and word[i] == mArr[i]:
-            return 1
-    return 0
-
 def remove_misplaced_matches(mArrs, wordList):
+    def matches_positions(word, mArr):
+        for i in range(5):
+            if mArr[i] and word[i] == mArr[i]:
+                return 1
+        return 0
+
     words_to_remove = []
     for mArr in mArrs:
         # Skip the mArr if it is empty (all elements are '')
@@ -41,6 +42,20 @@ def remove_misplaced_matches(mArrs, wordList):
         words_to_remove.extend(foundWords)
     wordList = [word for word in wordList if word not in words_to_remove]
     return wordList
+
+def sort_word_prob(wordList):
+    def word_value(word, letter_counts):
+        return sum(letter_counts.get(char, 0) for char in word)
+    def process_text(words):
+        for word in words:
+            letters = ''.join(word)
+        letter_counts = Counter(letters)
+        return letter_counts
+    def sort_words_by_value(words, letter_counts):
+        return sorted(words, key=lambda word: word_value(word.lower(), letter_counts), reverse=True)
+        
+    letter_counts = process_text(wordList)
+    return sort_words_by_value(wordList, letter_counts)  
 
 def get_misplaced_characters(mArrs):
     chars = []
@@ -56,13 +71,13 @@ def guess_word(cArr, mArr, iArr):
     filter = [word for word in filter if all(letter in word for letter in mChars)] #removes any word that doesn't contain every unique misplaced character
     filter = [word for word in filter if matches_pattern(word, cArr)] #keeps only words that match the pattern of letters in the correct letters list
     filter = remove_misplaced_matches(mArr, filter) #removes any words that match the regex provided by misplaced words, reducing repetition of same character in same spot
-    random.shuffle(filter) #removes alphabetcal order hell
-    num_unique_sort = sorted(filter, key=unique_char_count, reverse=TRUE) #forces every character to be checked before even thinking about double letters ('shush' as an example)
+    sort = sort_word_prob(filter)
+    sort = sorted(sort, key=unique_char_count, reverse=TRUE) #forces every character to be checked before even thinking about double letters ('shush' as an example)
     # These filters are ordered in such a way to remove as many strings before the next filter
     # This is because the 'correct_filter' requires more computing resources, the more objects it has to iterate through
-    print(len(num_unique_sort))
+    print(len(sort))
     # print(num_unique_sort)
-    return num_unique_sort[0]
+    return sort[0]
 
 def window():
     root = Tk()
