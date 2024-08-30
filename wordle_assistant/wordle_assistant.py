@@ -1,9 +1,9 @@
 with open("words.txt","r") as f:
-    rawList = f.readlines()
+    rawWordList = f.readlines()
 
-rawList = [w.strip() for w in rawList]
+rawWordList = [w.strip() for w in rawWordList]
 wordList = []
-wordList = [word for word in wordList + rawList if len(word) == 5]
+wordList = [word for word in wordList + rawWordList if len(word) == 5]
 
 
 def guess_word(game_state):
@@ -49,17 +49,17 @@ def guess_word(game_state):
         score = 0
         for letterIndex in range(len(word)):
 
-	        # If the word contains any letters that are confirmed to not be in the answer,
+            # If the word contains any letters that are confirmed to not be in the answer,
             # set the score extremely low
             if word[letterIndex] in greyLetters:
                 score = -999999999
             # Otherwise, increase the word's score by how often that letter
             # appears in that position in every word in the dictionary
             else:
-                score += letterPositionalFrequency(word[letterIndex], letterIndex)
+                score += getLetterFrequency(word[letterIndex], letterIndex)
 
             # If the word does not have a green letter in its marked spot
-	        # set the score extremely low
+            # set the score extremely low
             if greenLetters[letterIndex] != 0:
                 if word[letterIndex] != greenLetters[letterIndex]:
                     score = -999999999
@@ -71,8 +71,8 @@ def guess_word(game_state):
                     if yellowLetters[i] == word[letterIndex]:
                         score = -999999999
 
-	    # If the word does not have a yellow letter anywhere
-	    # set the score extremely low
+        # If the word does not have a yellow letter anywhere
+        # set the score extremely low
         for yellowLetter in yellowLetters:
             if not yellowLetter in word:
                 score = -999999999
@@ -82,13 +82,23 @@ def guess_word(game_state):
     # Return the word with the highest score
     return wordList[wordScores.index(max(wordScores))]
 
+letterFrequency = []
+
 # Add up every occurance of a letter in the given index of every word in the word list
-def letterPositionalFrequency(letter, index):
-	score = 0
-	for word in wordList:
-		if word[index] == letter:
-			score += 1
-	return score
+def setupLetterFrequency():
+    global letterFrequency
+    letterFrequency = [[], [], [], [], []]
+    for index in range(5):
+        for letterIndex in range(26):
+            score = 0
+            letter = chr(letterIndex + 97)
+            for word in wordList:
+                if word[index] == letter:
+                    score += 1
+            letterFrequency[index].append(score)
+
+def getLetterFrequency(letter, index):
+    return letterFrequency[index][ord(letter) - 97]
 
 # Given the answer, attempts to solve the puzzle without having to input the game state
 def auto_solve(keyword):
@@ -115,9 +125,13 @@ def auto_solve(keyword):
     return False
 
 if __name__ == "__main__":
+    setupLetterFrequency()
     while True:
         state = input("Game state? ")
-        if len(state) == 5:
+        if state == "all":
+            for word in wordList:
+                auto_solve(word)
+        elif len(state) == 5:
             auto_solve(state)
         else:
             guess = guess_word(state)
