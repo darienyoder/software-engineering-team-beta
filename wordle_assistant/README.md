@@ -11,4 +11,6 @@ This program accepts 5 types of commands:
 5. Type "exit" to quit.
 
 ## Letter Elimination
-This is a function that creates guesses to eliminate extra letters.
+Perform two tasks to eliminate extra letters:
+1. Guess words that cannot be the answer but use a lot of letters.
+2. Use words with some but not all of the guessed letters to find positions.
