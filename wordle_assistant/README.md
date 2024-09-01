@@ -9,3 +9,6 @@ This program accepts 5 types of commands:
 3. Type "sample ##" to test a given number of random words and receive the ratio it gets correct afterward.
 4. Type "all" to test all words in the word list and receive the ratio it gets correct afterward.
 5. Type "exit" to quit.
+
+## Letter Elimination
+This is a function that creates guesses to eliminate extra letters.
