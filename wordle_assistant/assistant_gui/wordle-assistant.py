@@ -56,7 +56,7 @@ def guess_word(cArr, mArr, iArr):
     
     sort = sort_word_prob(filter)
     sort = sorted(sort, key=unique_char_count, reverse=True) # forces every character to be checked before even thinking about double letters
-    
+    # print(sort)
     return sort[0] if sort else None
 
 def auto_solve(output_file="auto_solve_results.txt"):
@@ -81,9 +81,9 @@ def auto_solve(output_file="auto_solve_results.txt"):
 
                 if guess == target_word:
                     word_found = True
-                    result = f"Word: {target_word.upper()} - Solved in {guess_count} guesses\n"
+                    result = f"Word: {target_word.upper()} - Solved in {guess_count} guesses"
                     if guess_count > 6:
-                        f.write(result)
+                        f.write(result + '\n')
                     print(result)
                     break
 
@@ -104,8 +104,8 @@ def auto_solve(output_file="auto_solve_results.txt"):
                 # Safety break after too many guesses
                 if guess_count > 100:  # Adjust this threshold as needed
                     print(f"Too many guesses for word: {target_word.upper()}. Moving to the next word.")
-                    result = f"Word: {target_word.upper()} - Too many guesses (>100)\n"
-                    f.write(result)
+                    result = f"Word: {target_word.upper()} - Too many guesses (>100)"
+                    f.write(result + '\n')
                     break
 
     print(f"Results written to {output_file}")
