@@ -5,7 +5,8 @@ with open("words.txt","r") as f:
 
 rawWordList = [w.strip() for w in rawWordList]
 wordList = []
-wordList = [word for word in wordList + rawWordList if len(word) == 5]
+# wordList = [word for word in wordList + rawWordList if len(word) == 5]
+wordList = rawWordList
 
 difficultWords = ['awash', 'backs', 'bakes', 'beaus', 'blobs', 'blows', 'bonus', 'brays', 'broom', 'cafes', 'cakes', 'claws', 'clays', 'combs', 'comma', 'coxed', 'coxes', 'craws', 'damps', 'dares', 'dazed', 'deeds', 'deems', 'dikes', 'diver', 'dives', 'dizzy', 'doges', 'domes', 'doves', 'dozed', 'dozes', 'draws', 'drays', 'dregs', 'dukes', 'dupes', 'eager', 'eared', 'eases', 'eater', 'eaves', 'ebbed', 'edges', 'eider', 'erode', 'every', 'faked', 'faxed', 'faxes', 'fifes', 'fixed', 'fixes', 'flows', 'fowls', 'foxed', 'foxes', 'foyer', 'frank', 'frays', 'gales', 'galls', 'games', 'gated', 'gates', 'gawky', 'gazed', 'gazes', 'gears', 'genus', 'giver', 'gives', 'glaze', 'gofer', 'golds', 'gongs', 'gowns', 'grams', 'graze', 'greys', 'grove', 'gusts', 'hafts', 'halls', 'hangs', 'hared', 'hares', 'hatch', 'hated', 'hates', 'haves', 'hawks', 'hears', 'heeds', 'hider', 'hides', 'hiked', 'hiker', 'hikes', 'hills', 'hints', 'hived', 'hives', 'hocks', 'holds', 'holly', 'homed', 'hoods', 'hoofs', 'hoops', 'hoped', 'hosts', 'hound', 'hours', 'hover', 'howls', 'huffy', 'hulls', 'humps', 'jaded', 'jades', 'jails', 'james', 'jaunt', 'jawed', 'jazzy', 'jeans', 'jeeps', 'jests', 'jesus', 'jilts', 'jinks', 'jived', 'jives', 'joist', 'joked', 'joker', 'jokes', 'jolly', 'jolts', 'jowls', 'jumps', 'keels', 'kelts', 'keyed', 'kicks', 'kills', 'kilts', 'kings', 'kinks', 'kitty', 'krill', 'lasts', 'lemur', 'lined', 'lines', 'louts', 'lover', 'lower', 'lulls', 'lusty', 'makes', 'males', 'mares', 'match', 'mates', 'mayas', 'mazes', 'miles', 'minus', 'mixer', 'mixes', 'mover', 'moves', 'mowed', 'mower', 'muggy', 'mummy', 'nears', 'newer', 'night', 'nines', 'nulls', 'oozed', 'oozes', 'pawed', 'payed', 'payer', 'ploys', 'preys', 'raked', 'rakes', 'rayed', 'razed', 'razes', 'rears', 'reefs', 'rider', 'river', 'rover', 'rower', 'scare', 'screw', 'seems', 'shahs', 'shame', 'shave', 'sizes', 'skies', 'skims', 'skips', 'slabs', 'slavs', 'slays', 'slyer', 'smell', 'sofas', 'swabs', 'swags', 'swarm', 'sways', 'swore', 'taxed', 'taxes', 'texts', 'tiger', 'tufts', 'udder', 'vales', 'vamps', 'vanes', 'vases', 'vents', 'vests', 'vines', 'voles', 'volts', 'vowed', 'wades', 'wafer', 'wafts', 'wager', 'wages', 'wails', 'waked', 'wakes', 'wales', 'walls', 'wands', 'wanes', 'wards', 'wares', 'warms', 'warps', 'warts', 'wasps', 'waste', 'watch', 'water', 'waved', 'waves', 'waxed', 'waxes', 'wears', 'weeds', 'weeks', 'weeps', 'wells', 'wends', 'wider', 'wides', 'wiles', 'wills', 'wilts', 'wined', 'wines', 'wings', 'wired', 'wirer', 'wires', 'witch', 'wives', 'wodge', 'wolds', 'woods', 'wordy', 'worry', 'wound', 'wowed', 'xrays', 'yanks', 'yards', 'yawed', 'yawns', 'years', 'yells', 'yokes', 'yours', 'zappy', 'zeals', 'zulus']
 
@@ -166,7 +167,7 @@ def auto_solve(keyword):
                 state += "-" + guess[letter_index]
                 print_string += " " + guess[letter_index] + "  "
         state += " "
-        print(print_string)
+        # print(print_string)
         if guess == keyword:
             return True
     return False
