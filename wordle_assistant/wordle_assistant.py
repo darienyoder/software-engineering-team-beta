@@ -107,8 +107,7 @@ def guess_word(game_state):
     # Return the word with the highest score
     return wordList[wordScores.index(max(wordScores))]
 
-letterFrequency = []
-
+# Returns a list of words that could be the answer based on the known information
 def getPossibleWords():
     words = []
     for word in wordList:
@@ -129,6 +128,8 @@ def getPossibleWords():
         if possible:
             words.append(word)
     return words
+
+letterFrequency = []
 
 # Add up every occurance of a letter in the given index of every word in the word list
 def setupLetterFrequency():
@@ -170,12 +171,27 @@ def auto_solve(keyword):
             return True
     return False
 
+previousInput = ""
+
 if __name__ == "__main__":
     setupLetterFrequency()
     while True:
         state = input("Game state? ")
+
+        # If input begins with a caret, include previous input
+        if state.startswith("^"):
+            state = state.replace("^", "")
+            state = state.strip()
+            state = previousInput + " " + state
+
+        # Set previousInput so that the caret can be used for the next input
+        previousInput = state
+
+        # Ends the program
         if state == "exit":
             break
+
+        # Tests all words and returns the success rate
         elif state == "all":
             wordCount = 0
             solved = 0
@@ -191,6 +207,8 @@ if __name__ == "__main__":
             print("Solved " + str(solved) + ". (" + str(int(solved / wordCount * 10000) / 100) + "%)")
             print("Could not solve " + str(wordCount - solved) + ":")
             print(unsolved_list)
+
+        # Tests a given number of random words and returns the success rate
         elif state.startswith("sample"):
             sampleSize = state.split(" ")
             if len(sampleSize) == 1 or int(sampleSize[1]) == 0:
@@ -215,8 +233,12 @@ if __name__ == "__main__":
                 print("Solved " + str(solved) + ". (" + str(int(solved / int(sampleSize[1]) * 10000) / 100) + "%)")
                 print("Could not solve " + str(int(sampleSize[1]) - solved) + ":")
                 print(unsolved_list)
+
+        # Simulates a series of guesses to solve a five letter word
         elif len(state) == 5:
             auto_solve(state)
+
+        # Suggests the next word to guess given a series of hints
         else:
             guess = guess_word(state)
             print("You should try '" + guess + "'.")
