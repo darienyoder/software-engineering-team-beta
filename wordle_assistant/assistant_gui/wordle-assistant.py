@@ -30,13 +30,14 @@ def guess_word(cArr, mArr, iArr):
 
     def remove_misplaced_matches(mArrs, wordList):
         for mArr in mArrs:
-            wordList = [word for word in wordList if not any(mArr[i] != '' and word[i] == mArr[i] for i in range(5))]
+            for i in range(5):
+                if mArr[i]:
+                    wordList = [word for word in wordList if word[i] != mArr[i] and mArr[i] in word]
         return wordList
 
     def sort_word_prob(wordList):
         letter_counts = Counter(''.join(wordList))
         return sorted(wordList, key=lambda word: (sum(letter_counts[char] for char in set(word)), unique_char_count(word)), reverse=True)
-
 
     def get_misplaced_characters(mArrs):
         chars = []
@@ -48,19 +49,15 @@ def guess_word(cArr, mArr, iArr):
     
     mChars = get_misplaced_characters(mArr)
 
-    filter = [word for word in all_words if not any(letter in word for letter in iArr)] #removes any word that contains any incorrect letter
-    filter = [word for word in filter if all(letter in word for letter in mChars)] #removes any word that doesn't contain every unique misplaced character
-    filter = [word for word in filter if matches_pattern(word, cArr)] #keeps only words that match the pattern of letters in the correct letters list
-    filter = remove_misplaced_matches(mArr, filter) #removes any words that match the regex provided by misplaced words, reducing repetition of same character in same spot
+    filter = [word for word in all_words if not any(letter in word for letter in iArr)] # removes any word that contains any incorrect letter
+    filter = [word for word in filter if all(letter in word for letter in mChars)] # removes any word that doesn't contain every unique misplaced character
+    filter = [word for word in filter if matches_pattern(word, cArr)] # keeps only words that match the pattern of letters in the correct letters list
+    filter = remove_misplaced_matches(mArr, filter) # removes any words that match the regex provided by misplaced words, reducing repetition of same character in same spot
     
-    # random.shuffle(filter)
     sort = sort_word_prob(filter)
-    sort = sorted(sort, key=unique_char_count, reverse=TRUE) #forces every character to be checked before even thinking about double letters ('shush' as an example)
-    # These filters are ordered in such a way to remove as many strings before the next filter
-    # This is because the 'correct_filter' requires more computing resources, the more objects it has to iterate through
-    # print(len(sort))
-    # print(sort)
-    return sort[0] #accounting for all filters and sorts, return the first object, (the most likely object)
+    sort = sorted(sort, key=unique_char_count, reverse=True) # forces every character to be checked before even thinking about double letters
+    
+    return sort[0] if sort else None
 
 def auto_solve(output_file="auto_solve_results.txt"):
     with open(output_file, "w") as f:
@@ -76,10 +73,17 @@ def auto_solve(output_file="auto_solve_results.txt"):
                 guess_count += 1
                 guess = guess_word(correct_arr, misplaced_arr, incorrect_letters)
 
+                if not guess:  # If no valid guess is found
+                    print(f"No valid guess for word: {target_word.upper()}. Fail.")
+                    result = f"Word: {target_word.upper()} - Fail\n"
+                    f.write(result)
+                    break
+
                 if guess == target_word:
                     word_found = True
                     result = f"Word: {target_word.upper()} - Solved in {guess_count} guesses\n"
-                    f.write(result)
+                    if guess_count > 6:
+                        f.write(result)
                     print(result)
                     break
 
@@ -87,18 +91,15 @@ def auto_solve(output_file="auto_solve_results.txt"):
                 for i in range(5):
                     if guess[i] == target_word[i]:
                         correct_arr[i] = guess[i]
-                    elif guess[i] in target_word and guess[i] != correct_arr[i]:
-                        # Ensure the misplaced letter is not placed in the same position again
-                        for misplaced in misplaced_arr:
-                            if '' in misplaced and misplaced[i] != guess[i]:
-                                misplaced[i] = guess[i]
-                                break
+                    elif guess[i] in target_word:
+                        if guess[i] != correct_arr[i] and guess[i] not in [arr[i] for arr in misplaced_arr]:
+                            for misplaced in misplaced_arr:
+                                if misplaced[i] == '':
+                                    misplaced[i] = guess[i]
+                                    break
                     else:
                         if guess[i] not in correct_arr and guess[i] not in incorrect_letters:
                             incorrect_letters.append(guess[i])
-
-                # Debugging output to monitor the loop
-                # print(f"Guess #{guess_count}: {guess.upper()} | Correct: {correct_arr} | Misplaced: {misplaced_arr} | Incorrect: {incorrect_letters}")
 
                 # Safety break after too many guesses
                 if guess_count > 100:  # Adjust this threshold as needed
