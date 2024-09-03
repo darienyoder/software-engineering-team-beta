@@ -41,6 +41,10 @@ def guess_word(game_state):
                 case _:
                     pass
 
+    # If a letter is green or yellow in one space, ignore it being grey in another
+    for greyLetterIndex in range(len(greyLetters) - 1, -1, -1):
+        if greyLetters[greyLetterIndex] in greenLetters or greyLetters[greyLetterIndex] in yellowLetters:
+            greyLetters.pop(greyLetterIndex)
 
     ### Choosing a word
     # Each word in the dictionary is given a score based on how common its letters are.
