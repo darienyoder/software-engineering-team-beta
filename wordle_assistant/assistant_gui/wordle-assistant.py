@@ -169,13 +169,69 @@ def window():
     btn.grid(row=11)
     root.mainloop()
 
+def cli():
+    # Words are inputed with a special character before each letter.
+    # "-" means that the character was grey.
+    # "/" means that the character was yellow.
+    # "+" means that the character was green.
+    # Ex. "+s-h-a/r/e"
+    correct_arr = [''] * 5
+    misplaced_arr = [[''] * 5 for _ in range(5)]
+    incorrect_letters = []
+    guessNum = 0
+
+    while True:
+        # Prompt the user for input
+        user_input = input("Enter your word with annotations (+green, /yellow, -grey) or press Enter to skip or type 'quit' to exit: ").strip().lower()
+
+        if user_input == 'quit':
+            print("Exiting CLI...")
+            break
+
+        if user_input == '':
+            # If the user submits an empty guess, simply make the next suggestion
+            guess = guess_word(correct_arr, misplaced_arr, incorrect_letters)
+            if guess:
+                print(f"Suggested next guess: {guess.upper()}")
+            else:
+                print("No valid guesses remaining.")
+            continue
+
+        # Process the input
+        for i in range(5):
+            if user_input[2 * i] == '+':  # Green (correct letter in the correct spot)
+                correct_arr[i] = user_input[2 * i + 1]
+            elif user_input[2 * i] == '/':  # Yellow (misplaced letter)
+                if user_input[2 * i + 1] not in correct_arr:  # Avoid placing letters already known to be correct
+                    misplaced_arr[guessNum][i] = user_input[2 * i + 1]
+            elif user_input[2 * i] == '-':  # Grey (incorrect letter)
+                if user_input[2 * i + 1] not in incorrect_letters:
+                    incorrect_letters.append(user_input[2 * i + 1])
+
+        # Get the next guess
+        guess = guess_word(correct_arr, misplaced_arr, incorrect_letters)
+        
+        guessNum += 1
+
+        if guess:
+            print(f"Suggested next guess: {guess.upper()}")
+        else:
+            print("No valid guesses remaining.")
+
+        # debugging
+        # print(f"Correct: {correct_arr}")
+        # print(f"Misplaced: {misplaced_arr}")
+        # print(f"Incorrect: {incorrect_letters}")
+
 def main():
-    choice = input("Choose an option:\n1. Run Auto Solve\n2. Launch GUI\nEnter 1 or 2: ")
+    choice = input("Choose an option:\n1. Run Auto Solve\n2. Launch GUI\n3. Launch CLI\nChoice: ")
 
     if choice == "1":
         auto_solve()
     elif choice == "2":
         window()
+    elif choice == "3":
+        cli()
     else:
         print("Invalid choice. Please enter 1 or 2.")
 
