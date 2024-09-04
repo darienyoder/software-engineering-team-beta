@@ -1,13 +1,12 @@
 from random import randrange
 
-with open("words.txt","r") as f:
+with open("words.txt", "r") as f:
     rawWordList = f.readlines()
 
 rawWordList = [w.strip() for w in rawWordList]
 wordList = []
 wordList = [word for word in wordList + rawWordList if len(word) == 5]
 
-difficultWords = ['awash', 'backs', 'bakes', 'beaus', 'blobs', 'blows', 'bonus', 'brays', 'broom', 'cafes', 'cakes', 'claws', 'clays', 'combs', 'comma', 'coxed', 'coxes', 'craws', 'damps', 'dares', 'dazed', 'deeds', 'deems', 'dikes', 'diver', 'dives', 'dizzy', 'doges', 'domes', 'doves', 'dozed', 'dozes', 'draws', 'drays', 'dregs', 'dukes', 'dupes', 'eager', 'eared', 'eases', 'eater', 'eaves', 'ebbed', 'edges', 'eider', 'erode', 'every', 'faked', 'faxed', 'faxes', 'fifes', 'fixed', 'fixes', 'flows', 'fowls', 'foxed', 'foxes', 'foyer', 'frank', 'frays', 'gales', 'galls', 'games', 'gated', 'gates', 'gawky', 'gazed', 'gazes', 'gears', 'genus', 'giver', 'gives', 'glaze', 'gofer', 'golds', 'gongs', 'gowns', 'grams', 'graze', 'greys', 'grove', 'gusts', 'hafts', 'halls', 'hangs', 'hared', 'hares', 'hatch', 'hated', 'hates', 'haves', 'hawks', 'hears', 'heeds', 'hider', 'hides', 'hiked', 'hiker', 'hikes', 'hills', 'hints', 'hived', 'hives', 'hocks', 'holds', 'holly', 'homed', 'hoods', 'hoofs', 'hoops', 'hoped', 'hosts', 'hound', 'hours', 'hover', 'howls', 'huffy', 'hulls', 'humps', 'jaded', 'jades', 'jails', 'james', 'jaunt', 'jawed', 'jazzy', 'jeans', 'jeeps', 'jests', 'jesus', 'jilts', 'jinks', 'jived', 'jives', 'joist', 'joked', 'joker', 'jokes', 'jolly', 'jolts', 'jowls', 'jumps', 'keels', 'kelts', 'keyed', 'kicks', 'kills', 'kilts', 'kings', 'kinks', 'kitty', 'krill', 'lasts', 'lemur', 'lined', 'lines', 'louts', 'lover', 'lower', 'lulls', 'lusty', 'makes', 'males', 'mares', 'match', 'mates', 'mayas', 'mazes', 'miles', 'minus', 'mixer', 'mixes', 'mover', 'moves', 'mowed', 'mower', 'muggy', 'mummy', 'nears', 'newer', 'night', 'nines', 'nulls', 'oozed', 'oozes', 'pawed', 'payed', 'payer', 'ploys', 'preys', 'raked', 'rakes', 'rayed', 'razed', 'razes', 'rears', 'reefs', 'rider', 'river', 'rover', 'rower', 'scare', 'screw', 'seems', 'shahs', 'shame', 'shave', 'sizes', 'skies', 'skims', 'skips', 'slabs', 'slavs', 'slays', 'slyer', 'smell', 'sofas', 'swabs', 'swags', 'swarm', 'sways', 'swore', 'taxed', 'taxes', 'texts', 'tiger', 'tufts', 'udder', 'vales', 'vamps', 'vanes', 'vases', 'vents', 'vests', 'vines', 'voles', 'volts', 'vowed', 'wades', 'wafer', 'wafts', 'wager', 'wages', 'wails', 'waked', 'wakes', 'wales', 'walls', 'wands', 'wanes', 'wards', 'wares', 'warms', 'warps', 'warts', 'wasps', 'waste', 'watch', 'water', 'waved', 'waves', 'waxed', 'waxes', 'wears', 'weeds', 'weeks', 'weeps', 'wells', 'wends', 'wider', 'wides', 'wiles', 'wills', 'wilts', 'wined', 'wines', 'wings', 'wired', 'wirer', 'wires', 'witch', 'wives', 'wodge', 'wolds', 'woods', 'wordy', 'worry', 'wound', 'wowed', 'xrays', 'yanks', 'yards', 'yawed', 'yawns', 'years', 'yells', 'yokes', 'yours', 'zappy', 'zeals', 'zulus']
 
 def guess_word(game_state):
 
@@ -43,7 +42,10 @@ def guess_word(game_state):
 
     # If a letter is green or yellow in one space, ignore it being grey in another
     for greyLetterIndex in range(len(greyLetters) - 1, -1, -1):
-        if greyLetters[greyLetterIndex] in greenLetters or greyLetters[greyLetterIndex] in yellowLetters:
+        if (
+            greyLetters[greyLetterIndex] in greenLetters
+            or greyLetters[greyLetterIndex] in yellowLetters
+        ):
             greyLetters.pop(greyLetterIndex)
 
     ### Choosing a word
@@ -56,17 +58,44 @@ def guess_word(game_state):
 
     possibleWords = getPossibleWords()
 
-    if guessCount < 6 and greenLetters.count(0) <= 4 and len(possibleWords) > 6 - guessCount:
+    if (
+        (guessCount < 6)
+        and (greenLetters.count(0) <= 4)
+        and (len(possibleWords) > (7 - guessCount))
+    ):
         strategy = "learn"
         for letterIndex in range(26):
             letter = chr(letterIndex + 97)
             score = 0
-            if (not letter in greyLetters) and (not letter in yellowLetters) and (not letter in greenLetters):
+            if (
+                (not letter in greyLetters)
+                and (not letter in yellowLetters)
+                and (not letter in greenLetters)
+            ):
                 for newWord in possibleWords:
                     if letter in newWord:
                         score += 1
             newLetterFrequency.append(score)
 
+        # If every yellow is present, score those instead
+        if all(freq == 0 for freq in newLetterFrequency):
+            newLetterFrequency.clear()
+            for letterIndex in range(26):
+                letter = chr(letterIndex + 97)
+                score = 0
+                if (
+                    (letter in yellowLetters)
+                    and (not letter in greenLetters)
+                    and (not letter in greyLetters)
+                ):
+                    for newWord in possibleWords:
+                        if letter in newWord:
+                            score += 1
+                newLetterFrequency.append(score)
+
+        newLetterFrequency.append(score)
+
+    # First line after learn if
     wordScores = []
     for wordIndex in range(len(wordList)):
         word = wordList[wordIndex]
@@ -78,7 +107,7 @@ def guess_word(game_state):
                 # If the word contains any letters that are confirmed to not be in the answer,
                 # set the score extremely low
                 if word[letterIndex] in greyLetters:
-                    score = -999999999
+                    score = -999
                 # Otherwise, increase the word's score by how often that letter
                 # appears in that position in every word in the dictionary
                 else:
@@ -88,30 +117,44 @@ def guess_word(game_state):
                 # set the score extremely low
                 if greenLetters[letterIndex] != 0:
                     if word[letterIndex] != greenLetters[letterIndex]:
-                        score = -999999999
+                        score = -999
 
                 # If the word has a letter in a spot where that letter was marked yellow
                 # set the score extremely low
                 for i in range(len(yellowLetters)):
-                    if (yellowLetterIndexes[i] == letterIndex):
+                    if yellowLetterIndexes[i] == letterIndex:
                         if yellowLetters[i] == word[letterIndex]:
-                            score = -999999999
+                            score = -999
 
             # If the word does not have a yellow letter anywhere
             # set the score extremely low
             for yellowLetter in yellowLetters:
                 if not yellowLetter in word:
-                    score = -999999999
+                    score = -999
 
         elif strategy == "learn":
             for letterIndex in range(len(word)):
                 score += newLetterFrequency[ord(word[letterIndex]) - 97]
-
+            score = int(score / 2)
+            if len(set(word)) == 5:
+                score += 10
+            elif len(set(word)) == 4:
+                score += 4
+            elif len(set(word)) == 3:
+                score += 3
+            elif len(set(word)) == 2:
+                score += 2
+            elif len(set(word)) == 1:
+                score -= 1
+            else:
+                score -= 1
 
         wordScores.append(score)
 
-    # Return the word with the highest score
+    # wordScores.sort(reverse=True)
+    # print("max:", wordScores[0:9])
     return wordList[wordScores.index(max(wordScores))]
+
 
 # Returns a list of words that could be the answer based on the known information
 def getPossibleWords():
@@ -125,7 +168,7 @@ def getPossibleWords():
                 if word[letterIndex] != greenLetters[letterIndex]:
                     possible = False
             for i in range(len(yellowLetters)):
-                if (yellowLetterIndexes[i] == letterIndex):
+                if yellowLetterIndexes[i] == letterIndex:
                     if yellowLetters[i] == word[letterIndex]:
                         possible = False
         for yellowLetter in yellowLetters:
@@ -135,7 +178,9 @@ def getPossibleWords():
             words.append(word)
     return words
 
+
 letterFrequency = []
+
 
 # Add up every occurance of a letter in the given index of every word in the word list
 def setupLetterFrequency():
@@ -150,8 +195,10 @@ def setupLetterFrequency():
                     score += 1
             letterFrequency[index].append(score)
 
+
 def getLetterFrequency(letter, index):
     return letterFrequency[index][ord(letter) - 97]
+
 
 # Given the answer, attempts to solve the puzzle without having to input the game state
 def auto_solve(keyword):
@@ -176,6 +223,7 @@ def auto_solve(keyword):
         if guess == keyword:
             return True
     return False
+
 
 previousInput = ""
 
@@ -210,7 +258,13 @@ if __name__ == "__main__":
                     unsolved_list.append(word)
             print()
             print("Tried " + str(wordCount) + " words.")
-            print("Solved " + str(solved) + ". (" + str(int(solved / wordCount * 10000) / 100) + "%)")
+            print(
+                "Solved "
+                + str(solved)
+                + ". ("
+                + str(int(solved / wordCount * 10000) / 100)
+                + "%)"
+            )
             print("Could not solve " + str(wordCount - solved) + ":")
             print(unsolved_list)
 
@@ -221,7 +275,7 @@ if __name__ == "__main__":
                 print("Enter a valid sample size")
             else:
                 sample = []
-                for i in range(min( int(sampleSize[1]), len(wordList) )):
+                for i in range(min(int(sampleSize[1]), len(wordList))):
                     word = ""
                     while word == "" or word in sampleSize:
                         word = wordList[randrange(0, len(wordList))]
@@ -236,7 +290,13 @@ if __name__ == "__main__":
                         unsolved_list.append(word)
                 print()
                 print("Tried " + str(int(sampleSize[1])) + " words.")
-                print("Solved " + str(solved) + ". (" + str(int(solved / int(sampleSize[1]) * 10000) / 100) + "%)")
+                print(
+                    "Solved "
+                    + str(solved)
+                    + ". ("
+                    + str(int(solved / int(sampleSize[1]) * 10000) / 100)
+                    + "%)"
+                )
                 print("Could not solve " + str(int(sampleSize[1]) - solved) + ":")
                 print(unsolved_list)
 

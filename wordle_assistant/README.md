@@ -10,4 +10,7 @@ This program accepts 5 types of commands:
 4. Type "all" to test all words in the word list and receive the ratio it gets correct afterward.
 5. Type "exit" to quit.
 
-Be sure to test your changes with the "sample" or "all" command and compare the accuracy to output.txt to avoid regressions.
+## Letter Elimination
+Perform two tasks to eliminate extra letters:
+1. Guess words that cannot be the answer but use a lot of letters.
+2. Use words with some but not all of the guessed letters to find positions.
