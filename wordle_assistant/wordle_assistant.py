@@ -224,13 +224,34 @@ def auto_solve(keyword):
             return True
     return False
 
+# Prints the program's list of commands
+def print_help():
+    print()
+    print("  _      __            ____      ___           _     __            __ ")
+    print(" | | /| / /__  _______/ / /__   / _ | ___ ___ (_)__ / /____ ____  / /_")
+    print(" | |/ |/ / _ \\/ __/ _  / / -_) / __ |(_-<(_-</ (_-</ __/ _ `/ _ \\/ __/")
+    print(" |__/|__/\\___/_/  \\_,_/_/\\__/ /_/ |_/___/___/_/___/\\__/\\_,_/_//_/\\__/")
+    print("                                                          by Team Beta")
+    print("This program accepts 6 types of commands:")
+    print("1. Type the given hints or leave the input blank to receive a suggestion for the next word.")
+    print('    "+" before a letter indicates that the letter is present in the answer and in the correct spot. (Green)')
+    print('    "/" before a letter indicates that the letter is present in the answer, but in the wrong spot. (Yellow)')
+    print('    "-" before a letter indicates that the letter is not present in the answer. (Grey)')
+    print('    "^" at the beginning of a command will include the previously typed hint.')
+    print('    Ex. "^ +s-h-a/r/e"')
+    print('2. Type a five-letter word without hints to have the program attempt to solve the word automatically.')
+    print('3. Type "sample ##" to test a given number of random words and print the success rate.')
+    print('4. Type "all" to test all words in the word list and print the success rate.')
+    print('5. Type "help" to show all commands.')
+    print('6. Type "exit" to quit.')
 
 previousInput = ""
 
 if __name__ == "__main__":
     setupLetterFrequency()
+    print_help()
     while True:
-        state = input("Game state? ")
+        state = input("> ")
 
         # If input begins with a caret, include previous input
         if state.startswith("^"):
@@ -244,6 +265,10 @@ if __name__ == "__main__":
         # Ends the program
         if state == "exit":
             break
+
+        # Shows all possible commands
+        elif state == "help":
+            print_help()
 
         # Tests all words and returns the success rate
         elif state == "all":
