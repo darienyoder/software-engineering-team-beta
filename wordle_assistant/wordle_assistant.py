@@ -5,8 +5,8 @@ with open("words.txt", "r") as f:
 
 rawWordList = [w.strip() for w in rawWordList]
 wordList = []
-# wordList = [word for word in wordList + rawWordList if len(word) == 5]
-wordList = rawWordList
+wordList = [word for word in wordList + rawWordList if len(word) == 5]
+
 
 def guess_word(game_state):
 
@@ -219,7 +219,7 @@ def auto_solve(keyword):
                 state += "-" + guess[letter_index]
                 print_string += " " + guess[letter_index] + "  "
         state += " "
-        # print(print_string)
+        print(print_string)
         if guess == keyword:
             return True
     return False
