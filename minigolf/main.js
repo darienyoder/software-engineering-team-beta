@@ -1,6 +1,8 @@
 const strokeForce = 100; // The speed of the ball when it is hit
 const friction = 0.5; // The rate at which the ball slows
 
+var level; // The level object; builds the stage
+
 var ball; // The player's golf ball
 var canMove = true; // Whether the player can control the ball
 
@@ -12,21 +14,8 @@ function setup()
     // Initialize canvas
     createCanvas();
 
-    // Create golf ball in the center of the screen
-    ball = new Sprite(window.innerWidth / 2, window.innerHeight / 2);
-    ball.diameter = 20;
-    ball.color = "#ffffff";
-    ball.layer = 2;
-    ball.drag = friction;
-
-    // Create hole
-    hole = new Sprite(window.innerWidth / 2, 50);
-    hole.diameter = 40;
-    hole.collider = 'kinematic';
-    hole.layer = 1;
-    hole.color = 'grey';
-    hole.stroke = 'black';
-
+    // Create the level layout using "level-generation.js"
+    level = buildLevel(500, 300, createVector(100, 150), createVector(400, 150));
 
 }
 
@@ -37,14 +26,17 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
-    // Green background for the canvas
-    background("#408040");
+    // Beige background for the canvas
+    background("#f2ece3");
+
+    // Draw the stage using "level-generation.js"
+    drawStage();
 
     // When mouse is clicked...
     if (mouse.presses() && canMove)
     {
         // Accelerate ball toward the mouse at a speed of "strokeForce"
-        ball.bearing = createVector(1, 0).angleBetween(createVector(mouse.canvasPos.x, mouse.canvasPos.y).sub(ball.pos));
+        ball.bearing = createVector(1, 0).angleBetween(createVector(mouse.canvasPos.x, mouse.canvasPos.y).sub(levelToScreen(ball.pos)));
         ball.applyForce(strokeForce);
     }
 
@@ -58,6 +50,15 @@ async function draw()
         // Can replace this with like nextlevel() or some shit when we get there
         ball.remove();
     }
+}
+
+// Converts level coordinates to screen coordinates
+// Use this if you need to draw on the screen without using sprites
+function levelToScreen(vector)
+{
+    let adjustedX = (vector.x - camera.position.x) * camera.zoom + width / 2;
+    let adjustedY = (vector.y - camera.position.y) * camera.zoom + height / 2;
+    return createVector(adjustedX, adjustedY);
 }
 
 // Use "await sleep(milliseconds);" to delay the code's execution
