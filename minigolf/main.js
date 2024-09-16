@@ -12,6 +12,9 @@ function setup()
     // Initialize canvas
     createCanvas();
 
+    // Create the level layout using "level-generation.js"
+    buildLevel();
+
     // Create golf ball in the center of the screen
     ball = new Sprite(window.innerWidth / 2, window.innerHeight / 2);
     ball.diameter = 20;
