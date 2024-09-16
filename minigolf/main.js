@@ -1,5 +1,6 @@
 const strokeForce = 100; // The speed of the ball when it is hit
 const friction = 0.5; // The rate at which the ball slows
+const maxPullBackDistance = 100; // The maximum distance to pull back
 
 var level; // The level object; builds the stage
 
@@ -7,6 +8,8 @@ var ball; // The player's golf ball
 var canMove = true; // Whether the player can control the ball
 
 var hole; // The goal
+
+var pullStart = null; // The starting position of the pull-back
 
 // Runs once when the program starts
 function setup()
@@ -32,12 +35,26 @@ async function draw()
     // Draw the stage using "level-generation.js"
     drawStage();
 
-    // When mouse is clicked...
-    if (mouse.presses() && canMove)
-    {
-        // Accelerate ball toward the mouse at a speed of "strokeForce"
-        ball.bearing = createVector(1, 0).angleBetween(createVector(mouse.canvasPos.x, mouse.canvasPos.y).sub(levelToScreen(ball.pos)));
-        ball.applyForce(strokeForce);
+    // When mouse is pressed...
+    if (mouse.presses() && canMove) {
+        // Record the start position of the pull-back
+        pullStart = createVector(mouse.canvasPos.x, mouse.canvasPos.y);
+    }
+
+    // When mouse is released...
+    if (mouse.releases() && canMove && pullStart) {
+        // Calculate the pull vector and force
+        let pullEnd = createVector(mouse.canvasPos.x, mouse.canvasPos.y);
+        let pullVector = pullStart.sub(pullEnd);
+        let pullDistance = constrain(pullVector.mag(), 0, maxPullBackDistance);
+        let forceMagnitude = (pullDistance / maxPullBackDistance) * strokeForce;
+        let forceDirection = pullVector.normalize();
+
+        // Apply the calculated force to the ball
+        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
+
+        // Reset the pullStart
+        pullStart = null;
     }
 
     // Hole functionality
