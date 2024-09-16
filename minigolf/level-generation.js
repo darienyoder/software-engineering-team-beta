@@ -46,3 +46,14 @@ function buildLevel(levelWidth, levelHeight, ballPosition, holePosition)
     // In the future it should be its own object.
     return [createVector(levelWidth, levelHeight)];
 }
+
+// Draws the stage
+function drawStage()
+{
+    fill("#000000"); // Black outline around the stage
+    rect(levelToScreen(createVector(-5, -5)).x, levelToScreen(createVector(-5, -5)).y, (level[0].x + 10) * camera.zoom, (level[0].y + 10) * camera.zoom);
+
+    fill("#408040"); // Green floor
+    rect(levelToScreen(createVector(5, 5)).x, levelToScreen(createVector(5, 5)).y, (level[0].x - 10) * camera.zoom, (level[0].y - 10) * camera.zoom);
+
+}

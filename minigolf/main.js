@@ -29,13 +29,8 @@ async function draw()
     // Beige background for the canvas
     background("#f2ece3");
 
-    // Draws the stage
-    // Right now the level data is stored in an array, but eventually it should be its own object
-    fill("#000000"); // Black outline around the stage
-    rect(levelToScreen(createVector(-5, -5)).x, levelToScreen(createVector(-5, -5)).y, (level[0].x + 10) * camera.zoom, (level[0].y + 10) * camera.zoom);
-
-    fill("#408040"); // Green floor
-    rect(levelToScreen(createVector(5, 5)).x, levelToScreen(createVector(5, 5)).y, (level[0].x - 10) * camera.zoom, (level[0].y - 10) * camera.zoom);
+    // Draw the stage using "level-generation.js"
+    drawStage();
 
     // When mouse is clicked...
     if (mouse.presses() && canMove)
