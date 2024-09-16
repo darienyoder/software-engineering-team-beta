@@ -2,6 +2,8 @@ const strokeForce = 100; // The speed of the ball when it is hit
 const friction = 0.5; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
+var strokeCount = 0;
+
 var level; // The level object; builds the stage
 
 var ball; // The player's golf ball
@@ -35,6 +37,9 @@ async function draw()
     // Draw the stage using "level-generation.js"
     drawStage();
 
+    // Draw the stroke counter
+    drawStrokeCount();
+
     // When mouse is pressed...
     if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
@@ -55,6 +60,8 @@ async function draw()
 
         // Reset the pullStart
         pullStart = null;
+
+        incrementShots();
     }
 
     // Hole functionality
@@ -82,4 +89,17 @@ function levelToScreen(vector)
 function sleep(milliseconds)
 {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+function drawStrokeCount()
+{
+    fill(0); // Set text color to black
+    textSize(20); // Set text size
+    textAlign(RIGHT, TOP); // Align text to the top-right corner
+    text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
+}
+
+function incrementShots()
+{
+    strokeCount++;
 }
