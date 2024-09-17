@@ -69,8 +69,8 @@ async function draw()
         drawTrajectory();
     }
 
-    // Hole functionality
-    if (hole.overlaps(ball))
+    // Hole functionality Ball must be going slow to get in hole
+    if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
