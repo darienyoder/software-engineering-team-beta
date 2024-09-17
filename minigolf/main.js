@@ -79,6 +79,15 @@ async function draw()
         // Can replace this with like nextlevel() or some shit when we get there
         ball.remove();
     }
+
+
+    //Ball has to be stopped in order to move
+    if (ball.vel.x==0 && ball.vel.y==0){
+        canMove=true
+    }
+    else{
+        canMove=false
+    }
 }
 
 // Converts level coordinates to screen coordinates
