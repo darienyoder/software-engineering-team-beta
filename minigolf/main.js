@@ -43,13 +43,13 @@ async function draw()
     // When mouse is pressed...
     if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
-        pullStart = createVector(mouse.canvasPos.x, mouse.canvasPos.y);
+        pullStart = createVector(mouseX, mouseY);
     }
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
         // Calculate the pull vector and force
-        let pullEnd = createVector(mouse.canvasPos.x, mouse.canvasPos.y);
+        let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
         let pullDistance = constrain(pullVector.mag(), 0, maxPullBackDistance);
         let forceMagnitude = (pullDistance / maxPullBackDistance) * strokeForce;
@@ -62,6 +62,11 @@ async function draw()
         pullStart = null;
 
         incrementShots();
+    }
+
+    if (pullStart)
+    {
+        drawTrajectory();
     }
 
     // Hole functionality
@@ -103,3 +108,32 @@ function incrementShots()
 {
     strokeCount++;
 }
+
+function drawTrajectory() {
+    if (pullStart === null) return; // No trajectory to draw if no pullStart is set
+
+    // Ball's current position as the start position
+    let startX = ball.position.x;
+    let startY = ball.position.y;
+
+    // Convert ball position to screen coordinates
+    let screenStart = levelToScreen(createVector(startX, startY));
+
+    // Convert pullStart to screen coordinates
+    let screenPullStart = levelToScreen(pullStart);
+
+    // Convert current mouse position to screen coordinates
+    let screenMousePos = levelToScreen(createVector(mouseX, mouseY));
+
+    // Calculate the pull vector from pullStart to mouse position
+    let pullVector = createVector(screenPullStart.x-screenMousePos.x, screenPullStart.y-screenMousePos.y);
+    let pullDistance = constrain(pullVector.mag(), 0, maxPullBackDistance);
+    pullVector.normalize();
+    pullVector.mult(pullDistance);
+
+    // Draw trajectory line
+    strokeWeight(3);
+    // fill(255, 0, 0); // Red color for the trajectory? Breaks other colors somewhat
+    line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
+}
+
