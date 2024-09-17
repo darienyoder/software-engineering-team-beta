@@ -80,6 +80,12 @@ async function draw()
         ball.remove();
     }
 
+    if (sandtrap.overlaps(ball))
+    {
+        ball.vel.x = ball.vel.x / 3;
+        ball.vel.y = ball.vel.y / 3;
+    }
+
 
     //Ball has to be stopped in order to move
     if (ball.vel.x==0 && ball.vel.y==0){
