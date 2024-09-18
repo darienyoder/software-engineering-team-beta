@@ -98,7 +98,19 @@ async function draw()
     }
 
     ball.overlaps(windmillBody);
+    windmillBlades.rotateTo(10);
+    windmillBlades.rotateTo(180);
 
+    // Make sure windmillBlades can't interact with anything but the ball
+    windmillBlades.overlaps(windmillBody)
+    windmillBlades.overlaps(topWall)
+    windmillBlades.overlaps(bottomWall)
+    windmillBlades.overlaps(leftWall)
+    windmillBlades.overlaps(rightWall)
+    windmillBlades.overlaps(hole)
+    windmillBlades.overlaps(sandtrap)
+    windmillBlades.overlaps(tubeA)
+    windmillBlades.overlaps(tubeB)
 
     //Ball has to be stopped in order to move
     if (ball.vel.x==0 && ball.vel.y==0){
@@ -107,6 +119,8 @@ async function draw()
     else{
         canMove=false
     }
+
+    
 }
 
 // Converts level coordinates to screen coordinates
