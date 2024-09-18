@@ -92,9 +92,11 @@ async function draw()
     }
 
     if (tubeB.overlaps(ball)){
-        ball.vel.x = 1;
-        ball.vel.y = 3;
+        ball.vel.x = .25;
+        ball.vel.y = .75;
     }
+
+    ball.overlaps(windmillBody);
 
 
     //Ball has to be stopped in order to move
