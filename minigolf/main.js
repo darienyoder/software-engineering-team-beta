@@ -69,8 +69,8 @@ async function draw()
         drawTrajectory();
     }
 
-    // Hole functionality
-    if (hole.overlaps(ball))
+    // Hole functionality Ball must be going slow to get in hole
+    if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
@@ -78,6 +78,31 @@ async function draw()
 
         // Can replace this with like nextlevel() or some shit when we get there
         ball.remove();
+    }
+
+    if (sandtrap.overlaps(ball))
+    {
+        ball.vel.x = ball.vel.x / 3;
+        ball.vel.y = ball.vel.y / 3;
+    }
+
+    if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
+        ball.x = tubeB.x;
+        ball.y = tubeB.y;
+    }
+
+    if (tubeB.overlaps(ball)){
+        ball.vel.x = 1;
+        ball.vel.y = 3;
+    }
+
+
+    //Ball has to be stopped in order to move
+    if (ball.vel.x==0 && ball.vel.y==0){
+        canMove=true
+    }
+    else{
+        canMove=false
     }
 }
 
@@ -136,4 +161,3 @@ function drawTrajectory() {
     // fill(255, 0, 0); // Red color for the trajectory? Breaks other colors somewhat
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
 }
-

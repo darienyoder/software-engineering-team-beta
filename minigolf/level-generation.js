@@ -42,6 +42,25 @@ function buildLevel(levelWidth, levelHeight, ballPosition, holePosition)
     hole.color = 'grey';
     hole.stroke = 'black';
 
+
+    //Creating a sandtrap
+    sandtrap = new Sprite(150, 250, 100, 70); 
+    sandtrap.layer = 1;
+    sandtrap.collider = 'kinematic';
+    sandtrap.color = 'tan';
+    sandtrap.stroke = 'black';
+
+    // Tubes
+    tubeA = new Sprite(45, 45)
+    tubeA.diameter = 40;
+    tubeA.collider = 'kinematic';
+    tubeA.layer = 1;
+    tubeA.color = 'purple'
+    tubeB = new Sprite(400, 45, 50, 50)
+    tubeB.collider = 'kinematic'
+    tubeB.layer = 1;
+    tubeB.color = 'purple'
+
     // For now I'm storing the level data as an array.
     // In the future it should be its own object.
     return [createVector(levelWidth, levelHeight)];
