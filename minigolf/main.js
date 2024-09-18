@@ -46,6 +46,7 @@ async function draw()
         pullStart = createVector(mouseX, mouseY);
     }
 
+
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
         // Calculate the pull vector and force

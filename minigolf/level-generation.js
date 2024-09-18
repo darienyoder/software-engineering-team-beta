@@ -62,11 +62,18 @@ function buildLevel(levelWidth, levelHeight, ballPosition, holePosition)
     tubeB.color = 'purple'
 
     // Create windmill
-    windmillBody = new Sprite([[200, 175], [250, 175], [225, 100], [200, 175]],'s');
+    wmX = 225;
+    wmY = 100
+    windmillBody = new Sprite([[wmX, wmY], [wmX - 25, wmY + 75], [wmX + 25, wmY + 75], [wmX, wmY]],'s');
     windmillBody.color = 'white';
-    windmillBlades = new Sprite([[200,150], [250, 150], [225, 100], [200, 150]],'s');
-    windmillBlades.color = "#cdf7f4";
-    // windmillBody = new Sprite(250, 150, 50, 'triangle');
+    windmillBlades = new Sprite(
+        [[wmX,wmY], [wmX-12.5, wmY+75], [wmX+12.5, wmY+75], [wmX, wmY]  // Bottom
+        ,[wmX,wmY], [wmX+75, wmY+12.5], [wmX+75, wmY-12.5], [wmX, wmY]  // Right
+        ,[wmX,wmY], [wmX-12.5, wmY-75], [wmX+12.5, wmY-75], [wmX, wmY]  // Top
+        ,[wmX,wmY], [wmX-75, wmY+12.5], [wmX-75, wmY-12.5], [wmX, wmY]] // Left
+        ,'s');
+    windmillBlades.color = "#52f8ff";
+    
     
     // For now I'm storing the level data as an array.
     // In the future it should be its own object.
