@@ -55,8 +55,15 @@ async function draw()
         let forceMagnitude = (pullDistance / maxPullBackDistance) * strokeForce;
         let forceDirection = pullVector.normalize();
 
-        // Apply the calculated force to the ball
+        // Apply the calculated force to the ball if its in sand
+        if (ball.overlaps(sandtrap)){
+        ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
+
+        }
+        else{
+            //Apply calculated for normally
         ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
+        }
 
         // Reset the pullStart
         pullStart = null;
