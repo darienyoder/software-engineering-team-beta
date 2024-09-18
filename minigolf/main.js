@@ -154,8 +154,10 @@ function drawTrajectory() {
     pullVector.mult(pullDistance);
 
     // Draw trajectory line
-    strokeWeight(3);
-    // fill(255, 0, 0); // Red color for the trajectory? Breaks other colors somewhat
+    push(); // Start new style for the line
+    stroke('red'); // Can be any color
+    strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
+    pop(); // Remove style
 }
 
