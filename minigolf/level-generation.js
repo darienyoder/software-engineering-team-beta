@@ -75,7 +75,15 @@ function buildLevel(levelWidth, levelHeight, ballPosition, holePosition)
     windmillBlades.color = "#52f8ff";
     windmillBlades.collider = 'kinematic';
     
+    // Creating the putter head
+    putter = new Sprite(ballPosition.x , ballPosition.y, 10, 30, 'n');
+    putter.layer = 1;
+    putter.color = 130,130,130;
+    putter.stroke = 'black';
+    //putter.debug = true;
+    putter.offset.x = -20;
     
+
     // For now I'm storing the level data as an array.
     // In the future it should be its own object.
     return [createVector(levelWidth, levelHeight)];

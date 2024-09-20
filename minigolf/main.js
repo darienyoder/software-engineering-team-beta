@@ -56,11 +56,28 @@ async function draw()
         let forceMagnitude = (pullDistance / maxPullBackDistance) * strokeForce;
         let forceDirection = pullVector.normalize();
 
-        // Apply the calculated force to the ball
-        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
-
         // Reset the pullStart
         pullStart = null;
+
+        // Swinging the putter
+        putter.moveTo(ball.x - (5*(forceMagnitude/6))*forceDirection.x , ball.y - (5*(forceMagnitude/6))*forceDirection.y, .04*forceMagnitude);
+        await sleep(4*forceMagnitude);
+        putter.moveTo(ball.x, ball.y, .04*forceMagnitude);
+        await sleep(4*forceMagnitude);
+
+        // Apply the calculated force to the ball if its in sand
+        if (ball.overlaps(sandtrap)){
+        ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
+
+        }
+        else{
+            //Apply calculated for normally
+        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
+        }
+
+        // Hide the putter
+        putter.visible = false;
+
 
         incrementShots();
     }
@@ -68,6 +85,7 @@ async function draw()
     if (pullStart)
     {
         drawTrajectory();
+        drawPutter();
     }
 
     // Hole functionality Ball must be going slow to get in hole
@@ -119,8 +137,6 @@ async function draw()
     else{
         canMove=false
     }
-
-    
 }
 
 // Converts level coordinates to screen coordinates
@@ -174,7 +190,17 @@ function drawTrajectory() {
     pullVector.mult(pullDistance);
 
     // Draw trajectory line
-    strokeWeight(3);
-    // fill(255, 0, 0); // Red color for the trajectory? Breaks other colors somewhat
+    push(); // Start new style for the line
+    stroke('red'); // Can be any color
+    strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
+    pop(); // Remove style
+}
+
+function drawPutter(){
+    // Draw the putter back in
+    putter.moveTo(ball.x, ball.y,100);
+    putter.visible = true;
+    let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
+    putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
 }
