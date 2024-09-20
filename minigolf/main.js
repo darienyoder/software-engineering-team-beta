@@ -46,6 +46,7 @@ async function draw()
         pullStart = createVector(mouseX, mouseY);
     }
 
+
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
         // Calculate the pull vector and force
@@ -104,6 +105,30 @@ async function draw()
         ball.vel.y = ball.vel.y / 3;
     }
 
+    if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
+        ball.x = tubeB.x;
+        ball.y = tubeB.y;
+    }
+
+    if (tubeB.overlaps(ball)){
+        ball.vel.x = .25;
+        ball.vel.y = .75;
+    }
+
+    ball.overlaps(windmillBody);
+    windmillBlades.rotateTo(10);
+    windmillBlades.rotateTo(180);
+
+    // Make sure windmillBlades can't interact with anything but the ball
+    windmillBlades.overlaps(windmillBody)
+    windmillBlades.overlaps(topWall)
+    windmillBlades.overlaps(bottomWall)
+    windmillBlades.overlaps(leftWall)
+    windmillBlades.overlaps(rightWall)
+    windmillBlades.overlaps(hole)
+    windmillBlades.overlaps(sandtrap)
+    windmillBlades.overlaps(tubeA)
+    windmillBlades.overlaps(tubeB)
 
     //Ball has to be stopped in order to move
     if (ball.vel.x==0 && ball.vel.y==0){
