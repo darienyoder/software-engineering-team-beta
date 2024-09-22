@@ -15,7 +15,16 @@ function setup()
     createCanvas();
 
     // Create the level layout using "level-generation.js"
-    level = buildLevel(500, 300, createVector(100, 150), createVector(400, 150));
+
+    let levelData = {
+        width: 500,
+        height: 300,
+        ballPosition: createVector(100, 150),
+        holePosition: createVector(400, 150),
+        // shapes: [ wRect(ADD, 100, 100, 200, 200) ],
+    }
+
+    level = buildLevel(levelData);
 
 }
 
@@ -27,7 +36,7 @@ async function draw()
     clear();
 
     // Beige background for the canvas
-    background("#f2ece3");
+    background(backgroundColor);
 
     // Draw the stage using "level-generation.js"
     drawStage();
