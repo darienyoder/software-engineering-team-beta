@@ -23,6 +23,11 @@ function createWallSegment(fromVector, toVector)
     newWall.strokeWeight = 0.0;
     newWall.color = wallColor;
     newWall.collider = "static";
+
+    newWall = new Sprite(fromVector.x, fromVector.y, wallThickness);
+    newWall.strokeWeight = 0.0;
+    newWall.color = wallColor;
+    newWall.collider = "static";
 }
 
 // Adds or subtracts shapes from the current level area
@@ -103,24 +108,59 @@ function modifyLevelShape(newShape)
     }
 }
 
+function parseAreaInput(areaString)
+{
+    positiveWalls = [];
+    negativeWalls = [];
+
+    let statements = areaString.replaceAll(",", "").split(";");
+    for (var statement of statements)
+    {
+        statement = statement.trim().split(" ");
+        if (statement.length > 2)
+        {
+            console.log(statement);
+            let shape = {operation: 0, polygon: []};
+            if (statement[0].toLowerCase() == "add")
+                shape.operation = ADD;
+            else if (statement[0].toLowerCase() == "sub")
+                shape.operation = SUBTRACT;
+
+            switch (statement[1].toLowerCase())
+            {
+                case "rect":
+                    shape.polygon = [
+                        {"X": Number(statement[2]), "Y": Number(statement[3])},
+                        {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3])},
+                        {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3]) + Number(statement[5])},
+                        {"X": Number(statement[2]), "Y": Number(statement[3]) + Number(statement[5])},
+                    ];
+                    break;
+
+                case "circle":
+                case "oval":
+                    const pointCount = 32
+                    let circlePoint = createVector(1, 0);
+                    for (var i = 0; i < pointCount; i++)
+                    {
+                        circlePoint.rotate(360 / pointCount);
+                        // alert(circlePoint)
+                        shape.polygon.push( { "X": Number(statement[2]) + circlePoint.x * Number(statement[4]), "Y": Number(statement[3]) + circlePoint.y * Number(statement[4]) } );
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            modifyLevelShape(shape)
+        }
+    }
+}
+
 function buildLevel(levelData)
 {
-    let wallInput = [
-        {operation: ADD, polygon: [{"X":0, "Y":0}, {"X":200, "Y":0}, {"X":200, "Y":300}, {"X":0, "Y":300}]},
-        {operation: ADD, polygon: [{"X":0, "Y":0}, {"X":500, "Y":0}, {"X":500, "Y":100}, {"X":0, "Y":100}]},
-        {operation: ADD, polygon: [{"X":0, "Y":200}, {"X":500, "Y":200}, {"X":500, "Y":300}, {"X":0, "Y":300}]},
-        {operation: ADD, polygon: [{"X":300, "Y":0}, {"X":500, "Y":0}, {"X":500, "Y":300}, {"X":300, "Y":300}]},
-        {operation: SUB, polygon: [{"X":50, "Y":50}, {"X":450, "Y":50}, {"X":450, "Y":150}, {"X":50, "Y":150}]},
-    ];
 
-    // Reverse the array to use the pop() function starting from the front
-    wallInput.reverse();
-
-    // Apply every shape to the level area one by one
-    while (wallInput.length != 0)
-    {
-        modifyLevelShape(wallInput.pop());
-    }
+    parseAreaInput(levelData.area);
 
     // Clean up the polygons
     clipper.AddPaths(positiveWalls, ADD, true);
@@ -140,6 +180,8 @@ function buildLevel(levelData)
         polynode = polynode.GetNext();
     }
 
+    console.log(positiveWalls);
+
     // Build all segments
     for (var polygon of positiveWalls)
     {
@@ -156,20 +198,24 @@ function buildLevel(levelData)
         }
     }
 
+    let levelBounds = ClipperLib.Clipper.GetBounds(positiveWalls);
+    let levelWidth = levelBounds.right - levelBounds.left;
+    let levelHeight = levelBounds.bottom - levelBounds.top;
+
     // Position camera to center bounding rectangle
-    camera.x = levelData.width / 2;
-    camera.y = levelData.height / 2;
-    camera.zoom = Math.min(((window.innerWidth - levelMargin) / levelData.width), ((window.innerHeight - levelMargin) / levelData.height))
+    camera.x = (levelBounds.right + levelBounds.left) / 2;
+    camera.y = (levelBounds.bottom + levelBounds.top) / 2;
+    camera.zoom = Math.min(((window.innerWidth - levelMargin) / levelWidth), ((window.innerHeight - levelMargin) / levelHeight))
 
     // Create golf ball at "ballPosition"
-    ball = Ball(levelData.ballPosition.x, levelData.ballPosition.y);
+    ball = Ball(levelData.ballPosition[0], levelData.ballPosition[1]);
 
     // Create hole at "holePosition"
-    hole = Hole(levelData.holePosition.x, levelData.holePosition.y);
+    hole = Hole(levelData.holePosition[0], levelData.holePosition[1]);
 
     // For now I'm storing the level data as an array.
     // In the future it should be its own object.
-    return [createVector(levelData.width, levelData.height)];
+    return [createVector(levelWidth, levelHeight)];
 }
 
 function drawPolygon(path, pathColor)

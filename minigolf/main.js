@@ -17,11 +17,13 @@ function setup()
     // Create the level layout using "level-generation.js"
 
     let levelData = {
-        width: 500,
-        height: 300,
-        ballPosition: createVector(100, 150),
-        holePosition: createVector(400, 150),
-        // shapes: [ wRect(ADD, 100, 100, 200, 200) ],
+        ballPosition: [50, 75],
+        holePosition: [450, 75],
+        area: `
+            ADD rect 0, 0, 500, 150;
+            ADD circle 250, 75, 150;
+            SUB circle 250, 75, 100;
+        `,
     }
 
     level = buildLevel(levelData);
