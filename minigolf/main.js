@@ -11,7 +11,12 @@ var canMove = true; // Whether the player can control the ball
 
 var hole; // The goal
 
+var ballInGoal = false;
+
 var pullStart = null; // The starting position of the pull-back
+
+var message = '';
+var messageTime = 0;
 
 // Runs once when the program starts
 function setup()
@@ -91,9 +96,11 @@ async function draw()
     // Hole functionality Ball must be going slow to get in hole
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
+        ballInGoal = true;
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         await sleep(3000);
+        
 
         // Can replace this with like nextlevel() or some shit when we get there
         ball.remove();
@@ -131,11 +138,25 @@ async function draw()
     windmillBlades.overlaps(tubeB)
 
     //Ball has to be stopped in order to move
-    if (ball.vel.x==0 && ball.vel.y==0){
-        canMove=true
-    }
-    else{
-        canMove=false
+    if(!ballInGoal){
+        if (ball.vel.x==0 && ball.vel.y==0){
+            canMove=true //Player can take the next shot
+            if(!message) {
+            message = "Take Your Shot"; //Set the message
+            messageTime = millis(); //Record when message was displayed
+            }
+        }
+        else{
+            canMove=false
+        }
+
+        if(message){
+            drawMessage(); //Display message
+        }
+
+        if(millis() - messageTime >= 3000){ //Clear the message 
+            message = ''; //Reset the message
+        }
     }
 }
 
@@ -195,6 +216,13 @@ function drawTrajectory() {
     strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
     pop(); // Remove style
+}
+
+function drawMessage() {
+    fill(0); //Setting text color
+    textSize(24); //Setting text size
+    textAlign(CENTER, CENTER); // Centering text
+    text(message, width / 2, height / 9); //Moving the up
 }
 
 function drawPutter(){
