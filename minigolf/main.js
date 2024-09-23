@@ -165,7 +165,10 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
-    } else if (gameState === 'gameOver' && key === 'R') {
+    } else if (gameState === 'playing' && key === '`') { 
+        // Tilde runs tests
+        runTests();
+    }else if (gameState === 'gameOver' && key === 'R') {
         startGame();
     }
 }
