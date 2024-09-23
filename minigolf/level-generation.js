@@ -42,48 +42,6 @@ function buildLevel(levelWidth, levelHeight, ballPosition, holePosition)
     hole.color = 'grey';
     hole.stroke = 'black';
 
-
-    //Creating a sandtrap
-    sandtrap = new Sprite(150, 250, 100, 70); 
-    sandtrap.layer = 1;
-    sandtrap.collider = 'kinematic';
-    sandtrap.color = 'tan';
-    sandtrap.stroke = 'black';
-
-    // Create tubes
-    tubeA = new Sprite(45, 45);
-    tubeA.diameter = 40;
-    tubeA.collider = 'kinematic';
-    tubeA.layer = 1;
-    tubeA.color = 'purple'
-    tubeB = new Sprite(400, 45, 50, 50);
-    tubeB.collider = 'kinematic'
-    tubeB.layer = 1;
-    tubeB.color = 'purple'
-
-    // Create windmill
-    wmX = 225;
-    wmY = 20
-    windmillBody = new Sprite([[wmX, wmY], [wmX - 25, wmY + 75], [wmX + 25, wmY + 75], [wmX, wmY]],'s');
-    windmillBody.color = 'white';
-    windmillBlades = new Sprite(
-        [[wmX,wmY], [wmX-12.5, wmY+75], [wmX+12.5, wmY+75], [wmX, wmY]  // Bottom
-        ,[wmX,wmY], [wmX+75, wmY+12.5], [wmX+75, wmY-12.5], [wmX, wmY]  // Right
-        ,[wmX,wmY], [wmX-12.5, wmY-75], [wmX+12.5, wmY-75], [wmX, wmY]  // Top
-        ,[wmX,wmY], [wmX-75, wmY+12.5], [wmX-75, wmY-12.5], [wmX, wmY]] // Left
-        );
-    windmillBlades.color = "#52f8ff";
-    windmillBlades.collider = 'kinematic';
-    
-    // Creating the putter head
-    putter = new Sprite(ballPosition.x , ballPosition.y, 10, 30, 'n');
-    putter.layer = 1;
-    putter.color = 130,130,130;
-    putter.stroke = 'black';
-    //putter.debug = true;
-    putter.offset.x = -20;
-    
-
     // For now I'm storing the level data as an array.
     // In the future it should be its own object.
     return [createVector(levelWidth, levelHeight)];

@@ -27,6 +27,22 @@ function setup()
     // Create the level layout using "level-generation.js"
     level = buildLevel(500, 300, createVector(100, 150), createVector(400, 150));
 
+
+    sandtrap = Sandtrap();
+    let tubes = Tubes();
+    tubeA = tubes[0];
+    tubeB = tubes[1];
+    Windmill(200, 50);
+
+
+    // Creating the putter head
+    putter = new Sprite(-1000, -1000, 10, 30, 'n');
+    putter.layer = 1;
+    putter.color = 130,130,130;
+    putter.stroke = 'black';
+    //putter.debug = true;
+    putter.offset.x = -20;
+
 }
 
 // Runs 60 times per second
@@ -100,7 +116,7 @@ async function draw()
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         await sleep(3000);
-        
+
 
         // Can replace this with like nextlevel() or some shit when we get there
         ball.remove();
@@ -154,7 +170,7 @@ async function draw()
             drawMessage(); //Display message
         }
 
-        if(millis() - messageTime >= 3000){ //Clear the message 
+        if(millis() - messageTime >= 3000){ //Clear the message
             message = ''; //Reset the message
         }
     }
