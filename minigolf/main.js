@@ -216,6 +216,7 @@ async function handleGamePlay() {
     if (pullStart)
     {
         drawTrajectory();
+        drawUserAssistance();
         drawPutter();
     }
 
@@ -317,8 +318,6 @@ function incrementShots()
 function drawTrajectory() {
     if (pullStart === null) return; // No trajectory to draw if no pullStart is set
 
-    drawUserAssistance();
-
     // Ball's current position as the start position
     let startX = ball.position.x;
     let startY = ball.position.y;
@@ -347,29 +346,28 @@ function drawTrajectory() {
 }
 
 function drawUserAssistance() {
-    // Ball's current position as the start position
-    let startX = mouse.position.x;
-    let startY = mouse.position.y;
-
-    // Convert ball position to screen coordinates
-    let screenStart = levelToScreen(createVector(startX, startY));
+    // Ensure pullStart is set
+    if (pullStart === null) return;
 
     // Convert pullStart to screen coordinates
-    let screenPullStart = levelToScreen(pullStart);
+    let screenPullStart = pullStart;
 
     // Convert current mouse position to screen coordinates
-    let screenMousePos = levelToScreen(createVector(mouseX, mouseY));
+    let screenMousePos = createVector(mouseX, mouseY);
 
     // Calculate the pull vector from pullStart to mouse position
-    let pullVector = createVector(screenPullStart.x-screenMousePos.x, screenPullStart.y-screenMousePos.y);
+    let pullVector = createVector(screenMousePos.x - screenPullStart.x, screenMousePos.y - screenPullStart.y);
 
     // Draw trajectory line
     push(); // Start new style for the line
-    stroke('grey'); // Can be any color
+    stroke('grey'); // Color for the line
     strokeWeight(5);
-    line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
+    // Draw line from pullStart to current mouse position
+    line(screenPullStart.x, screenPullStart.y, screenPullStart.x + pullVector.x, screenPullStart.y + pullVector.y);
     pop(); // Remove style
 }
+
+
 
 function drawMessage() {
     fill(0); //Setting text color
