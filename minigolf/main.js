@@ -28,22 +28,54 @@ function setup()
 
     let levelData = {
         ballPosition: [50, 75],
-        holePosition: [450, 75],
+        holePosition: [250, 75],
         area: `
-            ADD rect 0, 0, 500, 150;
-            ADD circle 250, 75, 150;
-            SUB circle 250, 75, 100;
+
+            // Left side;
+            ADD rect 0, 0, 150, 150;
+
+            // Right side;
+            {
+                ADD rect 350, 0, 150, 250;
+                SUB {
+                    ADD circle 390, 165, 40;
+                    ADD rect 350, 125, 40, 200;
+                    ADD rect 390, 165, 40, 200;
+                }
+            }
+            // Top arc;
+            {
+                ADD circle 250, 75, 150;
+                SUB circle 250, 75, 100;
+                SUB rect 0, 150, 500, 300;
+                SUB rect 150, 75, 300, 300;
+            }
+
+            // Path to end;
+            {
+                ADD rect 0, 200, 150, 50;
+                ADD oval 150, 150, 125, 100;
+                SUB oval 150, 150, 75, 50;
+                SUB rect 0, 0, 150, 200;
+                SUB rect 0, 0, 225, 150;
+            }
+
+            // End goal;
+            ADD circle 250, 75, 50;
+            ADD rect 225, 75, 50, 75;
+
         `,
     }
+
 
     level = buildLevel(levelData);
 
 
-    sandtrap = Sandtrap();
-    let tubes = Tubes();
+    sandtrap = Sandtrap(250, -50);
+    let tubes = Tubes(465, 215, 25, 225);
     tubeA = tubes[0];
     tubeB = tubes[1];
-    Windmill(200, 50);
+    Windmill(450, 50);
 
 
     // Creating the putter head
@@ -155,10 +187,10 @@ async function draw()
 
     // Make sure windmillBlades can't interact with anything but the ball
     windmillBlades.overlaps(windmillBody)
-    windmillBlades.overlaps(topWall)
-    windmillBlades.overlaps(bottomWall)
-    windmillBlades.overlaps(leftWall)
-    windmillBlades.overlaps(rightWall)
+    // windmillBlades.overlaps(topWall) // These walls were placeholders and no longer exist
+    // windmillBlades.overlaps(bottomWall)
+    // windmillBlades.overlaps(leftWall)
+    // windmillBlades.overlaps(rightWall)
     windmillBlades.overlaps(hole)
     windmillBlades.overlaps(sandtrap)
     windmillBlades.overlaps(tubeA)
@@ -249,7 +281,7 @@ function drawMessage() {
     fill(0); //Setting text color
     textSize(24); //Setting text size
     textAlign(CENTER, CENTER); // Centering text
-    text(message, width / 2, height / 9); //Moving the up
+    text(message, width / 2, height / 9 * 2.5); //Moving the up
 }
 
 function drawPutter(){

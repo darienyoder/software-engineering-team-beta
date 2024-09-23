@@ -32,86 +32,139 @@ function createWallSegment(fromVector, toVector)
 
 // Adds or subtracts shapes from the current level area
 // newShape = {operation (ADD or SUB), polygon (list of points)}
-function modifyLevelShape(newShape)
+function modifyLevelShape(newShape, posWalls, negWalls)
 {
     if (newShape.operation == ADD)
     {
-        clipper.AddPaths(positiveWalls, ADD, true);
+        clipper.AddPaths(posWalls, ADD, true);
         clipper.AddPath(newShape.polygon, ADD, true);
         clipper.Execute(ClipperLib.ClipType.ctUnion, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
         clipper.Clear();
 
-        positiveWalls = [];
+        posWalls.length = 0;
         let polynode = levelPolytree.GetFirst();
         while (polynode)
         {
             if (polynode.IsHole())
             {
-                negativeWalls.push(polynode.Contour());
+                negWalls.push(polynode.Contour());
             }
             else
             {
-                positiveWalls.push(polynode.Contour());
+                posWalls.push(polynode.Contour());
             }
             polynode = polynode.GetNext();
         }
 
-        clipper.AddPaths(negativeWalls, ADD, true);
+        clipper.AddPaths(negWalls, ADD, true);
         clipper.AddPath(newShape.polygon, SUBTRACT, true);
         clipper.Execute(ClipperLib.ClipType.ctDifference, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
         clipper.Clear();
 
-        negativeWalls = [];
+        negWalls.length = 0;
         polynode = levelPolytree.GetFirst();
         while (polynode)
         {
             if (polynode.IsHole())
-                positiveWalls.push(polynode.Contour().reverse());
+                posWalls.push(polynode.Contour().reverse());
             else
-                negativeWalls.push(polynode.Contour().reverse());
+                negWalls.push(polynode.Contour().reverse());
             polynode = polynode.GetNext();
         }
     }
     else
     {
-        clipper.AddPaths(negativeWalls, ADD, true);
+        clipper.AddPaths(negWalls, ADD, true);
         clipper.AddPath(newShape.polygon, ADD, true);
         clipper.Execute(ClipperLib.ClipType.ctUnion, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
         clipper.Clear();
 
-        negativeWalls = [];
+        negWalls.length = 0;
         let polynode = levelPolytree.GetFirst();
         while (polynode)
         {
             if (polynode.IsHole())
-                positiveWalls.push(polynode.Contour().reverse());
+                posWalls.push(polynode.Contour().reverse());
             else
-                negativeWalls.push(polynode.Contour().reverse());
+                negWalls.push(polynode.Contour().reverse());
             polynode = polynode.GetNext();
         }
 
-        clipper.AddPaths(positiveWalls, ADD, true);
+        clipper.AddPaths(posWalls, ADD, true);
         clipper.AddPath(newShape.polygon, SUBTRACT, true);
         clipper.Execute(ClipperLib.ClipType.ctDifference, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
         clipper.Clear();
 
-        positiveWalls = [];
+        posWalls.length = 0;
         polynode = levelPolytree.GetFirst();
         while (polynode)
         {
             if (polynode.IsHole())
-                negativeWalls.push(polynode.Contour());
+                negWalls.push(polynode.Contour());
             else
-                positiveWalls.push(polynode.Contour());
+                posWalls.push(polynode.Contour());
             polynode = polynode.GetNext();
         }
     }
 }
 
-function parseAreaInput(areaString)
+function parseAreaString(areaString)
 {
-    positiveWalls = [];
-    negativeWalls = [];
+    let posWalls = [];
+    let negWalls = [];
+
+    while (areaString.includes("{"))
+    {
+        let blockEnter = areaString.indexOf("{");
+        let blockLength = 0;
+        let blockDepth = 1;
+        let blockOperation = ADD;
+
+        for (var i = blockEnter - 1; i >= 0; i--)
+        {
+            if (areaString[i] != " ")
+            {
+                if (areaString[i].toLowerCase() == "b")
+                    blockOperation = SUB;
+                else
+                    blockOperation = ADD;
+                break;
+            }
+        }
+
+        while (blockDepth > 0)
+        {
+            blockLength++;
+            if (areaString[blockEnter + blockLength] == "{")
+                blockDepth++;
+            else if (areaString[blockEnter + blockLength] == "}")
+                blockDepth--;
+        }
+
+        let subAreaPolygons = parseAreaString( areaString.slice(blockEnter + 1, blockEnter + blockLength) );
+
+        let subAreaReplacement = ";";
+        for (var polygon of subAreaPolygons[0])
+        {
+            subAreaReplacement += (blockOperation == SUB) ? "SUB poly" : "ADD poly";
+            for (var point of polygon)
+            {
+                subAreaReplacement += " " + String(point.X) + " " + String(point.Y);
+            }
+            subAreaReplacement += ";";
+        }
+        for (var polygon of subAreaPolygons[1])
+        {
+            subAreaReplacement += (blockOperation == SUB) ? "ADD poly" : "SUB poly";
+            for (var point of polygon)
+            {
+                subAreaReplacement += " " + String(point.X) + " " + String(point.Y);
+            }
+            subAreaReplacement += ";";
+        }
+
+        areaString = areaString.replace(areaString.slice(blockEnter, blockEnter + blockLength + 1), subAreaReplacement);
+    }
 
     let statements = areaString.replaceAll(",", "").split(";");
     for (var statement of statements)
@@ -119,16 +172,18 @@ function parseAreaInput(areaString)
         statement = statement.trim().split(" ");
         if (statement.length > 2)
         {
-            console.log(statement);
             let shape = {operation: 0, polygon: []};
             if (statement[0].toLowerCase() == "add")
                 shape.operation = ADD;
             else if (statement[0].toLowerCase() == "sub")
                 shape.operation = SUBTRACT;
+            else
+                continue;
 
             switch (statement[1].toLowerCase())
             {
                 case "rect":
+                case "rectangle":
                     shape.polygon = [
                         {"X": Number(statement[2]), "Y": Number(statement[3])},
                         {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3])},
@@ -138,49 +193,63 @@ function parseAreaInput(areaString)
                     break;
 
                 case "circle":
+                case "circ":
                 case "oval":
                     const pointCount = 32
-                    let circlePoint = createVector(1, 0);
-                    for (var i = 0; i < pointCount; i++)
+                    let circleScale = createVector(Number(statement[4]), statement.length < 6 ? Number(statement[4]) : Number(statement[5]));
+                    let arcLength = statement.length < 7 ? 359 : statement[6];
+                    let circlePoint = createVector(0, 1);
+                    for (var i = 0; i <= arcLength / 360 * arcLength; i++)
                     {
                         circlePoint.rotate(360 / pointCount);
-                        // alert(circlePoint)
-                        shape.polygon.push( { "X": Number(statement[2]) + circlePoint.x * Number(statement[4]), "Y": Number(statement[3]) + circlePoint.y * Number(statement[4]) } );
+                        shape.polygon.push( { "X": Number(statement[2]) + circlePoint.x * circleScale.x, "Y": Number(statement[3]) + circlePoint.y * circleScale.y } );
+                    }
+                    if (arcLength != 360)
+                        shape.polygon.push( { "X": Number(statement[2]), "Y": Number(statement[3]) } );
+                    break;
+
+                case "poly":
+                case "polygon":
+                    for (var i = 2; i < statement.length; i += 2)
+                    {
+                        shape.polygon.push( { "X": Number(statement[i]), "Y": Number(statement[i + 1]) } );
                     }
                     break;
 
                 default:
                     break;
             }
-            modifyLevelShape(shape)
+            modifyLevelShape(shape, posWalls, negWalls);
         }
     }
+
+    // Clean up the polygons
+    clipper.AddPaths(posWalls, ADD, true);
+    clipper.AddPaths(negWalls, SUBTRACT, true);
+    clipper.Execute(ClipperLib.ClipType.ctDifference, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
+    clipper.Clear();
+
+    posWalls = [];
+    negWalls = [];
+    polynode = levelPolytree.GetFirst();
+    while (polynode)
+    {
+        if (polynode.IsHole())
+            negWalls.push(polynode.Contour());
+        else
+            posWalls.push(polynode.Contour());
+        polynode = polynode.GetNext();
+    }
+
+    return [posWalls, negWalls];
 }
 
 function buildLevel(levelData)
 {
 
-    parseAreaInput(levelData.area);
-
-    // Clean up the polygons
-    clipper.AddPaths(positiveWalls, ADD, true);
-    clipper.AddPaths(negativeWalls, SUBTRACT, true);
-    clipper.Execute(ClipperLib.ClipType.ctDifference, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
-    clipper.Clear();
-
-    positiveWalls = [];
-    negativeWalls = [];
-    polynode = levelPolytree.GetFirst();
-    while (polynode)
-    {
-        if (polynode.IsHole())
-            negativeWalls.push(polynode.Contour());
-        else
-            positiveWalls.push(polynode.Contour());
-        polynode = polynode.GetNext();
-    }
-
-    console.log(positiveWalls);
+    let areaPolygons = parseAreaString(levelData.area);
+    positiveWalls = areaPolygons[0];
+    negativeWalls = areaPolygons[1];
 
     // Build all segments
     for (var polygon of positiveWalls)
@@ -250,25 +319,4 @@ function drawStage()
     // fill("#408040"); // Green floor
     // rect(levelToScreen(createVector(5, 5)).x, levelToScreen(createVector(5, 5)).y, (level[0].x - 10) * camera.zoom, (level[0].y - 10) * camera.zoom);
 
-}
-
-function Ball(x, y)
-{
-    let newBall = new Sprite(x, y);
-    newBall.diameter = 20;
-    newBall.color = "#ffffff";
-    newBall.layer = 2;
-    newBall.drag = friction;
-    return newBall;
-}
-
-function Hole(x, y)
-{
-    let newHole = new Sprite(x, y);
-    newHole.diameter = 40;
-    newHole.collider = 'kinematic';
-    newHole.layer = 1;
-    newHole.color = 'grey';
-    newHole.stroke = 'black';
-    return newHole;
 }

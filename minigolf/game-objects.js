@@ -1,4 +1,25 @@
 
+function Ball(x, y)
+{
+    let newBall = new Sprite(x, y);
+    newBall.diameter = 20;
+    newBall.color = "#ffffff";
+    newBall.layer = 2;
+    newBall.drag = friction;
+    return newBall;
+}
+
+function Hole(x, y)
+{
+    let newHole = new Sprite(x, y);
+    newHole.diameter = 40;
+    newHole.collider = 'kinematic';
+    newHole.layer = 1;
+    newHole.color = 'grey';
+    newHole.stroke = 'black';
+    return newHole;
+}
+
 function Sandtrap(posX, posY, width, height)
 {
     let sandtrap = new Sprite(posX, posY, width, height);
@@ -9,15 +30,14 @@ function Sandtrap(posX, posY, width, height)
     return sandtrap;
 }
 
-// Create tubes
-function Tubes()
+function Tubes(tubeaX, tubeaY, tubebX, tubebY)
 {
-    let tubeA = new Sprite(45, 45);
+    let tubeA = new Sprite(tubeaX, tubeaY);
     tubeA.diameter = 40;
     tubeA.collider = 'kinematic';
     tubeA.layer = 1;
     tubeA.color = 'purple'
-    let tubeB = new Sprite(400, 45, 50, 50);
+    let tubeB = new Sprite(tubebX, tubebY, 50, 50);
     tubeB.collider = 'kinematic'
     tubeB.layer = 1;
     tubeB.color = 'purple'
@@ -26,7 +46,6 @@ function Tubes()
 
 function Windmill(posX, posY)
 {
-    // Create windmill
     windmillBody = new Sprite([[posX, posY], [posX - 25, posY + 75], [posX + 25, posY + 75], [posX, posY]],'s');
     windmillBody.color = 'white';
     windmillBlades = new Sprite(
