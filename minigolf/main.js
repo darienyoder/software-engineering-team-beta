@@ -25,7 +25,18 @@ function setup()
     createCanvas();
 
     // Create the level layout using "level-generation.js"
-    level = buildLevel(500, 300, createVector(100, 150), createVector(400, 150));
+
+    let levelData = {
+        ballPosition: [50, 75],
+        holePosition: [450, 75],
+        area: `
+            ADD rect 0, 0, 500, 150;
+            ADD circle 250, 75, 150;
+            SUB circle 250, 75, 100;
+        `,
+    }
+
+    level = buildLevel(levelData);
 
 
     sandtrap = Sandtrap();
@@ -53,7 +64,7 @@ async function draw()
     clear();
 
     // Beige background for the canvas
-    background("#f2ece3");
+    background(backgroundColor);
 
     // Draw the stage using "level-generation.js"
     drawStage();
