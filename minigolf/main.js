@@ -127,7 +127,7 @@ function drawMainMenu() {
     textSize(48);
     textAlign(CENTER, CENTER);
     text("Golf Game", width / 2, height / 4);
-    
+
     textSize(24);
     text("Press 'Enter' to Start", width / 2, height / 2);
 }
@@ -140,8 +140,12 @@ function clearGameObjects() {
     tubeB.remove();
     windmillBody.remove();
     windmillBlades.remove();
-    
+
     clear();
+
+    for (var wall of walls)
+        wall.remove();
+
     background(backgroundColor);
 }
 
