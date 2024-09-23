@@ -2,6 +2,8 @@ const strokeForce = 100; // The speed of the ball when it is hit
 const friction = 0.5; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
+var gameObjects = [];
+
 var strokeCount = 0;
 
 var level; // The level object; builds the stage
@@ -73,13 +75,19 @@ function setupLevel() {
 
 
     level = buildLevel(levelData);
-
+    gameObjects.push(ball);
+    gameObjects.push(hole);
 
     sandtrap = Sandtrap(250, -50);
+    gameObjects.push(sandtrap);
     let tubes = Tubes(465, 215, 25, 225);
     tubeA = tubes[0];
     tubeB = tubes[1];
+    gameObjects.push(tubeA);
+    gameObjects.push(tubeB);
     Windmill(450, 50);
+    gameObjects.push(windmillBody);
+    gameObjects.push(windmillBlades);
 
 
     // Creating the putter head
@@ -133,15 +141,10 @@ function drawMainMenu() {
 }
 
 function clearGameObjects() {
-    ball.remove();
-    hole.remove();
-    sandtrap.remove();
-    tubeA.remove();
-    tubeB.remove();
-    windmillBody.remove();
-    windmillBlades.remove();
-
     clear();
+
+    for (var obj of gameObjects)
+        obj.remove();
 
     for (var wall of walls)
         wall.remove();
