@@ -18,12 +18,16 @@ var pullStart = null; // The starting position of the pull-back
 var message = '';
 var messageTime = 0;
 
+var gameState = 'menu';
+
 // Runs once when the program starts
-function setup()
+async function setup()
 {
     // Initialize canvas
     createCanvas();
+}
 
+function setupLevel() {
     // Create the level layout using "level-generation.js"
 
     let levelData = {
@@ -88,6 +92,14 @@ function setup()
 
 }
 
+function startGame() {
+    strokeCount = 0;
+    ballInGoal = false;
+    canMove = true;
+    setupLevel();
+    gameState = 'playing';
+}
+
 // Runs 60 times per second
 // Multiply your values by "deltaTime" when you want them to be in units of "per second".
 async function draw()
@@ -98,9 +110,60 @@ async function draw()
     // Beige background for the canvas
     background(backgroundColor);
 
-    // Draw the stage using "level-generation.js"
-    drawStage();
+    if (gameState === 'menu') {
+        drawMainMenu();
+    } else if (gameState === 'playing') {
+        // Draw the stage using "level-generation.js"
+        drawStage();
+        handleGamePlay();
+    } else if (gameState === 'gameOver') {
+        clearGameObjects(); // Clear objects before showing game over
+        drawGameOver();
+    }
+}
 
+function drawMainMenu() {
+    fill(0);
+    textSize(48);
+    textAlign(CENTER, CENTER);
+    text("Golf Game", width / 2, height / 4);
+    
+    textSize(24);
+    text("Press 'Enter' to Start", width / 2, height / 2);
+}
+
+function clearGameObjects() {
+    ball.remove();
+    hole.remove();
+    sandtrap.remove();
+    tubeA.remove();
+    tubeB.remove();
+    windmillBody.remove();
+    windmillBlades.remove();
+    
+    clear();
+    background(backgroundColor);
+}
+
+function drawGameOver() {
+    fill(0);
+    textSize(48);
+    textAlign(CENTER, CENTER);
+    text("Game Over", width / 2, height / 4);
+    textSize(24);
+    text(`Strokes: ${strokeCount}`, width / 2, height / 2);
+    text("Press 'R' to Restart", width / 2, height / 1.5);
+}
+
+function keyPressed() {
+    if (gameState === 'menu' && key === 'Enter') {
+        startGame();
+    } else if (gameState === 'gameOver' && key === 'R') {
+        startGame();
+    }
+}
+
+async function handleGamePlay() {
     // Draw the stroke counter
     drawStrokeCount();
 
@@ -166,7 +229,7 @@ async function draw()
 
 
         // Can replace this with like nextlevel() or some shit when we get there
-        ball.remove();
+        gameState = 'gameOver';
     }
 
     if (sandtrap.overlaps(ball))
