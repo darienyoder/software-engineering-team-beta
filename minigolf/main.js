@@ -125,9 +125,10 @@ async function draw()
 
         // Swinging the putter
         putter.moveTo(ball.x - (5*(forceMagnitude/6))*forceDirection.x , ball.y - (5*(forceMagnitude/6))*forceDirection.y, .04*forceMagnitude);
-        await sleep(4*forceMagnitude);
+        // ^^ why is the modifier 5/6 ?
+        await sleep(2 * forceMagnitude); //Sorry, the slow putt speed was bothering me
         putter.moveTo(ball.x, ball.y, .04*forceMagnitude);
-        await sleep(4*forceMagnitude);
+        await sleep(2*forceMagnitude);
 
         // Apply the calculated force to the ball if its in sand
         if (ball.overlaps(sandtrap)){
@@ -143,7 +144,10 @@ async function draw()
         putter.visible = false;
 
 
-        incrementShots();
+        if (pullDistance > 0) {
+            incrementShots();
+            // Just clicking does not increment shots anymore
+        }
     }
 
     if (pullStart)
