@@ -2,6 +2,8 @@ const strokeForce = 100; // The speed of the ball when it is hit
 const friction = 0.5; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
+let tFrict = friction;
+
 var gameObjects = [];
 
 var strokeCount = 0;
@@ -168,7 +170,7 @@ function keyPressed() {
     } else if (gameState === 'playing' && key === '`') { 
         // Tilde runs tests
         runTests();
-    }else if (gameState === 'gameOver' && key === 'R') {
+    }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
     }
 }
@@ -181,6 +183,16 @@ async function handleGamePlay() {
     if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
         pullStart = createVector(mouseX, mouseY);
+    }
+
+    let trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
+
+    if (trueVel > 0) {
+        if (trueVel <= 0.2 && !canMove) {
+            ball.drag = 2; // Placeholder value for high drag
+        } 
+    } else {
+        ball.drag = tFrict; // Reset drag to tFrict if ball is moving faster than 1
     }
 
 

@@ -37,6 +37,22 @@ addTest('Ball Movement', async () => {
     }
 });
 
+// Add this test to your existing tests array
+addTest('Ball Drag Test', async () => {
+    ball.velocity.x = 0.3; // Set a velocity greater than 0.2
+
+    // Check the drag value
+    if (ball.drag === 2) {
+        throw new Error(`Expected ball.drag to not be 2 when moving, but got ${ball.drag}`);
+    }
+    await sleep (1500)
+    // ball.velocity.x = 0.2; // velocity that triggers high drag
+
+    // Check the drag value
+    if (ball.drag !== 2) {
+        throw new Error(`${ball.velocity} Expected ball.drag to be 2 when velocity in trigger range, but got ${ball.drag}`);
+    }
+});
 
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
 addTest('Ball in Goal Logic', async () => {
