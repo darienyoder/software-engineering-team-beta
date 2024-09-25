@@ -2,6 +2,10 @@ const strokeForce = 100; // The speed of the ball when it is hit
 const friction = 0.5; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
+let tFrict = friction;
+
+var gameObjects = [];
+
 var strokeCount = 0;
 
 var level; // The level object; builds the stage
@@ -73,13 +77,19 @@ function setupLevel() {
 
 
     level = buildLevel(levelData);
-
+    gameObjects.push(ball);
+    gameObjects.push(hole);
 
     sandtrap = Sandtrap(250, -50);
+    gameObjects.push(sandtrap);
     let tubes = Tubes(465, 215, 25, 225);
     tubeA = tubes[0];
     tubeB = tubes[1];
+    gameObjects.push(tubeA);
+    gameObjects.push(tubeB);
     Windmill(450, 50);
+    gameObjects.push(windmillBody);
+    gameObjects.push(windmillBlades);
 
 
     // Creating the putter head
@@ -127,21 +137,20 @@ function drawMainMenu() {
     textSize(48);
     textAlign(CENTER, CENTER);
     text("Golf Game", width / 2, height / 4);
-    
+
     textSize(24);
     text("Press 'Enter' to Start", width / 2, height / 2);
 }
 
 function clearGameObjects() {
-    ball.remove();
-    hole.remove();
-    sandtrap.remove();
-    tubeA.remove();
-    tubeB.remove();
-    windmillBody.remove();
-    windmillBlades.remove();
-    
     clear();
+
+    for (var obj of gameObjects)
+        obj.remove();
+
+    for (var wall of walls)
+        wall.remove();
+
     background(backgroundColor);
 }
 
@@ -158,7 +167,10 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
-    } else if (gameState === 'gameOver' && key === 'R') {
+    } else if (gameState === 'playing' && key === '`') { 
+        // Tilde runs tests
+        runTests();
+    }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
     }
 }
@@ -171,6 +183,16 @@ async function handleGamePlay() {
     if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
         pullStart = createVector(mouseX, mouseY);
+    }
+
+    let trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
+
+    if (trueVel > 0) {
+        if (trueVel <= 0.2 && !canMove) {
+            ball.drag = 2; // Placeholder value for high drag
+        } 
+    } else {
+        ball.drag = tFrict; // Reset drag to tFrict if ball is moving faster than 1
     }
 
 
@@ -216,6 +238,7 @@ async function handleGamePlay() {
     if (pullStart)
     {
         drawTrajectory();
+        drawUserAssistance();
         drawPutter();
     }
 
@@ -317,8 +340,6 @@ function incrementShots()
 function drawTrajectory() {
     if (pullStart === null) return; // No trajectory to draw if no pullStart is set
 
-    drawUserAssistance();
-
     // Ball's current position as the start position
     let startX = ball.position.x;
     let startY = ball.position.y;
@@ -347,29 +368,28 @@ function drawTrajectory() {
 }
 
 function drawUserAssistance() {
-    // Ball's current position as the start position
-    let startX = mouse.position.x;
-    let startY = mouse.position.y;
-
-    // Convert ball position to screen coordinates
-    let screenStart = levelToScreen(createVector(startX, startY));
+    // Ensure pullStart is set
+    if (pullStart === null) return;
 
     // Convert pullStart to screen coordinates
-    let screenPullStart = levelToScreen(pullStart);
+    let screenPullStart = pullStart;
 
     // Convert current mouse position to screen coordinates
-    let screenMousePos = levelToScreen(createVector(mouseX, mouseY));
+    let screenMousePos = createVector(mouseX, mouseY);
 
     // Calculate the pull vector from pullStart to mouse position
-    let pullVector = createVector(screenPullStart.x-screenMousePos.x, screenPullStart.y-screenMousePos.y);
+    let pullVector = createVector(screenMousePos.x - screenPullStart.x, screenMousePos.y - screenPullStart.y);
 
     // Draw trajectory line
     push(); // Start new style for the line
-    stroke('grey'); // Can be any color
+    stroke('grey'); // Color for the line
     strokeWeight(5);
-    line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
+    // Draw line from pullStart to current mouse position
+    line(screenPullStart.x, screenPullStart.y, screenPullStart.x + pullVector.x, screenPullStart.y + pullVector.y);
     pop(); // Remove style
 }
+
+
 
 function drawMessage() {
     fill(0); //Setting text color

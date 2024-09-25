@@ -11,6 +11,8 @@ const SUB = 1;
 
 var levelPolytree = new ClipperLib.PolyTree(); // Tree used for clipping polygons
 
+var walls = []; // Wall sprites
+
 var positiveWalls = []; // Polygons that add to the level area
 var negativeWalls = []; // Holes in the level area
 
@@ -23,11 +25,13 @@ function createWallSegment(fromVector, toVector)
     newWall.strokeWeight = 0.0;
     newWall.color = wallColor;
     newWall.collider = "static";
+    walls.push(newWall);
 
     newWall = new Sprite(fromVector.x, fromVector.y, wallThickness);
     newWall.strokeWeight = 0.0;
     newWall.color = wallColor;
     newWall.collider = "static";
+    walls.push(newWall);
 }
 
 // Adds or subtracts shapes from the current level area
@@ -166,7 +170,7 @@ function parseAreaString(areaString)
         areaString = areaString.replace(areaString.slice(blockEnter, blockEnter + blockLength + 1), subAreaReplacement);
     }
 
-    let statements = areaString.replaceAll(",", "").split(";");
+    let statements = areaString.replaceAll(",", "").replaceAll("(", "").replaceAll(")", "").split(";");
     for (var statement of statements)
     {
         statement = statement.trim().split(" ");
