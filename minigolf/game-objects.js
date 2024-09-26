@@ -1,6 +1,6 @@
 
 function Ball(x, y)
-{
+{ 
     let newBall = new Sprite(x, y);
     newBall.diameter = 20;
     newBall.color = "#ffffff";
