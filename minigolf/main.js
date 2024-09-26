@@ -307,6 +307,7 @@ async function handleGamePlay() {
             message = ''; //Reset the message
         }
     }
+    //ball.debug = mouse.pressing()
 }
 
 // Converts level coordinates to screen coordinates
