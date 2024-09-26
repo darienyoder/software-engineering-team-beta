@@ -35,7 +35,7 @@ addTest('LevelGen Basic Rect', async () => {
             {"X": x, "Y": y + h}
         ]], []]))
             {
-                throw new Error('Rect did not build as expected.');
+                throw new Error("ADD rect " + String(x) + " " + String(y) + " " + String(w) + " " + String(h) + ";");
             }
     }
 });
@@ -79,9 +79,10 @@ addTest('LevelGen Shape Addition', async () => {
             {"X": x1, "Y": y1 + h1},
         ]], []]))
             {
-                throw new Error('Rect did not build as expected.');
+                throw new Error("ADD rect " + String(x1) + " " + String(y1) + " " + String(w1) + " " + String(h1) + ";"
+                              + "ADD rect" + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";");
             }
-                }
+    }
 });
 
 // Subtracts one rectangle from another and
@@ -108,7 +109,7 @@ addTest('LevelGen Shape Subtraction', async () => {
         // Ex. ADD rect 3, 5, 7, 6; SUB rect 5, 9, 23, 28;"
         let testArea = parseAreaString(
         "ADD rect " + String(x1) + " " + String(y1) + " " + String(w1) + " " + String(h1) + ";"
-        + "SUB rect" + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";"
+        + "SUB rect " + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";"
     )
         if (!compareAreas(testArea, [[[
             {"X": x1, "Y": y1},
@@ -120,7 +121,8 @@ addTest('LevelGen Shape Subtraction', async () => {
             {"X": x1, "Y": y1 + h1},
         ]], []]))
             {
-                throw new Error('Rect did not build as expected.');
+                throw new Error("ADD rect " + String(x1) + " " + String(y1) + " " + String(w1) + " " + String(h1) + ";"
+                              + "SUB rect " + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";");
             }
-                }
+    }
 });
