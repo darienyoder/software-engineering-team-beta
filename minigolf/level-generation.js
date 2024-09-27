@@ -112,6 +112,31 @@ function modifyLevelShape(newShape, posWalls, negWalls)
     }
 }
 
+// Eliminates any overlapping shapes in the area
+function cleanPolygons(area)
+{
+    let posWalls = area[0];
+    let negWalls = area[1];
+    clipper.AddPaths(posWalls, ADD, true);
+    clipper.AddPaths(negWalls, SUBTRACT, true);
+    clipper.Execute(ClipperLib.ClipType.ctDifference, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
+    clipper.Clear();
+
+    posWalls = [];
+    negWalls = [];
+    polynode = levelPolytree.GetFirst();
+    while (polynode)
+    {
+        if (polynode.IsHole())
+            negWalls.push(polynode.Contour());
+        else
+            posWalls.push(polynode.Contour());
+        polynode = polynode.GetNext();
+    }
+
+    return [posWalls, negWalls];
+}
+
 function parseAreaString(areaString)
 {
     let posWalls = [];
@@ -227,25 +252,7 @@ function parseAreaString(areaString)
         }
     }
 
-    // Clean up the polygons
-    clipper.AddPaths(posWalls, ADD, true);
-    clipper.AddPaths(negWalls, SUBTRACT, true);
-    clipper.Execute(ClipperLib.ClipType.ctDifference, levelPolytree, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero);
-    clipper.Clear();
-
-    posWalls = [];
-    negWalls = [];
-    polynode = levelPolytree.GetFirst();
-    while (polynode)
-    {
-        if (polynode.IsHole())
-            negWalls.push(polynode.Contour());
-        else
-            posWalls.push(polynode.Contour());
-        polynode = polynode.GetNext();
-    }
-
-    return [posWalls, negWalls];
+    return cleanPolygons([posWalls, negWalls]);
 }
 
 function buildLevel(levelData)
@@ -317,10 +324,4 @@ function drawStage()
         drawPolygon(negativeWalls[wall], backgroundColor);
     }
     stroke("#000000");
-    // fill("#000000"); // Black outline around the stage
-    // rect(levelToScreen(createVector(-5, -5)).x, levelToScreen(createVector(-5, -5)).y, (level[0].x + 10) * camera.zoom, (level[0].y + 10) * camera.zoom);
-    //
-    // fill("#408040"); // Green floor
-    // rect(levelToScreen(createVector(5, 5)).x, levelToScreen(createVector(5, 5)).y, (level[0].x - 10) * camera.zoom, (level[0].y - 10) * camera.zoom);
-
 }

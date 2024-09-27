@@ -127,8 +127,6 @@ addTest('LevelGen Shape Subtraction', async () => {
     }
 });
 
-
-
 // Subtracts a rectangle from inside another and
 // makes sure that the resulting polygons
 // are shaped as expected
@@ -139,7 +137,7 @@ addTest('LevelGen Shape Subtraction', async () => {
 //  | +---+ |
 //  +-------+
 //
-addTest('LevelGen Donut Subtraction', async () => {
+addTest('LevelGen Donut', async () => {
 
     for (var x1 = 0; x1 < 10; x1++)
     for (var y1 = 0; y1 < 10; y1++)
@@ -171,4 +169,36 @@ addTest('LevelGen Donut Subtraction', async () => {
                               + "SUB rect " + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";");
             }
     }
+});
+
+// Tests order of operations using curly brackets
+addTest('LevelGen Brackets', async () => {
+
+    // The SUB statement should not affect the ADD statement outside the brackets
+    let testArea = cleanPolygons(parseAreaString(`
+        ADD rect 0, 0, 5, 10;
+        {
+            ADD rect 6, 0, 9, 10;
+            SUB rect 0, 0, 10, 10;
+        }
+    `));
+
+    if (!compareAreas(testArea, [[
+        [
+            {"X": 0, "Y": 0},
+            {"X": 5, "Y": 0},
+            {"X": 5, "Y": 10},
+            {"X": 0, "Y": 10}
+        ],
+        [
+            {"X": 10, "Y": 0},
+            {"X": 15, "Y": 0},
+            {"X": 15, "Y": 10},
+            {"X": 10, "Y": 10}
+        ],
+        ], []]))
+        {
+            console.log(testArea);
+            throw new Error("Brackets did not group statements correctly.");
+        }
 });
