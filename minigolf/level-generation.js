@@ -269,7 +269,7 @@ class Level
         return this.cleanPolygons([posWalls, negWalls]);
     }
 
-    clearLevel()
+    clear()
     {
         this.positiveWalls = [];
         this.negativeWalls = [];
@@ -287,7 +287,7 @@ class Level
     loadLevelFromDict(levelDict)
     {
         // Delete any existing level
-        this.clearLevel();
+        this.clear();
 
         // Get walls from area string
         let areaPolygons = this.parseAreaString(levelDict.area);
