@@ -8,7 +8,7 @@ var gameObjects = [];
 
 var strokeCount = 0;
 
-var level; // The level object; builds the stage
+var level = new Level(); // The level object; builds the stage
 
 var ball; // The player's golf ball
 var canMove = true; // Whether the player can control the ball
@@ -33,50 +33,8 @@ async function setup()
 
 function setupLevel() {
     // Create the level layout using "level-generation.js"
+    level.load(0);
 
-    let levelData = {
-        ballPosition: [50, 75],
-        holePosition: [250, 75],
-        area: `
-
-            // Left side;
-            ADD rect 0, 0, 150, 150;
-
-            // Right side;
-            {
-                ADD rect 350, 0, 150, 250;
-                SUB {
-                    ADD circle 390, 165, 40;
-                    ADD rect 350, 125, 40, 200;
-                    ADD rect 390, 165, 40, 200;
-                }
-            }
-            // Top arc;
-            {
-                ADD circle 250, 75, 150;
-                SUB circle 250, 75, 100;
-                SUB rect 0, 150, 500, 300;
-                SUB rect 150, 75, 300, 300;
-            }
-
-            // Path to end;
-            {
-                ADD rect 0, 200, 150, 50;
-                ADD oval 150, 150, 125, 100;
-                SUB oval 150, 150, 75, 50;
-                SUB rect 0, 0, 150, 200;
-                SUB rect 0, 0, 225, 150;
-            }
-
-            // End goal;
-            ADD circle 250, 75, 50;
-            ADD rect 225, 75, 50, 75;
-
-        `,
-    }
-
-
-    level = buildLevel(levelData);
     gameObjects.push(ball);
     gameObjects.push(hole);
 
@@ -116,15 +74,13 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-
-    // Beige background for the canvas
-    background(backgroundColor);
+    background("white");
 
     if (gameState === 'menu') {
         drawMainMenu();
     } else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        drawStage();
+        level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
         clearGameObjects(); // Clear objects before showing game over
@@ -148,10 +104,10 @@ function clearGameObjects() {
     for (var obj of gameObjects)
         obj.remove();
 
-    for (var wall of walls)
-        wall.remove();
+    // for (var wall of walls)
+    //     wall.remove();
 
-    background(backgroundColor);
+    // background(backgroundColor);
 }
 
 function drawGameOver() {
@@ -167,7 +123,7 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
-    } else if (gameState === 'playing' && key === '`') { 
+    } else if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
     }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
@@ -190,7 +146,7 @@ async function handleGamePlay() {
     if (trueVel > 0) {
         if (trueVel <= 0.2 && !canMove) {
             ball.drag = 2; // Placeholder value for high drag
-        } 
+        }
     } else {
         ball.drag = tFrict; // Reset drag to tFrict if ball is moving faster than 1
     }
@@ -250,9 +206,9 @@ async function handleGamePlay() {
         ball.moveTo(hole.position.x, hole.position.y);
         await sleep(3000);
 
-
-        // Can replace this with like nextlevel() or some shit when we get there
-        gameState = 'gameOver';
+        level.nextLevel();
+        ballInGoal = false;
+        canMove = true;
     }
 
     if (sandtrap.overlaps(ball))
