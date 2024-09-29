@@ -1,4 +1,5 @@
-const tests = [];
+const tests = []; // How is this working if it's constant?
+                  // Like I know it is, but How?
 
 function addTest(name, testFunction) {
     tests.push({ name, testFunction });
@@ -21,6 +22,21 @@ async function runTests() {
         console.log('Some tests failed. Check above for details.');
     }
 }
+
+// Test that menu works
+// Test only runs if it starts on 'menu' screen
+addTest('Test Menu', async () => {
+    // Test only works if we start from menu screen
+    if (gameState === 'menu'){
+        const element = document.querySelector('input');
+        element.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+
+
+        await sleep(1000);
+        if (gameState !== 0) throw new Error(`Expected gameState to be  but got ${gameState} instead.`);
+    }
+});
+
 
 // Example Tests
 addTest('Initial Stroke Count', async () => {
@@ -54,8 +70,66 @@ addTest('Ball Drag Test', async () => {
     }
 });
 
+
+// Test that the windmill works
+addTest('Windmill Push Test', async () => {
+    ball.velocity.x = 0;
+    ball.velocity.y = 0;
+    initialX = ball.velocity.x;
+    initialY = ball.velocity.y;
+    ball.x = windmillBody.x -20;
+    ball.y = windmillBody.y +10;
+    await sleep (2500)
+    // ball.velocity.x = 0.2; // velocity that triggers high drag
+
+    // Check the drag value
+    if (ball.x == initialX && ball.y == initialY) {
+        throw new Error(`Expected ball to not be at ${initialX.x}, ${initialY.y}, but it is at ${ball.x}, ${ball.y}`);
+    }
+    ball.vel.x = 0;
+    ball.vel.y = 0;
+});
+
+
+// Test that the tubes work as expected
+// Be careful because on some maps, tubes put the ball in goal  
+addTest('Tube Teleportation test', async () => {
+    //The following lines are a teleport
+    ball.vel.x = 0;
+    ball.vel.y = 0;
+    ball.x = tubeA.x;
+    ball.y = tubeA.y;
+    await sleep(1000); // Wait for any animations
+    if ((ball.x == tubeA.x) && (ball.y == tubeA.y)) {
+        throw new Error(`Expected ball to not be at ${tubeA.x}, ${tubeA.y}, but it is at ${ball.x}, ${ball.y}`);
+    }
+    ball.vel.x = 0;
+    ball.vel.y = 0;
+});
+
+
+// Test the water
+addTest('Water Test', async () => {
+    lastHit = createVector(50, 75); // This may need to be changed if it's a position off map.
+    ball.x = water.x;
+    ball.y = water.y;
+    initialX = ball.velocity.x
+    await sleep (100)
+    // ball.velocity.x = 0.2; // velocity that triggers high drag
+
+    // Check both that it's not at the water and is at lastHit
+    if (ball.x == water.x && ball.y == water.y && ball.x != lastHit.x && ball.y != lastHit.y) {
+        throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${ball.x}, ${ball.y}`);
+    }
+    ball.vel.x = 0;
+    ball.vel.y = 0;
+});
+
+
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
 addTest('Ball in Goal Logic', async () => {
+    ball.vel.x = 0;
+    ball.vel.y = 0;
     //The following lines are a teleport
     ball.x = hole.x;
     ball.y = hole.y;
