@@ -13,10 +13,26 @@
     			padding: 0;
     			overscroll-behavior: none;
     		}
+			#colorButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        	}
+        	#colorButton:hover {
+            	background-color: #0056b3;
+        	}
     	</style>
     </head>
     <body>
     	<main></main>
+		<button id="colorButton">Change Trajectory Color</button>
+
     	<!-- P5play -->
     	<script src="https://q5js.org/q5.js"></script>
     	<script src="https://p5play.org/v3/planck.min.js"></script>

@@ -10,30 +10,40 @@ var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
 var gameState = 'menu';
 
+let trajectoryColor = 'red'; // Default trajectory color
+const trajectoryColors = ['red', 'blue', 'purple', 'orange']; // Colors to cycle through
+let currentColorIndex = 0;
+
 // Runs once when the program starts
 async function setup()
 {
     // Initialize canvas
     createCanvas();
+
+    document.getElementById('colorButton').addEventListener('click', () => {
+        // Change the trajectory color on click
+        currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
+        trajectoryColor = trajectoryColors[currentColorIndex];
+    });
 }
 
 function setupLevel() {
     // Create the level layout using "level-generation.js"
     level.load(0);
 
-    // gameObjects.push(ball);
-    // gameObjects.push(hole);
+    gameObjects.push(ball);
+    gameObjects.push(hole);
 
-    // sandtrap = Sandtrap(250, -50);
-    // gameObjects.push(sandtrap);
-    // let tubes = Tubes(465, 215, 25, 225);
-    // tubeA = tubes[0];
-    // tubeB = tubes[1];
-    // gameObjects.push(tubeA);
-    // gameObjects.push(tubeB);
-    // Windmill(450, 50);
-    // gameObjects.push(windmillBody);
-    // gameObjects.push(windmillBlades);
+    sandtrap = Sandtrap(250, -50);
+    gameObjects.push(sandtrap);
+    let tubes = Tubes(465, 215, 25, 225);
+    tubeA = tubes[0];
+    tubeB = tubes[1];
+    gameObjects.push(tubeA);
+    gameObjects.push(tubeB);
+    Windmill(450, 50);
+    gameObjects.push(windmillBody);
+    gameObjects.push(windmillBlades);
 
 
     // Creating the putter head
@@ -75,14 +85,33 @@ async function draw()
 }
 
 function drawMainMenu() {
-    fill(0);
+    // Draw the main menu background
+    fill(255); // White background for contrast
+    rect(0, 0, width, height); // Optional: clear background
+
+    fill(0); // Set text color to black
     textSize(48);
     textAlign(CENTER, CENTER);
     text("Golf Game", width / 2, height / 4);
 
     textSize(24);
     text("Press 'Enter' to Start", width / 2, height / 2);
+
+    // Draw the background rectangle for the color visualization
+    fill('#408040'); // Set rectangle color to #408040
+    rect(width / 4, height * 2 / 3, width / 2, 130); // Rectangle behind the text
+
+    // Set text color to the current trajectory color
+    fill(trajectoryColor);
+    textSize(18);
+    text("Current Trajectory color:", width / 2, height * 3 / 4);
+
+    // Draw the color name next to the rectangle
+    fill(trajectoryColor); // Text color same as the trajectory color
+    text(trajectoryColor, width / 2, height * 3 / 4 + 20);
 }
+
+
 
 function clearGameObjects() {
     clear();
@@ -304,7 +333,7 @@ function drawTrajectory() {
 
     // Draw trajectory line
     push(); // Start new style for the line
-    stroke('red'); // Can be any color
+    stroke(trajectoryColor); // Can be any color
     strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
     pop(); // Remove style
