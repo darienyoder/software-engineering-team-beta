@@ -220,9 +220,6 @@ async function handleGamePlay() {
     if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
         ball.x = tubeB.x;
         ball.y = tubeB.y;
-    }
-
-    if (tubeB.overlaps(ball)){
         ball.vel.x = .25;
         ball.vel.y = .75;
     }

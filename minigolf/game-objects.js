@@ -40,7 +40,7 @@ function Tubes(tubeaX, tubeaY, tubebX, tubebY)
     tubeA.layer = 1;
     tubeA.color = 'purple'
     let tubeB = new Sprite(tubebX, tubebY, 50, 50);
-    tubeB.collider = 'kinematic'
+    tubeB.collider = 'n'
     tubeB.layer = 1;
     tubeB.color = 'purple'
     return [tubeA, tubeB];
