@@ -390,7 +390,13 @@ class Level
 
     nextLevel()
     {
-        this.load(this.number + 1);
+        if (this.number == levelData.length - 1)
+        {
+            this.clear();
+            gameState = 'gameOver';
+        }
+        else
+            this.load(this.number + 1);
     }
 
     drawPolygon(path, pathColor)

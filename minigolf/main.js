@@ -126,6 +126,7 @@ function clearGameObjects() {
 }
 
 function drawGameOver() {
+    background("white");
     fill(0);
     textSize(48);
     textAlign(CENTER, CENTER);
