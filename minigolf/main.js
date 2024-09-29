@@ -3,25 +3,11 @@ const friction = 0.5; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
 let tFrict = friction;
-
-var gameObjects = [];
-
-var strokeCount = 0;
-
+var gameObjects = [], strokeCount = 0;
 var level = new Level(); // The level object; builds the stage
-
-var ball; // The player's golf ball
-var canMove = true; // Whether the player can control the ball
-
-var hole; // The goal
-
-var ballInGoal = false;
-
-var pullStart = null; // The starting position of the pull-back
-
-var message = '';
-var messageTime = 0;
-
+var ball, hole; // The player's golf ball and the hole
+var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
+var message = '', messageTime = 0;
 var gameState = 'menu';
 
 // Runs once when the program starts
@@ -35,19 +21,19 @@ function setupLevel() {
     // Create the level layout using "level-generation.js"
     level.load(0);
 
-    gameObjects.push(ball);
-    gameObjects.push(hole);
+    // gameObjects.push(ball);
+    // gameObjects.push(hole);
 
-    sandtrap = Sandtrap(250, -50);
-    gameObjects.push(sandtrap);
-    let tubes = Tubes(465, 215, 25, 225);
-    tubeA = tubes[0];
-    tubeB = tubes[1];
-    gameObjects.push(tubeA);
-    gameObjects.push(tubeB);
-    Windmill(450, 50);
-    gameObjects.push(windmillBody);
-    gameObjects.push(windmillBlades);
+    // sandtrap = Sandtrap(250, -50);
+    // gameObjects.push(sandtrap);
+    // let tubes = Tubes(465, 215, 25, 225);
+    // tubeA = tubes[0];
+    // tubeB = tubes[1];
+    // gameObjects.push(tubeA);
+    // gameObjects.push(tubeB);
+    // Windmill(450, 50);
+    // gameObjects.push(windmillBody);
+    // gameObjects.push(windmillBlades);
 
 
     // Creating the putter head
@@ -345,8 +331,6 @@ function drawUserAssistance() {
     line(screenPullStart.x, screenPullStart.y, screenPullStart.x + pullVector.x, screenPullStart.y + pullVector.y);
     pop(); // Remove style
 }
-
-
 
 function drawMessage() {
     fill(0); //Setting text color

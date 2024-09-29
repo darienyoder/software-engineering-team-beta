@@ -7,6 +7,8 @@ var levelData = [
             ADD rect 0, 0, 300, 150;
 
         `,
+        obstacles: `
+        `
     },
     {
         ballPosition: [75, 75],
@@ -46,6 +48,11 @@ var levelData = [
             ADD circle 250, 75, 50;
             ADD rect 225, 75, 50, 75;
 
+        `,
+        obstacles: `
+            ADD Sandtrap 250 -50 100 30;
+            ADD Tubes 465 215 25 225;
+            ADD Windmill 450 50;
         `,
     },
 ];

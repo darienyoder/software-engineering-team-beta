@@ -284,6 +284,24 @@ class Level
         }
     }
 
+    createGameObject(objectData) {
+        switch (objectData.type) {
+            case 'Ball':
+                return Ball(objectData.position[0], objectData.position[1]);
+            case 'Hole':
+                return Hole(objectData.position[0], objectData.position[1]);
+            case 'Sandtrap':
+                return Sandtrap(objectData.position[0], objectData.position[1], objectData.width, objectData.height);
+            case 'Tubes':
+                return Tubes(objectData.position[0], objectData.position[1], objectData.targetPosition[0], objectData.targetPosition[1]);
+            case 'Windmill':
+                return Windmill(objectData.position[0], objectData.position[1]);
+            default:
+                console.warn(`Unknown object type: ${objectData.type}`);
+                return null;
+        }
+    }    
+
     loadLevelFromDict(levelDict)
     {
         // Delete any existing level
@@ -324,6 +342,43 @@ class Level
 
         // Create hole at "holePosition"
         hole = Hole(levelDict.holePosition[0], levelDict.holePosition[1]);
+        // Create obstacles
+        // this.createObstacles(levelDict.obstacles);
+    }
+
+    createObstacles(obstaclesString) {
+        // Parse the obstacles string and create game objects
+        const obstacleStatements = obstaclesString.trim().split(';').filter(Boolean);
+        for (const statement of obstacleStatements) {
+            const parts = statement.trim().split(' ');
+
+            // Example structure: "ADD Sandtrap 50 50 100 30"
+            if (parts[0].toLowerCase() === 'add') {
+                const objectType = parts[1];
+                let objectData = { type: objectType };
+
+                switch (objectType) {
+                    case 'Sandtrap':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        objectData.width = Number(parts[4]);
+                        objectData.height = Number(parts[5]);
+                        break;
+                    case 'Tubes':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        objectData.targetPosition = [Number(parts[4]), Number(parts[5])];
+                        break;
+                    case 'Windmill':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        break;
+                    // Add more cases for other object types as needed
+                }
+                
+                const gameObject = this.createGameObject(objectData);
+                if (gameObject) {
+                    gameObjects.push(gameObject); // Assuming gameObjects is a global array
+                }
+            }
+        }
     }
 
     load(number)
