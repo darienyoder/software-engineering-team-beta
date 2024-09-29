@@ -111,12 +111,15 @@ function Water(posX, posY, shape) {
     water.color = '#00008B';
     water.stroke = '#00008B';
     return water;
+}
 
-
-    // let sandtrap = new Sprite(posX, posY, 75, 75);
-    // sandtrap.layer = 1;
-    // sandtrap.collider = 'kinematic';
-    // sandtrap.color = 'tan';
-    // sandtrap.stroke = 'tan';
-    // return sandtrap;
+// Volcano sets ball to beginning
+// May be fun to have it generate "lava" objects
+function Volcano(posX, posY) {
+    volcano = new Sprite([[posX, posY], [posX - 50, posY + 75], [posX + 50, posY + 75], [posX, posY]],'s');
+    volcano.color = '#8B4513';
+    volcano.stroke = '#8B0000';
+    volcano.layer = 0;
+    volcano.collider = 'kinematic';
+    return volcano;
 }

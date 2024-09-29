@@ -13,6 +13,7 @@ var level; // The level object; builds the stage
 var ball; // The player's golf ball
 var canMove = true; // Whether the player can control the ball
 var lastHit = null; // Last place the ball was hit from
+var ballStart = null;
 
 var hole; // The goal
 
@@ -35,8 +36,11 @@ async function setup()
 function setupLevel() {
     // Create the level layout using "level-generation.js"
 
+    ballStart = createVector(50,75);
+    lastHit = ballStart;
+
     let levelData = {
-        ballPosition: [50, 75],
+        ballPosition: [ballStart.x, ballStart.y],
         holePosition: [250, 75],
         area: `
 
@@ -90,9 +94,10 @@ function setupLevel() {
     gameObjects.push(tubeB);
     water = Water(460, 40, 'square');
     gameObjects.push(water);
+    volcano = Volcano(80, 75);
+    gameObjects.push(volcano);
     Windmill(450, 50);
     gameObjects.push(windmillBody);
-    // gameObjects.push(windmillBlades);
     gameObjects.push(windmillBlade1);
     gameObjects.push(windmillBlade2);
     gameObjects.push(windmillBlade3);
@@ -225,11 +230,11 @@ async function handleGamePlay() {
 
         // Apply the calculated force to the ball if its in sand
         if (ball.overlaps(sandtrap)){
-        ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
+            ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
         }
         else{
             //Apply calculated for normally
-        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
+            ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
         }
 
         // Hide the putter
@@ -270,31 +275,31 @@ async function handleGamePlay() {
     if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
         ball.x = tubeB.x;
         ball.y = tubeB.y;
-        ball.vel.x = 1;
+        ball.vel.x = 3;
         ball.vel.y = 0;
     }
 
-    if (ball.overlaps(water)){
+    ball.overlaps(tubeB);
+
+    if (water.overlaps(ball)){
         ball.vel.x = 0;
         ball.vel.y = 0;
-        ball.x = lastHit.x; // These need to be added to the ball's code
+        ball.x = lastHit.x;
         ball.y = lastHit.y;
     }
 
-    ball.overlaps(tubeB);   
+    if(volcano.overlaps(ball)){
+        ball.vel.x = 0;
+        ball.vel.y = 0;
+        ball.x = ballStart.x;
+        ball.y = ballStart.y;
+    }
 
     ball.overlaps(windmillBody);
-    // windmillBlades.rotationSpeed = -1;
     windmillBlade1.rotationSpeed = -1;
     windmillBlade2.rotationSpeed = -1;
     windmillBlade3.rotationSpeed = -1;
     windmillBlade4.rotationSpeed = -1;
-    // Make sure windmillBlades can't interact with anything but the ball
-    // windmillBlades.overlaps(windmillBody)
-    // windmillBlades.overlaps(hole)
-    // windmillBlades.overlaps(sandtrap)
-    // windmillBlades.overlaps(tubeA)
-    // windmillBlades.overlaps(tubeB)
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){
