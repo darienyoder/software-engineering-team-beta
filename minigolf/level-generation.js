@@ -2,6 +2,8 @@ const ADD = 0;
 const SUBTRACT = 1;
 const SUB = 1;
 
+var ballStart, lastHit;
+
 var floorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
@@ -300,7 +302,7 @@ class Level
                 console.warn(`Unknown object type: ${objectData.type}`);
                 return null;
         }
-    }    
+    }
 
     loadLevelFromDict(levelDict)
     {
@@ -374,7 +376,7 @@ class Level
                         break;
                     // Add more cases for other object types as needed
                 }
-                
+
                 const gameObject = this.createGameObject(objectData);
                 if (gameObject) {
                     gameObjects.push(gameObject); // Assuming gameObjects is a global array
