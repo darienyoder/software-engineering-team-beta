@@ -54,20 +54,24 @@ addTest('Ball Movement', async () => {
 
 // Add this test to your existing tests array
 addTest('Ball Drag Test', async () => {
-    ball.velocity.x = 0.3; // Set a velocity greater than 0.2
-
+    ball.vel.x = frictionTrigger * 2; // Set a velocity greater than 0.2
+    ball.vel.y = 0;
     // Check the drag value
     // May also want to check that it's not in a sandtrap here
-    if (ball.drag === 2) {
-        throw new Error(`Expected ball.drag to not be 2 when moving, but got ${ball.drag}`);
+    if (ball.drag !== friction) {
+        throw new Error(`Expected ball.drag to be ${friction} when moving, but got ${ball.drag}`);
     }
-    await sleep (1500)
-    // ball.velocity.x = 0.2; // velocity that triggers high drag
+
+    ball.vel.x = frictionTrigger / 2; // velocity that triggers high drag
+    ball.vel.y = frictionTrigger / 2; // velocity that triggers high drag
+
+    await sleep(50); //Might need to be proportional to slowFriction
 
     // Check the drag value
-    if (ball.drag !== 2) {
-        throw new Error(`${ball.velocity} Expected ball.drag to be 2 when velocity in trigger range, but got ${ball.drag}`);
+    if (ball.drag !== slowFriction) {
+        throw new Error(`${ball.velocity} Expected ball.drag to be ${slowFriction} when velocity in trigger range, but got ${ball.drag}`);
     }
+
 });
 
 

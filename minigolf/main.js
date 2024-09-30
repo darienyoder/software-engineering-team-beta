@@ -1,8 +1,6 @@
 const strokeForce = 100; // The speed of the ball when it is hit
-const friction = 0.5; // The rate at which the ball slows
+const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
-
-let tFrict = friction;
 
 var gameObjects = [], strokeCount = 0;
 var level = new Level(); // The level object; builds the stage
@@ -165,14 +163,14 @@ async function handleGamePlay() {
         pullStart = createVector(mouseX, mouseY);
     }
 
-    let trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
+    var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
     if (trueVel > 0) {
-        if (trueVel <= 0.2 && !canMove) {
-            ball.drag = 2; // Placeholder value for high drag
+        if (trueVel <= frictionTrigger && trueVel != 0) {
+            ball.drag = slowFriction;
         }
     } else {
-        ball.drag = tFrict; // Reset drag to tFrict if ball is moving faster than 1
+        ball.drag = friction;
     }
 
 
