@@ -106,7 +106,7 @@ function drawMainMenu() {
     text("Press 'Enter' to Start", width / 2, height / 2);
 
     // Draw the background rectangle for the color visualization
-    fill('#408040'); // Set rectangle color to #408040
+    fill(floorColor); // Set rectangle color to #408040
     rect(width / 4, height * 2 / 3, width / 2, 130); // Rectangle behind the text
 
     // Set text color to the current trajectory color
