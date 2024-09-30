@@ -152,8 +152,8 @@ function keyPressed() {
         runTests();
     }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
-    } 
-    
+    }
+
 }
 
 async function handleGamePlay() {
@@ -235,7 +235,7 @@ async function handleGamePlay() {
         canMove = true;
     }
 
-    if (sandtrap.overlaps(ball)) 
+    if (sandtrap.overlaps(ball))
     {
         ball.vel.x = ball.vel.x / 3;
         ball.vel.y = ball.vel.y / 3;

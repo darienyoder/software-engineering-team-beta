@@ -240,7 +240,7 @@ class Level
                     case "circle":
                     case "circ":
                     case "oval":
-                        const pointCount = 32
+                        const pointCount = 64;
                         let circleScale = createVector(Number(statement[4]), statement.length < 6 ? Number(statement[4]) : Number(statement[5]));
                         let arcLength = statement.length < 7 ? 359 : statement[6];
                         let circlePoint = createVector(0, 1);

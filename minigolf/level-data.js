@@ -1,10 +1,36 @@
 var levelData = [
     {
-        ballPosition: [75, 75],
-        holePosition: [225, 75],
+        ballPosition: [10075, 75],
+        holePosition: [10225, 75],
         area: `
 
-            ADD rect 0, 0, 300, 150;
+            ADD rect 10000, 0, 300, 150;
+
+        `,
+        obstacles: `
+        `
+    },
+    {
+        ballPosition: [37.5, 10000],
+        holePosition: [262.5, 10000],
+        area: `
+
+            {
+                ADD circ 150, 10000, 150;
+                SUB circ 150, 10000, 75;
+                SUB rect 0, 10000, 300, 150;
+
+                ADD circ 37.5, 10000, 37.5;
+                ADD circ 262.5, 10000, 37.5;
+            }
+
+            // {
+            //     ADD circ 375, 10000, 150;
+            //     SUB circ 375, 10000, 75;
+            //     SUB rect 0, 9849, 600, 150;
+            //
+            //     ADD circ 487.5, 10000, 37.5;
+            // }
 
         `,
         obstacles: `
