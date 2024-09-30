@@ -2,7 +2,7 @@ const strokeForce = 100; // The speed of the ball when it is hit
 const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
-var gameObjects = [], strokeCount = 0;
+var gameObjects = [], strokeCounts = []; strokeCount = 0;
 var level = new Level(); // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
@@ -30,7 +30,6 @@ async function setup()
 function setupLevel() {
     // Create the level layout using "level-generation.js"
     level.load(0);
-
     gameObjects.push(ball);
     gameObjects.push(hole);
 
@@ -136,7 +135,10 @@ function drawGameOver() {
     textAlign(CENTER, CENTER);
     text("Game Over", width / 2, height / 4);
     textSize(24);
-    text(`Strokes: ${strokeCount}`, width / 2, height / 2);
+    var totalStrokes = 0;
+    for (var strokes of strokeCounts)
+        totalStrokes += strokes;
+    text(`Strokes: ${totalStrokes}`, width / 2, height / 2);
     text("Press 'R' to Restart", width / 2, height / 1.5);
 }
 
@@ -224,6 +226,8 @@ async function handleGamePlay() {
         ballInGoal = true;
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
+        strokeCounts.push(strokeCount);
+        strokeCount = 0;
         await sleep(3000);
 
         level.nextLevel();

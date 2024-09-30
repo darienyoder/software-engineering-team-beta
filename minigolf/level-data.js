@@ -8,7 +8,8 @@ var levelData = [
 
         `,
         obstacles: `
-        `
+        `,
+        par: 2,
     },
     {
         ballPosition: [75, 75],
@@ -54,5 +55,6 @@ var levelData = [
             ADD Tubes 465 215 25 225;
             ADD Windmill 450 50;
         `,
+        par: 5,
     },
 ];
