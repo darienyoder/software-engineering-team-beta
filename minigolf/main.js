@@ -13,7 +13,7 @@ var message = '', messageTime = 0;
 var gameState = 'menu';
 
 let trajectoryColor = 'red'; // Default trajectory color
-const trajectoryColors = ['red', 'blue', 'purple', 'orange']; // Colors to cycle through
+const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
 let currentColorIndex = 0;
 
 // Runs once when the program starts
@@ -112,11 +112,9 @@ function drawMainMenu() {
     // Set text color to the current trajectory color
     fill(trajectoryColor);
     textSize(18);
-    text("Current Trajectory color:", width / 2, height * 3 / 4);
+    text("Current Trajectory color: \n" + trajectoryColor, width / 2, (height * 2 / 3)+56);
 
-    // Draw the color name next to the rectangle
-    fill(trajectoryColor); // Text color same as the trajectory color
-    text(trajectoryColor, width / 2, height * 3 / 4 + 20);
+    fill(0);
 }
 
 
