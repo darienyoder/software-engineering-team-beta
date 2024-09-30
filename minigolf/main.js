@@ -24,11 +24,30 @@ var messageTime = 0;
 
 var gameState = 'menu';
 
+// Sound variables
+let hitSound, holeSound;
+
+// Loading sound files
+function preload(){
+    hitSound = loadSound('assets/golfPutt.wav');
+    holeSound = loadSound('assets/golfGoal.wav');
+} 
+
 // Runs once when the program starts
 async function setup()
 {
     // Initialize canvas
     createCanvas();
+}
+
+//Hit sound function
+function playHitSound() {
+    hitSound.play();
+}
+
+//Hole sound function
+function playGoalSound() {
+    holeSound.play();
 }
 
 function setupLevel() {
@@ -198,6 +217,7 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
+        playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -246,6 +266,7 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
+        playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         await sleep(3000);
