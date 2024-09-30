@@ -3,11 +3,13 @@ const friction = 0.5; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
 let tFrict = friction;
+
 var gameObjects = [], strokeCount = 0;
 var level = new Level(); // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
+
 var gameState = 'menu';
 
 let trajectoryColor = 'red'; // Default trajectory color
@@ -41,10 +43,16 @@ function setupLevel() {
     tubeB = tubes[1];
     gameObjects.push(tubeA);
     gameObjects.push(tubeB);
+    water = Water(460, 40, 'square');
+    gameObjects.push(water);
+    volcano = Volcano(80, 75);
+    gameObjects.push(volcano);
     Windmill(450, 50);
     gameObjects.push(windmillBody);
-    gameObjects.push(windmillBlades);
-
+    gameObjects.push(windmillBlade1);
+    gameObjects.push(windmillBlade2);
+    gameObjects.push(windmillBlade3);
+    gameObjects.push(windmillBlade4);
 
     // Creating the putter head
     putter = new Sprite(-1000, -1000, 10, 30, 'n');
@@ -144,7 +152,8 @@ function keyPressed() {
         runTests();
     }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
-    }
+    } 
+    
 }
 
 async function handleGamePlay() {
@@ -154,6 +163,7 @@ async function handleGamePlay() {
     // When mouse is pressed...
     if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
+        lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
     }
 
@@ -189,17 +199,15 @@ async function handleGamePlay() {
 
         // Apply the calculated force to the ball if its in sand
         if (ball.overlaps(sandtrap)){
-        ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
-
+            ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
         }
         else{
             //Apply calculated for normally
-        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
+            ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
         }
 
         // Hide the putter
         putter.visible = false;
-
 
         if (pullDistance > 0) {
             incrementShots();
@@ -227,7 +235,7 @@ async function handleGamePlay() {
         canMove = true;
     }
 
-    if (sandtrap.overlaps(ball))
+    if (sandtrap.overlaps(ball)) 
     {
         ball.vel.x = ball.vel.x / 3;
         ball.vel.y = ball.vel.y / 3;
@@ -236,27 +244,31 @@ async function handleGamePlay() {
     if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
         ball.x = tubeB.x;
         ball.y = tubeB.y;
+        ball.vel.x = 3;
+        ball.vel.y = 0;
     }
 
-    if (tubeB.overlaps(ball)){
-        ball.vel.x = .25;
-        ball.vel.y = .75;
+    ball.overlaps(tubeB);
+
+    if (water.overlaps(ball)){
+        ball.vel.x = 0;
+        ball.vel.y = 0;
+        ball.x = lastHit.x;
+        ball.y = lastHit.y;
+    }
+
+    if(volcano.overlaps(ball)){
+        ball.vel.x = 0;
+        ball.vel.y = 0;
+        ball.x = ballStart.x;
+        ball.y = ballStart.y;
     }
 
     ball.overlaps(windmillBody);
-    windmillBlades.rotateTo(10);
-    windmillBlades.rotateTo(180);
-
-    // Make sure windmillBlades can't interact with anything but the ball
-    windmillBlades.overlaps(windmillBody)
-    // windmillBlades.overlaps(topWall) // These walls were placeholders and no longer exist
-    // windmillBlades.overlaps(bottomWall)
-    // windmillBlades.overlaps(leftWall)
-    // windmillBlades.overlaps(rightWall)
-    windmillBlades.overlaps(hole)
-    windmillBlades.overlaps(sandtrap)
-    windmillBlades.overlaps(tubeA)
-    windmillBlades.overlaps(tubeB)
+    windmillBlade1.rotationSpeed = -1;
+    windmillBlade2.rotationSpeed = -1;
+    windmillBlade3.rotationSpeed = -1;
+    windmillBlade4.rotationSpeed = -1;
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){
