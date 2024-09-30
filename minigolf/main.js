@@ -248,9 +248,11 @@ for (var wall of level.walls)
                 }
             }
     
+            //Calculate new ball velocity manually
             let velocityVector = (ball.vel.x, ball.vel.y);
             velocityVector.reflect(normalVector);
             ball.vel.x = velocityVector.x;
+            ball.vel.y = velocityVector.y;
     
             break;
         }
