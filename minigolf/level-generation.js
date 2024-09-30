@@ -339,6 +339,8 @@ class Level
 
         // Create golf ball at "ballPosition"
         ball = Ball(levelDict.ballPosition[0], levelDict.ballPosition[1]);
+        ballStart = createVector(levelDict.ballPosition[0], levelDict.ballPosition[1]);
+        lastHit = ballStart;
 
         // Create hole at "holePosition"
         hole = Hole(levelDict.holePosition[0], levelDict.holePosition[1]);
