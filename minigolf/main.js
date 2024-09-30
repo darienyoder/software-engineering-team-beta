@@ -218,6 +218,44 @@ async function handleGamePlay() {
         drawPutter();
     }
 
+    // Iterate through each wall in the level
+for (var wall of level.walls)
+    {
+        // Check if the ball and the wall have collided
+        if (ball.collides(wall))
+        {
+            let normalVector;
+    
+            // If the wall is a circle (like on rounded corners), the normal is the direction from the wall to the ball
+            if (wall.width == wall.height)
+            {
+                normalVector = createVector(ball.x, ball.y).sub(createVector(wall.x, wall.y)).normalized();
+            }
+            // If the wall is a segment, the normal is the rotation of the sprite +/- 90 degrees
+            // There is a normal vector for each side of the wall, so calculate each vector's distance to the ball and use whichever is closest
+            else
+            {
+                let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
+                let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
+    
+                if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
+                {
+                    normalVector = positiveNormalVector;
+                }
+                else
+                {
+                    normalVector = negativeNormalVector;
+                }
+            }
+    
+            let velocityVector = (ball.vel.x, ball.vel.y);
+            velocityVector.reflect(normalVector);
+            ball.vel.x = velocityVector.x;
+    
+            break;
+        }
+    }
+
     // Hole functionality Ball must be going slow to get in hole
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
