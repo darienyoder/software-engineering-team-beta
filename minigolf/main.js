@@ -4,84 +4,35 @@ const maxPullBackDistance = 100; // The maximum distance to pull back
 
 let tFrict = friction;
 
-var gameObjects = [];
-
-var strokeCount = 0;
-
-var level; // The level object; builds the stage
-
-var ball; // The player's golf ball
-var canMove = true; // Whether the player can control the ball
-var lastHit = null; // Last place the ball was hit from
-var ballStart = null;
-
-var hole; // The goal
-
-var ballInGoal = false;
-
-var pullStart = null; // The starting position of the pull-back
-
-var message = '';
-var messageTime = 0;
+var gameObjects = [], strokeCount = 0;
+var level = new Level(); // The level object; builds the stage
+var ball, hole; // The player's golf ball and the hole
+var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
+var message = '', messageTime = 0;
 
 var gameState = 'menu';
+
+let trajectoryColor = 'red'; // Default trajectory color
+const trajectoryColors = ['red', 'blue', 'purple', 'orange']; // Colors to cycle through
+let currentColorIndex = 0;
 
 // Runs once when the program starts
 async function setup()
 {
     // Initialize canvas
     createCanvas();
+
+    document.getElementById('colorButton').addEventListener('click', () => {
+        // Change the trajectory color on click
+        currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
+        trajectoryColor = trajectoryColors[currentColorIndex];
+    });
 }
 
 function setupLevel() {
     // Create the level layout using "level-generation.js"
+    level.load(0);
 
-    ballStart = createVector(50,75);
-    lastHit = ballStart;
-
-    let levelData = {
-        ballPosition: [ballStart.x, ballStart.y],
-        holePosition: [250, 75],
-        area: `
-
-            // Left side;
-            ADD rect 0, 0, 150, 150;
-
-            // Right side;
-            {
-                ADD rect 350, 0, 150, 250;
-                SUB {
-                    ADD circle 390, 165, 40;
-                    ADD rect 350, 125, 40, 200;
-                    ADD rect 390, 165, 40, 200;
-                }
-            }
-            // Top arc;
-            {
-                ADD circle 250, 75, 150;
-                SUB circle 250, 75, 100;
-                SUB rect 0, 150, 500, 300;
-                SUB rect 150, 75, 300, 300;
-            }
-
-            // Path to end;
-            {
-                ADD rect 0, 200, 150, 50;
-                ADD oval 150, 150, 125, 100;
-                SUB oval 150, 150, 75, 50;
-                SUB rect 0, 0, 150, 200;
-                SUB rect 0, 0, 225, 150;
-            }
-
-            // End goal;
-            ADD circle 250, 75, 50;
-            ADD rect 225, 75, 50, 75;
-
-        `,
-    }
-
-
-    level = buildLevel(levelData);
     gameObjects.push(ball);
     gameObjects.push(hole);
 
@@ -127,15 +78,13 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-
-    // Beige background for the canvas
-    background(backgroundColor);
+    background("white");
 
     if (gameState === 'menu') {
         drawMainMenu();
     } else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        drawStage();
+        level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
         clearGameObjects(); // Clear objects before showing game over
@@ -144,14 +93,33 @@ async function draw()
 }
 
 function drawMainMenu() {
-    fill(0);
+    // Draw the main menu background
+    fill(255); // White background for contrast
+    rect(0, 0, width, height); // Optional: clear background
+
+    fill(0); // Set text color to black
     textSize(48);
     textAlign(CENTER, CENTER);
     text("Golf Game", width / 2, height / 4);
 
     textSize(24);
     text("Press 'Enter' to Start", width / 2, height / 2);
+
+    // Draw the background rectangle for the color visualization
+    fill('#408040'); // Set rectangle color to #408040
+    rect(width / 4, height * 2 / 3, width / 2, 130); // Rectangle behind the text
+
+    // Set text color to the current trajectory color
+    fill(trajectoryColor);
+    textSize(18);
+    text("Current Trajectory color:", width / 2, height * 3 / 4);
+
+    // Draw the color name next to the rectangle
+    fill(trajectoryColor); // Text color same as the trajectory color
+    text(trajectoryColor, width / 2, height * 3 / 4 + 20);
 }
+
+
 
 function clearGameObjects() {
     clear();
@@ -159,13 +127,14 @@ function clearGameObjects() {
     for (var obj of gameObjects)
         obj.remove();
 
-    for (var wall of walls)
-        wall.remove();
+    // for (var wall of walls)
+    //     wall.remove();
 
-    background(backgroundColor);
+    // background(backgroundColor);
 }
 
 function drawGameOver() {
+    background("white");
     fill(0);
     textSize(48);
     textAlign(CENTER, CENTER);
@@ -178,7 +147,7 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
-    } else if ((gameState === 'playing' || gameState === 'menu') && key === '`') { 
+    } else if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
     }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
@@ -203,7 +172,7 @@ async function handleGamePlay() {
     if (trueVel > 0) {
         if (trueVel <= 0.2 && !canMove) {
             ball.drag = 2; // Placeholder value for high drag
-        } 
+        }
     } else {
         ball.drag = tFrict; // Reset drag to tFrict if ball is moving faster than 1
     }
@@ -261,9 +230,9 @@ async function handleGamePlay() {
         ball.moveTo(hole.position.x, hole.position.y);
         await sleep(3000);
 
-
-        // Can replace this with like nextlevel() or some shit when we get there
-        gameState = 'gameOver';
+        level.nextLevel();
+        ballInGoal = false;
+        canMove = true;
     }
 
     if (sandtrap.overlaps(ball)) 
@@ -322,6 +291,7 @@ async function handleGamePlay() {
             message = ''; //Reset the message
         }
     }
+    //ball.debug = mouse.pressing()
 }
 
 // Converts level coordinates to screen coordinates
@@ -376,7 +346,7 @@ function drawTrajectory() {
 
     // Draw trajectory line
     push(); // Start new style for the line
-    stroke('red'); // Can be any color
+    stroke(trajectoryColor); // Can be any color
     strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
     pop(); // Remove style
@@ -403,8 +373,6 @@ function drawUserAssistance() {
     line(screenPullStart.x, screenPullStart.y, screenPullStart.x + pullVector.x, screenPullStart.y + pullVector.y);
     pop(); // Remove style
 }
-
-
 
 function drawMessage() {
     fill(0); //Setting text color
