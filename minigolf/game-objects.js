@@ -7,8 +7,8 @@ function Ball(x, y)
     newBall.layer = 2;
     newBall.drag = friction;
     newBall.rotationDrag = 90;
-    // newBall.image = 'assets/ball.png'
-    // newBall.image.scale = .025
+    newBall.image = 'assets/ball.png'
+    newBall.image.scale = .025
     return newBall;
 }
 
