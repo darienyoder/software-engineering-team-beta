@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.12'  # Specify the version you need
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
@@ -30,6 +30,6 @@ jobs:
 
       - name: Run tests
         run: |
-          python minigolf/pytest.py  # Replace with the name of your script in the 'minigolf' folder
+          python minigolf/pytest.py
         env:
-          DISPLAY: :99  # Required for headless mode
+          DISPLAY: :99
