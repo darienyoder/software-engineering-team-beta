@@ -222,7 +222,7 @@ async function handleGamePlay() {
 for (var wall of level.walls)
     {
         // Check if the ball and the wall have collided
-        if (ball.collides(wall))
+        if (wall.overlaps(ball))
         {
             let normalVector;
     
@@ -248,9 +248,10 @@ for (var wall of level.walls)
                 }
             }
     
-            let velocityVector = (ball.vel.x, ball.vel.y);
+            let velocityVector = createVector(ball.vel.x, ball.vel.y);
             velocityVector.reflect(normalVector);
             ball.vel.x = velocityVector.x;
+            ball.vel.y = velocityVector.y;
     
             break;
         }

@@ -40,13 +40,13 @@ class Level
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
         newWall.strokeWeight = 0.0;
         newWall.color = wallColor;
-        newWall.collider = "static";
+        newWall.collider = "n";
         this.walls.push(newWall);
 
         newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness);
         newWall.strokeWeight = 0.0;
         newWall.color = wallColor;
-        newWall.collider = "static";
+        newWall.collider = "n";
         this.walls.push(newWall);
     }
 
