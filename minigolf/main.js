@@ -14,6 +14,10 @@ let trajectoryColor = 'red'; // Default trajectory color
 const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
 let currentColorIndex = 0;
 
+//variables for ball velocity from previous frame; used in wall physics calculations
+let prevVelX = 0;
+let prevVelY = 0;
+
 // Runs once when the program starts
 async function setup()
 {
@@ -249,7 +253,7 @@ for (var wall of level.walls)
             }
     
             //Calculate new ball velocity manually
-            let velocityVector = (ball.vel.x, ball.vel.y);
+            let velocityVector = createVector(prevVelX, prevVelY);
             velocityVector.reflect(normalVector);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
@@ -257,6 +261,11 @@ for (var wall of level.walls)
             break;
         }
     }
+
+    //Store velocity from current frame for next frame's velocity calculations
+    //This avoids p5play applying it's own physics to the wall bounce before I apply mine
+    prevVelX = ball.vel.x;
+    prevVelY = ball.vel.y;
 
     // Hole functionality Ball must be going slow to get in hole
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
