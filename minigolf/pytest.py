@@ -5,15 +5,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import os
 
 # Define the port and path to your HTML file
 PORT = 8000
 HTML_FILE = "index.html"  # Update to your actual file name
-DIRECTORY = os.path.dirname(os.path.abspath('minigolf\\' + HTML_FILE))  # Get the directory of the HTML file
+DIRECTORY = os.path.dirname(os.path.abspath('minigolf/' + HTML_FILE))  # Correct the path separator
 
 # Function to start the local server
 def start_server(port):
@@ -47,11 +44,9 @@ if not wait_for_server(PORT):
 
 # Setup Chrome options
 chrome_options = Options()
-chrome_options.add_argument("--enable-logging")  # Enable logging
-chrome_options.add_argument("--v=1")  # Set verbosity level
-chrome_options.add_argument("--log-level=ALL")  # Capture all log levels
-chrome_options.add_argument("--remote-debugging-port=9222")  # Enable remote debugging
-chrome_options.add_argument("--headless")
+chrome_options.add_argument("--headless")  # Run in headless mode
+chrome_options.add_argument("--no-sandbox")  # Required for CI environments
+chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
 
 # Automatically download and configure ChromeDriver
 service = Service(ChromeDriverManager().install())
