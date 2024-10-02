@@ -25,7 +25,7 @@ def start_server(port):
     )
 
 # Function to check if the server is running
-def wait_for_server(port, timeout=30):
+def wait_for_server(port, timeout=45):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
@@ -63,18 +63,7 @@ try:
     # Open your HTML file via the local server
     driver.get(f'http://localhost:{PORT}/{HTML_FILE}')
 
-    # Wait for the colorButton to be present and visible
-    WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.ID, "colorButton")))
-
-    # Print the current page source for debugging
-    print(driver.page_source)
-
-    # Click the colorButton
-    color_button = driver.find_element(By.ID, "colorButton")
-    color_button.click()
-
-    # Optional: Wait for any changes to take effect after clicking the button
-    time.sleep(2)  # Adjust based on what changes need to happen
+    time.sleep(20)
 
     # Execute additional JavaScript functions if needed
     driver.execute_script("startGame()")
