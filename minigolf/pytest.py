@@ -5,6 +5,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import os
 
 # Define the port and path to your HTML file
@@ -60,12 +63,15 @@ try:
     # Open your HTML file via the local server
     driver.get(f'http://localhost:{PORT}/{HTML_FILE}')
 
-    # Wait for a moment to ensure everything is loaded
-    time.sleep(5)
-    
-    # Execute your JavaScript functions
+    # Wait for the colorButton to be present
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "colorButton")))
+
+    # Optional: Wait for any changes to take effect after clicking the button
+    time.sleep(2)  # Adjust based on what changes need to happen
+
+    # Execute additional JavaScript functions if needed
     driver.execute_script("startGame()")
-    time.sleep(5)
+    time.sleep(2)
     driver.execute_script("runTests()")
     time.sleep(10)
 
