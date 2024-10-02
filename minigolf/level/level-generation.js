@@ -5,6 +5,8 @@ const SUB = 1;
 var ballStart, lastHit;
 
 var floorColor = "#408040";
+var minFloorColor = "#102010";
+var maxFloorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
 
@@ -32,7 +34,39 @@ class Level
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
 
-        this.heightModifiers = [];
+        this.maxHeight = 2.0;
+        this.minHeight = -2.0;
+
+        this.heightModifiers = [
+            {
+                action: "add",
+                height: 2.0,
+                shape: "oval",
+                data: {
+                    x: 10075,
+                    y: 0,
+                    w: 75,
+                    h: 75,
+                },
+                gradient: {
+                    type: "radial",
+                }
+            },
+            {
+                action: "add",
+                height: -10.0,
+                shape: "oval",
+                data: {
+                    x: 10225,
+                    y: 150,
+                    w: 75,
+                    h: 75,
+                },
+                gradient: {
+                    type: "radial",
+                }
+            },
+        ];
 
     }
 
@@ -314,20 +348,22 @@ class Level
 
     shapeHasPoint(shape, pointX, pointY)
     {
-        switch (shape.type) {
+        switch (shape.shape) {
             case "rect":
                 return (
                     pointX > point.data.x
                     && pointX < point.data.x + point.data.w
                     && pointY > point.data.y
                     && pointY < point.data.y + point.data.h
-                );
+                ) ? 1 : 0;
                 break;
 
             case "oval":
-                return (
-                    createVector((pointX - shape.data.x) / shape.data.w, (pointY - shape.data.y) / shape.data.h).mag() < 1
-                );
+                let weight = Math.max(0.0, 1 - createVector((pointX - shape.data.x) / shape.data.w, (pointY - shape.data.y) / shape.data.h).mag());
+                if (shape.gradient.type == "flat")
+                    return Math.ceil(weight);
+                else if (shape.gradient.type == "radial")
+                    return weight;
                 break;
 
             default:
@@ -337,15 +373,16 @@ class Level
 
     getHeight(x, y)
     {
-        let height = x * 0.01 + y * 0.01;
+        let height = 0;
         for (var shape of this.heightModifiers)
         {
-            if (shapeHasPoint(shape, x, y))
+            let shapeWeight = this.shapeHasPoint(shape, x, y);
+            if (shapeWeight != 0)
             {
                 if (shape.action == "add")
-                    height += shape.height;
+                    height += shape.height * shapeWeight;
                 else
-                    height = shape.height;
+                    height = shape.height * shapeWeight;
             }
         }
         return height;
@@ -486,15 +523,64 @@ class Level
         endShape(CLOSE);
     }
 
+    drawHeight(modifier)
+    {
+        let drawColor;
+        if (modifier.height > 0)
+            drawColor = maxFloorColor;
+        else
+            drawColor = minFloorColor;
+
+        switch (modifier.shape)
+        {
+            case "oval":
+                const ringCount = 24;
+                let opacity = Math.floor(255 / ringCount).toString(16);
+                if (opacity.length == 1)
+                    opacity = "0" + opacity;
+                fill(drawColor + opacity);
+                stroke("#00000000");
+                for (var i = 0; i < ringCount; i++)
+                {
+                    let center = levelToScreen(createVector(modifier.data.x, modifier.data.y));
+                    ellipse(center.x, center.y, modifier.data.w / ringCount * i * camera.zoom * 2, modifier.data.h / ringCount * i * camera.zoom * 2);
+                }
+                break;
+            default:
+
+        }
+    }
+
+    lerpColor(a, b, amount)
+    {
+        var ah = parseInt(a.replace(/#/g, ''), 16),
+            ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+            bh = parseInt(b.replace(/#/g, ''), 16),
+            br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+            rr = ar + amount * (br - ar),
+            rg = ag + amount * (bg - ag),
+            rb = ab + amount * (bb - ab);
+
+        return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+    }
+
     // Draws the stage
     drawStage()
     {
         background(backgroundColor);
 
         stroke("#000000");
+
+        let baseScale = (0 - this.minHeight) / (this.maxHeight - this.minHeight)
+        let baseFloorColor = this.lerpColor(minFloorColor, maxFloorColor, baseScale);//"#" + this.lerpHexColor(maxFloorColor.slice(1, 2), minFloorColor.slice(1, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(3, 2), minFloorColor.slice(3, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(5, 2), minFloorColor.slice(5, 2), baseScale);
+
         for (var wall = 0; wall < this.positiveWalls.length; wall++)
         {
-            this.drawPolygon(this.positiveWalls[wall], floorColor);
+            this.drawPolygon(this.positiveWalls[wall], baseFloorColor);
+        }
+        for (var hM = 0; hM < this.heightModifiers.length; hM++)
+        {
+            this.drawHeight(this.heightModifiers[hM]);
         }
         for (var wall = 0; wall < this.negativeWalls.length; wall++)
         {
