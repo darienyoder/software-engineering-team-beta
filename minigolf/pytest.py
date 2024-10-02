@@ -63,8 +63,15 @@ try:
     # Open your HTML file via the local server
     driver.get(f'http://localhost:{PORT}/{HTML_FILE}')
 
-    # Wait for the colorButton to be present
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "colorButton")))
+    # Wait for the colorButton to be present and visible
+    WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.ID, "colorButton")))
+
+    # Print the current page source for debugging
+    print(driver.page_source)
+
+    # Click the colorButton
+    color_button = driver.find_element(By.ID, "colorButton")
+    color_button.click()
 
     # Optional: Wait for any changes to take effect after clicking the button
     time.sleep(2)  # Adjust based on what changes need to happen
