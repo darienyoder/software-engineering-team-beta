@@ -1,13 +1,13 @@
 
 function Ball(x, y)
-{ 
+{
     let newBall = new Sprite(x, y);
     newBall.diameter = 20;
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    newBall.image = 'assets/ball.png'
-    newBall.image.scale = .025
+    // newBall.image = 'assets/ball.png'
+    // newBall.image.scale = .025
     return newBall;
 }
 
@@ -100,7 +100,7 @@ function Windmill(posX, posY)
 }
 
 function Water(posX, posY, shape) {
-    
+
     if (shape == 'square'){
         water = new Sprite(posX, posY, 75, 75);
     }

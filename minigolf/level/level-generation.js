@@ -32,6 +32,8 @@ class Level
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
 
+        this.heightModifiers = [];
+
     }
 
     createWallSegment(fromVector, toVector)
@@ -153,6 +155,67 @@ class Level
         return [posWalls, negWalls];
     }
 
+    makeRect(x, y, w, h)
+    {
+        return [
+            {"X": x, "Y": y},
+            {"X": x + w, "Y": y},
+            {"X": x + w, "Y": y + h},
+            {"X": x, "Y": y + h},
+        ];
+    }
+
+    makeOval(x, y, w, h = 0, arcLength = 359)
+    {
+        let polygon = [];
+        const pointCount = 32;
+        let circleScale = createVector(w, h);
+        let circlePoint = createVector(0, 1);
+        for (var i = 0; i <= arcLength / 360 * arcLength; i++)
+        {
+            circlePoint.rotate(360 / pointCount);
+            polygon.push( { "X": x + circlePoint.x * circleScale.x, "Y": y + circlePoint.y * circleScale.y } );
+        }
+        if (arcLength != 360)
+            polygon.push( { "X": x, "Y": y } );
+        return polygon;
+    }
+
+    makePolygon(points)
+    {
+        let polygon = [];
+        for (var i = 0; i < points.length; i += 2)
+        {
+            polygon.push( { "X": Number(points[i]), "Y": Number(points[i + 1]) } );
+        }
+        return polygon;
+    }
+
+    makeShape(shapeName, args)
+    {
+        switch (shapeName.toLowerCase())
+        {
+            case "rect":
+            case "rectangle":
+                return this.makeRect(Number(args[0]), Number(args[1]), Number(args[2]), Number(args[3]));
+                break;
+
+            case "circle":
+            case "circ":
+            case "oval":
+                return this.makeOval(Number(args[0]), Number(args[1]), Number(args[2]), args.length < 4 ? Number(args[2]) : Number(args[3]), args.length < 5 ? 359 : args[4]);
+                break;
+
+            case "poly":
+            case "polygon":
+                return this.makePolygon(args);
+                break;
+
+            default:
+                break;
+        }
+    }
+
     parseAreaString(areaString)
     {
         let posWalls = [];
@@ -225,45 +288,8 @@ class Level
                 else
                     continue;
 
-                switch (statement[1].toLowerCase())
-                {
-                    case "rect":
-                    case "rectangle":
-                        shape.polygon = [
-                            {"X": Number(statement[2]), "Y": Number(statement[3])},
-                            {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3])},
-                            {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3]) + Number(statement[5])},
-                            {"X": Number(statement[2]), "Y": Number(statement[3]) + Number(statement[5])},
-                        ];
-                        break;
+                shape.polygon = this.makeShape(statement[1], statement.slice(2))
 
-                    case "circle":
-                    case "circ":
-                    case "oval":
-                        const pointCount = 32
-                        let circleScale = createVector(Number(statement[4]), statement.length < 6 ? Number(statement[4]) : Number(statement[5]));
-                        let arcLength = statement.length < 7 ? 359 : statement[6];
-                        let circlePoint = createVector(0, 1);
-                        for (var i = 0; i <= arcLength / 360 * arcLength; i++)
-                        {
-                            circlePoint.rotate(360 / pointCount);
-                            shape.polygon.push( { "X": Number(statement[2]) + circlePoint.x * circleScale.x, "Y": Number(statement[3]) + circlePoint.y * circleScale.y } );
-                        }
-                        if (arcLength != 360)
-                            shape.polygon.push( { "X": Number(statement[2]), "Y": Number(statement[3]) } );
-                        break;
-
-                    case "poly":
-                    case "polygon":
-                        for (var i = 2; i < statement.length; i += 2)
-                        {
-                            shape.polygon.push( { "X": Number(statement[i]), "Y": Number(statement[i + 1]) } );
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
                 this.modifyLevelShape(shape, posWalls, negWalls);
             }
         }
@@ -284,6 +310,50 @@ class Level
             gameObjects.pop();
             // gameObjects.pop().deconstructorFunction();
         }
+    }
+
+    shapeHasPoint(shape, pointX, pointY)
+    {
+        switch (shape.type) {
+            case "rect":
+                return (
+                    pointX > point.data.x
+                    && pointX < point.data.x + point.data.w
+                    && pointY > point.data.y
+                    && pointY < point.data.y + point.data.h
+                );
+                break;
+
+            case "oval":
+                return (
+                    createVector((pointX - shape.data.x) / shape.data.w, (pointY - shape.data.y) / shape.data.h).mag() < 1
+                );
+                break;
+
+            default:
+                return false;
+        }
+    }
+
+    getHeight(x, y)
+    {
+        let height = x * 0.01 + y * 0.01;
+        for (var shape of this.heightModifiers)
+        {
+            if (shapeHasPoint(shape, x, y))
+            {
+                if (shape.action == "add")
+                    height += shape.height;
+                else
+                    height = shape.height;
+            }
+        }
+        return height;
+    }
+
+    getNormal(x, y)
+    {
+        return (   createVector(x + 0.5, y, this.getHeight(x + 0.5, y)).sub(createVector(x - 0.5, y, this.getHeight(x - 0.5, y))).normalize()   ).cross(   createVector(x, y + 0.5, this.getHeight(x, y + 0.5)).sub(createVector(x, y - 0.5, this.getHeight(x, y - 0.5))).normalize()   );
     }
 
     createGameObject(objectData) {

@@ -17,6 +17,7 @@ let currentColorIndex = 0;
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
 let prevVelY = 0;
+var ballLastPosition = 0;
 
 // Runs once when the program starts
 async function setup()
@@ -71,6 +72,7 @@ function startGame() {
     canMove = true;
     setupLevel();
     gameState = 'playing';
+    ballLastPosition = createVector(0, 0);
 }
 
 // Runs 60 times per second
@@ -154,8 +156,8 @@ function keyPressed() {
         runTests();
     }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
-    } 
-    
+    }
+
 }
 
 async function handleGamePlay() {
@@ -168,6 +170,9 @@ async function handleGamePlay() {
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
     }
+
+    ball.velocity.x += level.getNormal(ball.x, ball.y).x;
+    ball.velocity.y += level.getNormal(ball.x, ball.y).y;
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
@@ -225,13 +230,13 @@ async function handleGamePlay() {
     }
 
     // Iterate through each wall in the level
-for (var wall of level.walls)
+    for (var wall of level.walls)
     {
         // Check if the ball and the wall have collided
         if (ball.collides(wall))
         {
             let normalVector;
-    
+
             // If the wall is a circle (like on rounded corners), the normal is the direction from the wall to the ball
             if (wall.width == wall.height)
             {
@@ -243,7 +248,7 @@ for (var wall of level.walls)
             {
                 let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
                 let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
-    
+
                 if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
                 {
                     normalVector = positiveNormalVector;
@@ -253,13 +258,14 @@ for (var wall of level.walls)
                     normalVector = negativeNormalVector;
                 }
             }
-    
+
             //Calculate new ball velocity manually
+            const wallFriction = 0.9;
             let velocityVector = createVector(prevVelX, prevVelY);
-            velocityVector.reflect(normalVector);
+            velocityVector.reflect(normalVector).mult(wallFriction);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
-    
+
             break;
         }
     }
@@ -284,7 +290,7 @@ for (var wall of level.walls)
         canMove = true;
     }
 
-    if (sandtrap.overlaps(ball)) 
+    if (sandtrap.overlaps(ball))
     {
         ball.vel.x = ball.vel.x / 3;
         ball.vel.y = ball.vel.y / 3;
@@ -321,7 +327,7 @@ for (var wall of level.walls)
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){
-        if (ball.vel.x==0 && ball.vel.y==0){
+        if (ballLastPosition.sub(ball.position).mag() < 0.01) {//(ball.vel.x==0 && ball.vel.y==0){
             canMove=true //Player can take the next shot
             if(!message) {
             message = "Take Your Shot"; //Set the message
