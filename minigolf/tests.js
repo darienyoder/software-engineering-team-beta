@@ -8,6 +8,8 @@ function addTest(name, testFunction) {
 async function runTests() {
     let allPassed = true;
     for (const test of tests) {
+        setupTestEnvironment();
+        
         try {
             await test.testFunction();
             console.log(`✔️ ${test.name} passed`);
@@ -18,10 +20,16 @@ async function runTests() {
     }
     if (allPassed) {
         console.log('All tests passed!');
+        return allPassed;
     } else {
         console.log('Some tests failed. Check above for details.');
+        return allPassed;
     }
 }
+
+function setupTestEnvironment() {
+
+};
 
 // Test that menu works
 // Test only runs if it starts on 'menu' screen
