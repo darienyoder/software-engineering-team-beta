@@ -48,7 +48,7 @@ chrome_options.add_argument("--enable-logging")  # Enable logging
 chrome_options.add_argument("--v=1")  # Set verbosity level
 chrome_options.add_argument("--log-level=ALL")  # Capture all log levels
 chrome_options.add_argument("--remote-debugging-port=9222")  # Enable remote debugging
-# chrome_options.add_argument("--headless")
+chrome_options.add_argument("--headless")
 
 # Automatically download and configure ChromeDriver
 service = Service(ChromeDriverManager().install())
