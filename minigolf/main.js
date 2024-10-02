@@ -10,6 +10,9 @@ var message = '', messageTime = 0;
 
 var gameState = 'menu';
 
+cameraModeOptions = ["Center", "Follow"] // Options that camera mode can take-- should be same as index.html's first camera option
+var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
+
 let trajectoryColor = 'red'; // Default trajectory color
 const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
 let currentColorIndex = 0;
@@ -23,6 +26,19 @@ async function setup()
 {
     // Initialize canvas
     createCanvas();
+
+    document.getElementById('cameraButton').addEventListener('click', () => {
+        // Change the trajectory color on click
+        cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
+        document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
+
+        if(cameraMode == "Center")
+        {
+        // Set the camera to be at the center of the canvas
+        camera.x = (level.bounds.right + level.bounds.left) / 2;
+        camera.y = (level.bounds.bottom + level.bounds.top) / 2;
+        }
+    });
 
     document.getElementById('colorButton').addEventListener('click', () => {
         // Change the trajectory color on click
@@ -159,6 +175,14 @@ function keyPressed() {
 }
 
 async function handleGamePlay() {
+
+    // Sets ball position when camera is follow
+    if (cameraMode === "Follow") {
+        // Make camera follow the ball's position
+        camera.x = ball.x;
+        camera.y = ball.y;
+    }
+
     // Draw the stroke counter
     drawStrokeCount();
 
