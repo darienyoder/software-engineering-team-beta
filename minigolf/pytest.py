@@ -68,9 +68,16 @@ try:
 
     # Capture console logs
     logs = driver.get_log('browser')
+    has_errors = False
+
     for log in logs:
         print(f"{log['level']}: {log['message']}")
+    if "❌" in log['message']:  # Check for failure indicators
+        has_errors = True
 
+    if has_errors:
+        print("One or more tests failed.")
+        exit(1)
 finally:
     # Close the driver
     driver.quit()
