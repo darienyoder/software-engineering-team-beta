@@ -17,7 +17,23 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get upgrade -y
+        sudo apt-get install -y \
+          libxss1 \
+          libappindicator3-1 \
+          libatk-bridge2.0-0 \
+          libgtk-3-0 \
+          libnspr4 \
+          libnss3 \
+          libgconf-2-4 \
+          libx11-xcb1 \
+          libxcomposite1 \
+          libxrandr2 \
+          libxdamage1 \
+          libxext6 \
+          fonts-liberation \
+          libgbm1 \
+          xdg-utils \
+          wget
 
     - name: Install Chrome
       run: |
@@ -27,7 +43,10 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install selenium geckodriver-autoinstaller requests
+        pip install selenium webdriver-manager requests
+
+    - name: Set up Display
+      run: echo "DISPLAY=:99" >> $GITHUB_ENV
 
     - name: Run pytest
       run: |

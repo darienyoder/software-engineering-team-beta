@@ -2,16 +2,13 @@ import subprocess
 import time
 import requests
 from selenium import webdriver
-from selenium.webdriver.firefox.service import Service
-from selenium.webdriver.firefox.options import Options
-import geckodriver_autoinstaller
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
-
-# Automatically install geckodriver
-geckodriver_autoinstaller.install()
 
 # Define the port and path to your HTML file
 PORT = 8000
@@ -28,7 +25,7 @@ def start_server(port):
     )
 
 # Function to check if the server is running
-def wait_for_server(port, timeout=30):
+def wait_for_server(port, timeout=45):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
@@ -48,32 +45,25 @@ if not wait_for_server(PORT):
     server_process.terminate()
     exit(1)
 
-# Setup Firefox options
-firefox_options = Options()
-firefox_options.add_argument("--headless")  # Run in headless mode (optional)
+# Setup Chrome options
+chrome_options = Options()
+chrome_options.add_argument("--enable-logging")  # Enable logging
+chrome_options.add_argument("--v=1")  # Set verbosity level
+chrome_options.add_argument("--log-level=ALL")  # Capture all log levels
+chrome_options.add_argument("--remote-debugging-port=9222")  # Enable remote debugging
+chrome_options.add_argument("--headless")
 
-# Automatically configure geckodriver
-service = Service()
+# Automatically download and configure ChromeDriver
+service = Service(ChromeDriverManager().install())
 
 # Initialize the WebDriver
-driver = webdriver.Firefox(service=service, options=firefox_options)
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
 try:
     # Open your HTML file via the local server
     driver.get(f'http://localhost:{PORT}/{HTML_FILE}')
 
-    # Wait for the colorButton to be present and visible
-    WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.ID, "colorButton")))
-
-    # Print the current page source for debugging
-    print(driver.page_source)
-
-    # Click the colorButton
-    color_button = driver.find_element(By.ID, "colorButton")
-    color_button.click()
-
-    # Optional: Wait for any changes to take effect after clicking the button
-    time.sleep(2)  # Adjust based on what changes need to happen
+    time.sleep(20)
 
     # Execute additional JavaScript functions if needed
     driver.execute_script("startGame()")
