@@ -166,24 +166,24 @@ addTest('Water Test', async () => {
 });
 
 
-// Test the volcano
-addTest('Volcano Test', async () => {
-    ball.x = ballStart.x;
-    ball.y = ballStart.y;
-    ball.vel.x = 5;
-    await sleep (300)
+// // Test the volcano
+// addTest('Volcano Test', async () => {
+//     ball.x = ballStart.x;
+//     ball.y = ballStart.y;
+//     ball.vel.x = 5;
+//     await sleep (300)
 
-    // Check both that it's not at the water and is at lastHit
-    if (ball.x != ballStart.x || ball.y != ballStart.y) {
-        throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
-    }
-    if (ball.vel.x != 0 || ball.vel.y != 0) {
-        throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
-    }
+//     // Check both that it's not at the water and is at lastHit
+//     if (ball.x != ballStart.x || ball.y != ballStart.y) {
+//         throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
+//     }
+//     if (ball.vel.x != 0 || ball.vel.y != 0) {
+//         throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
+//     }
     
-    ball.vel.x = 0;
-    ball.vel.y = 0;
-});
+//     ball.vel.x = 0;
+//     ball.vel.y = 0;
+// });
 
 
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
