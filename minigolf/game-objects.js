@@ -1,10 +1,18 @@
+// Enum for the layer values
+const layers = {
+    ball: 10,
+    hole: 9,
+    environment_front: 5,
+    environment_back: 4
+}
+Object.freeze(layers);
 
 function Ball(x, y)
 { 
     let newBall = new Sprite(x, y);
     newBall.diameter = 20;
     newBall.color = "#ffffff";
-    newBall.layer = 2;
+    newBall.layer = layers.ball;
     newBall.drag = friction;
     newBall.image = 'assets/ball.png'
     newBall.image.scale = .025
@@ -16,7 +24,7 @@ function Hole(x, y)
     let newHole = new Sprite(x, y);
     newHole.diameter = 40;
     newHole.collider = 'kinematic';
-    newHole.layer = 1;
+    newHole.layer = layers.hole;
     newHole.color = 'grey';
     newHole.stroke = 'yellow';
     return newHole;
@@ -25,7 +33,7 @@ function Hole(x, y)
 function Sandtrap(posX, posY, width, height)
 {
     let sandtrap = new Sprite(posX, posY, width, height);
-    sandtrap.layer = 1;
+    sandtrap.layer = layers.environment_front;
     sandtrap.collider = 'kinematic';
     sandtrap.color = 'tan';
     sandtrap.stroke = 'tan';
@@ -37,13 +45,13 @@ function Tubes(tubeaX, tubeaY, tubebX, tubebY)
     let tubeA = new Sprite(tubeaX, tubeaY);
     tubeA.diameter = 40;
     tubeA.collider = 'kinematic';
-    tubeA.layer = 1;
+    tubeA.layer = layers.environment_front;
     tubeA.color = '#4f2956';
     tubeA.stroke = '#4f2956';
 
     let tubeB = new Sprite(tubebX, tubebY, 50, 50);
     tubeB.collider = 'kinematic';
-    tubeB.layer = 1;
+    tubeB.layer = layers.environment_front;
     tubeB.color = '#4f2956';
     tubeB.stroke = '#4f2956';
     return [tubeA, tubeB];
@@ -54,7 +62,7 @@ function Windmill(posX, posY)
     windmillBody = new Sprite([[posX, posY], [posX - 25, posY + 75], [posX + 25, posY + 75], [posX, posY]],'s');
     windmillBody.color = 'white';
     windmillBody.stroke = 'white';
-    windmillBody.layer = 0;
+    windmillBody.layer = layers.environment_back;
 
     // windmillBlades = new Sprite(
     //     [[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]  // Bottom
@@ -108,7 +116,7 @@ function Water(posX, posY, shape) {
         water = new Sprite(posX, posY);
         water.diameter = 75;
     }
-    water.layer = 0;
+    water.layer = layers.environment_back;
     water.collider = 'kinematic';
     water.color = '#00008B';
     water.stroke = '#00008B';
@@ -121,7 +129,7 @@ function Volcano(posX, posY) {
     volcano = new Sprite([[posX, posY], [posX - 50, posY + 75], [posX + 50, posY + 75], [posX, posY]],'s');
     volcano.color = '#8B4513';
     volcano.stroke = '#8B0000';
-    volcano.layer = 0;
+    volcano.layer = layers.environment_front;
     volcano.collider = 'kinematic';
     return volcano;
 }
