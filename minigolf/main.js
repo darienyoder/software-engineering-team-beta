@@ -85,7 +85,7 @@ function setupLevel() {
     tubeB = tubes[1];
     gameObjects.push(tubeA);
     gameObjects.push(tubeB);
-    water = Water(99999460, 40, 'square');
+    water = Water(0, 0, 'square');
     gameObjects.push(water);
     volcano = Volcano(9999980, 75);
     gameObjects.push(volcano);
