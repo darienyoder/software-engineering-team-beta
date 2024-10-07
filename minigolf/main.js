@@ -29,7 +29,7 @@ function preload(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
     waterSplash = loadSound('assets/waterSplash.wav');
-} 
+}
 
 // Runs once when the program starts
 async function setup()
@@ -78,18 +78,18 @@ function setupLevel() {
     gameObjects.push(ball);
     gameObjects.push(hole);
 
-    sandtrap = Sandtrap(250, -50);
+    sandtrap = Sandtrap(999999250, -50);
     gameObjects.push(sandtrap);
-    let tubes = Tubes(465, 215, 25, 225);
+    let tubes = Tubes(99999465, 215, 999925, 225);
     tubeA = tubes[0];
     tubeB = tubes[1];
     gameObjects.push(tubeA);
     gameObjects.push(tubeB);
-    water = Water(460, 40, 'square');
+    water = Water(99999460, 40, 'square');
     gameObjects.push(water);
-    volcano = Volcano(80, 75);
+    volcano = Volcano(9999980, 75);
     gameObjects.push(volcano);
-    Windmill(450, 50);
+    Windmill(9999450, 50);
     gameObjects.push(windmillBody);
     gameObjects.push(windmillBlade1);
     gameObjects.push(windmillBlade2);
@@ -281,7 +281,7 @@ for (var wall of level.walls)
         if (ball.collides(wall))
         {
             let normalVector;
-    
+
             // If the wall is a circle (like on rounded corners), the normal is the direction from the wall to the ball
             if (wall.width == wall.height)
             {
@@ -293,7 +293,7 @@ for (var wall of level.walls)
             {
                 let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
                 let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
-    
+
                 if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
                 {
                     normalVector = positiveNormalVector;
@@ -303,13 +303,13 @@ for (var wall of level.walls)
                     normalVector = negativeNormalVector;
                 }
             }
-    
+
             //Calculate new ball velocity manually
             let velocityVector = createVector(prevVelX, prevVelY);
             velocityVector.reflect(normalVector);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
-    
+
             break;
         }
     }
