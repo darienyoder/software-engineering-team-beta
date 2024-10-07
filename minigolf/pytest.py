@@ -78,6 +78,9 @@ try:
     if has_errors:
         print("One or more tests failed.")
         exit(1)
+    else:
+        print("All tests passed.")
+        exit(0)
 finally:
     # Close the driver
     driver.quit()
