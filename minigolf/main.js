@@ -22,12 +22,13 @@ let prevVelX = 0;
 let prevVelY = 0;
 
 // Sound variables
-let hitSound, holeSound;
+let hitSound, holeSound, waterSplash;
 
 // Loading sound files
 function preload(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
+    waterSplash = loadSound('assets/waterSplash.wav');
 } 
 
 // Runs once when the program starts
@@ -64,6 +65,11 @@ function playHitSound() {
 //Hole sound function
 function playGoalSound() {
     holeSound.play();
+}
+
+//Hole sound function
+function playWaterSound() {
+    waterSplash.play();
 }
 
 function setupLevel() {
@@ -345,6 +351,7 @@ for (var wall of level.walls)
     ball.overlaps(tubeB);
 
     if (water.overlaps(ball)){
+        playWaterSound();
         ball.vel.x = 0;
         ball.vel.y = 0;
         ball.x = lastHit.x;
