@@ -209,7 +209,7 @@ async function handleGamePlay() {
         camera.zoom = 3;
     }
     else{
-        camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
+        // camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
     }
 
     // Draw the stroke counter
