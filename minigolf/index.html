@@ -3,7 +3,7 @@
     <head>
     	<meta charset="UTF-8" />
     	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    	<link rel="icon" href="favicon.png">
+    	<link rel="icon" href="data:," />
     	<title>Minigolf</title>
     	<style>
     		html,
@@ -13,30 +13,42 @@
     			padding: 0;
     			overscroll-behavior: none;
     		}
-			#colorButton {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+
+			.settingsButton {
+				padding: 10px;
+				background-color: #007bff;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				min-width: 180px; /* arbitrary length, adjust if necessary*/
         	}
-        	#colorButton:hover {
+        	.settingsButton:hover {
             	background-color: #0056b3;
         	}
+			#colorButton {
+				position: fixed;
+            	bottom: 20px;
+            	right: 20px;
+			}
+			#cameraButton {
+				position: fixed;
+            	bottom: 60px;
+            	right: 20px;
+			}
     	</style>
     </head>
     <body>
     	<main></main>
-		<button id="colorButton">Change Trajectory Color</button>
-
+		<button class="settingsButton" id="colorButton">Change Trajectory Color</button>
+		<button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
     	<!-- P5play -->
     	<script src="https://q5js.org/q5.js"></script>
     	<script src="https://p5play.org/v3/planck.min.js"></script>
     	<script src="https://p5play.org/v3/p5play.js"></script>
+
+		<!-- P5 -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
 
         <!-- Clipper.js -->
     	<script src="libraries/clipper.js"></script>

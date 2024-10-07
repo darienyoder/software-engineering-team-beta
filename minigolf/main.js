@@ -1,10 +1,8 @@
 const strokeForce = 100; // The speed of the ball when it is hit
-const friction = 0.5; // The rate at which the ball slows
+const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
-let tFrict = friction;
-
-var gameObjects = [], strokeCount = 0;
+var gameObjects = [], strokeCounts = []; strokeCount = 0;
 var level = new Level(); // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
@@ -12,15 +10,45 @@ var message = '', messageTime = 0;
 
 var gameState = 'menu';
 
+cameraModeOptions = ["Center", "Follow"] // Options that camera mode can take-- should be same as index.html's first camera option
+var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
+
 let trajectoryColor = 'red'; // Default trajectory color
-const trajectoryColors = ['red', 'blue', 'purple', 'orange']; // Colors to cycle through
+const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
 let currentColorIndex = 0;
+
+//variables for ball velocity from previous frame; used in wall physics calculations
+let prevVelX = 0;
+let prevVelY = 0;
+
+// Sound variables
+let hitSound, holeSound, waterSplash;
+
+// Loading sound files
+function preload(){
+    hitSound = loadSound('assets/golfPutt.wav');
+    holeSound = loadSound('assets/golfGoal.wav');
+    waterSplash = loadSound('assets/waterSplash.wav');
+} 
 
 // Runs once when the program starts
 async function setup()
 {
     // Initialize canvas
     createCanvas();
+
+    document.getElementById('cameraButton').addEventListener('click', () => {
+        // Change the trajectory color on click
+        cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
+        document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
+
+        if(cameraMode == "Center")
+        {
+        // Set the camera to be at the center of the canvas
+        camera.x = (level.bounds.right + level.bounds.left) / 2;
+        camera.y = (level.bounds.bottom + level.bounds.top) / 2;
+        }
+    });
 
     document.getElementById('colorButton').addEventListener('click', () => {
         // Change the trajectory color on click
@@ -29,10 +57,24 @@ async function setup()
     });
 }
 
+//Hit sound function
+function playHitSound() {
+    hitSound.play();
+}
+
+//Hole sound function
+function playGoalSound() {
+    holeSound.play();
+}
+
+//Hole sound function
+function playWaterSound() {
+    waterSplash.play();
+}
+
 function setupLevel() {
     // Create the level layout using "level-generation.js"
     level.load(0);
-
     gameObjects.push(ball);
     gameObjects.push(hole);
 
@@ -106,17 +148,15 @@ function drawMainMenu() {
     text("Press 'Enter' to Start", width / 2, height / 2);
 
     // Draw the background rectangle for the color visualization
-    fill('#408040'); // Set rectangle color to #408040
+    fill(floorColor); // Set rectangle color to #408040
     rect(width / 4, height * 2 / 3, width / 2, 130); // Rectangle behind the text
 
     // Set text color to the current trajectory color
     fill(trajectoryColor);
     textSize(18);
-    text("Current Trajectory color:", width / 2, height * 3 / 4);
+    text("Current Trajectory color: \n" + trajectoryColor, width / 2, (height * 2 / 3)+56);
 
-    // Draw the color name next to the rectangle
-    fill(trajectoryColor); // Text color same as the trajectory color
-    text(trajectoryColor, width / 2, height * 3 / 4 + 20);
+    fill(0);
 }
 
 
@@ -140,7 +180,10 @@ function drawGameOver() {
     textAlign(CENTER, CENTER);
     text("Game Over", width / 2, height / 4);
     textSize(24);
-    text(`Strokes: ${strokeCount}`, width / 2, height / 2);
+    var totalStrokes = 0;
+    for (var strokes of strokeCounts)
+        totalStrokes += strokes;
+    text(`Strokes: ${totalStrokes}`, width / 2, height / 2);
     text("Press 'R' to Restart", width / 2, height / 1.5);
 }
 
@@ -157,6 +200,14 @@ function keyPressed() {
 }
 
 async function handleGamePlay() {
+
+    // Sets ball position when camera is follow
+    if (cameraMode === "Follow") {
+        // Make camera follow the ball's position
+        camera.x = ball.x;
+        camera.y = ball.y;
+    }
+
     // Draw the stroke counter
     drawStrokeCount();
 
@@ -167,19 +218,20 @@ async function handleGamePlay() {
         pullStart = createVector(mouseX, mouseY);
     }
 
-    let trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
+    var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
     if (trueVel > 0) {
-        if (trueVel <= 0.2 && !canMove) {
-            ball.drag = 2; // Placeholder value for high drag
+        if (trueVel <= frictionTrigger && trueVel != 0) {
+            ball.drag = slowFriction;
         }
     } else {
-        ball.drag = tFrict; // Reset drag to tFrict if ball is moving faster than 1
+        ball.drag = friction;
     }
 
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
+        playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -222,12 +274,60 @@ async function handleGamePlay() {
         drawPutter();
     }
 
+    // Iterate through each wall in the level
+for (var wall of level.walls)
+    {
+        // Check if the ball and the wall have collided
+        if (ball.collides(wall))
+        {
+            let normalVector;
+    
+            // If the wall is a circle (like on rounded corners), the normal is the direction from the wall to the ball
+            if (wall.width == wall.height)
+            {
+                normalVector = createVector(ball.x, ball.y).sub(createVector(wall.x, wall.y)).normalized();
+            }
+            // If the wall is a segment, the normal is the rotation of the sprite +/- 90 degrees
+            // There is a normal vector for each side of the wall, so calculate each vector's distance to the ball and use whichever is closest
+            else
+            {
+                let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
+                let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
+    
+                if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
+                {
+                    normalVector = positiveNormalVector;
+                }
+                else
+                {
+                    normalVector = negativeNormalVector;
+                }
+            }
+    
+            //Calculate new ball velocity manually
+            let velocityVector = createVector(prevVelX, prevVelY);
+            velocityVector.reflect(normalVector);
+            ball.vel.x = velocityVector.x;
+            ball.vel.y = velocityVector.y;
+    
+            break;
+        }
+    }
+
+    //Store velocity from current frame for next frame's velocity calculations
+    //This avoids p5play applying it's own physics to the wall bounce before I apply mine
+    prevVelX = ball.vel.x;
+    prevVelY = ball.vel.y;
+
     // Hole functionality Ball must be going slow to get in hole
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
+        playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
+        strokeCounts.push(strokeCount);
+        strokeCount = 0;
         await sleep(3000);
 
         level.nextLevel();
@@ -251,6 +351,7 @@ async function handleGamePlay() {
     ball.overlaps(tubeB);
 
     if (water.overlaps(ball)){
+        playWaterSound();
         ball.vel.x = 0;
         ball.vel.y = 0;
         ball.x = lastHit.x;

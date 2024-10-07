@@ -334,11 +334,21 @@ class Level
         let levelWidth = this.bounds.right - this.bounds.left;
         let levelHeight = this.bounds.bottom - this.bounds.top;
 
-        // Position camera to center bounding rectangle
-        camera.x = (this.bounds.right + this.bounds.left) / 2;
-        camera.y = (this.bounds.bottom + this.bounds.top) / 2;
+        
+    // Position camera
+    if(cameraMode == "Center")
+        {
+            camera.x = (this.bounds.right + this.bounds.left) / 2;
+            camera.y = (this.bounds.bottom + this.bounds.top) / 2;
+        } else if (cameraMode == "Follow")
+        {
+            //camera.x = ballPosition.x;
+            camera.x = ball.x;
+            camera.y = ball.y;
+            // camera.y = ballPosition.y;
+        }
         camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
-
+        
         // Create golf ball at "ballPosition"
         ball = Ball(levelDict.ballPosition[0], levelDict.ballPosition[1]);
         ballStart = createVector(levelDict.ballPosition[0], levelDict.ballPosition[1]);
