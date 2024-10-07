@@ -21,6 +21,16 @@ let currentColorIndex = 0;
 let prevVelX = 0;
 let prevVelY = 0;
 
+// Sound variables
+let hitSound, holeSound, waterSplash;
+
+// Loading sound files
+function preload(){
+    hitSound = loadSound('assets/golfPutt.wav');
+    holeSound = loadSound('assets/golfGoal.wav');
+    waterSplash = loadSound('assets/waterSplash.wav');
+} 
+
 // Runs once when the program starts
 async function setup()
 {
@@ -45,6 +55,21 @@ async function setup()
         currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
         trajectoryColor = trajectoryColors[currentColorIndex];
     });
+}
+
+//Hit sound function
+function playHitSound() {
+    hitSound.play();
+}
+
+//Hole sound function
+function playGoalSound() {
+    holeSound.play();
+}
+
+//Hole sound function
+function playWaterSound() {
+    waterSplash.play();
 }
 
 function setupLevel() {
@@ -206,6 +231,7 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
+        playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -297,6 +323,7 @@ for (var wall of level.walls)
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
+        playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
@@ -324,6 +351,7 @@ for (var wall of level.walls)
     ball.overlaps(tubeB);
 
     if (water.overlaps(ball)){
+        playWaterSound();
         ball.vel.x = 0;
         ball.vel.y = 0;
         ball.x = lastHit.x;
