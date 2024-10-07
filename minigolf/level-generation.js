@@ -340,7 +340,7 @@ class Level
         {
             camera.x = (this.bounds.right + this.bounds.left) / 2;
             camera.y = (this.bounds.bottom + this.bounds.top) / 2;
-            camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
+            camera.zoom = 1;
         } else if (cameraMode == "Follow")
         {
             //camera.x = ballPosition.x;
