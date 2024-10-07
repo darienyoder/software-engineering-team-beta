@@ -206,7 +206,7 @@ async function handleGamePlay() {
         // Make camera follow the ball's position
         camera.x = ball.x;
         camera.y = ball.y;
-        camera.zoom = 1;
+        camera.zoom = 3;
     }
 
     // Draw the stroke counter
