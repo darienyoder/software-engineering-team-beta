@@ -5,8 +5,6 @@ const SUB = 1;
 var ballStart, lastHit;
 
 var floorColor = "#408040";
-var minFloorColor = "#102010";
-var maxFloorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
 
@@ -33,40 +31,6 @@ class Level
         this.walls = []; // Wall sprites
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
-
-        this.maxHeight = 2.0;
-        this.minHeight = -2.0;
-
-        this.heightModifiers = [
-            {
-                action: "add",
-                height: 2.0,
-                shape: "oval",
-                data: {
-                    x: 10075,
-                    y: 0,
-                    w: 75,
-                    h: 75,
-                },
-                gradient: {
-                    type: "radial",
-                }
-            },
-            {
-                action: "add",
-                height: -2.0,
-                shape: "oval",
-                data: {
-                    x: 10225,
-                    y: 150,
-                    w: 75,
-                    h: 75,
-                },
-                gradient: {
-                    type: "radial",
-                }
-            },
-        ];
 
     }
 
@@ -189,67 +153,6 @@ class Level
         return [posWalls, negWalls];
     }
 
-    makeRect(x, y, w, h)
-    {
-        return [
-            {"X": x, "Y": y},
-            {"X": x + w, "Y": y},
-            {"X": x + w, "Y": y + h},
-            {"X": x, "Y": y + h},
-        ];
-    }
-
-    makeOval(x, y, w, h = 0, arcLength = 359)
-    {
-        let polygon = [];
-        const pointCount = 32;
-        let circleScale = createVector(w, h);
-        let circlePoint = createVector(0, 1);
-        for (var i = 0; i <= arcLength / 360 * arcLength; i++)
-        {
-            circlePoint.rotate(360 / pointCount);
-            polygon.push( { "X": x + circlePoint.x * circleScale.x, "Y": y + circlePoint.y * circleScale.y } );
-        }
-        if (arcLength != 360)
-            polygon.push( { "X": x, "Y": y } );
-        return polygon;
-    }
-
-    makePolygon(points)
-    {
-        let polygon = [];
-        for (var i = 0; i < points.length; i += 2)
-        {
-            polygon.push( { "X": Number(points[i]), "Y": Number(points[i + 1]) } );
-        }
-        return polygon;
-    }
-
-    makeShape(shapeName, args)
-    {
-        switch (shapeName.toLowerCase())
-        {
-            case "rect":
-            case "rectangle":
-                return this.makeRect(Number(args[0]), Number(args[1]), Number(args[2]), Number(args[3]));
-                break;
-
-            case "circle":
-            case "circ":
-            case "oval":
-                return this.makeOval(Number(args[0]), Number(args[1]), Number(args[2]), args.length < 4 ? Number(args[2]) : Number(args[3]), args.length < 5 ? 359 : args[4]);
-                break;
-
-            case "poly":
-            case "polygon":
-                return this.makePolygon(args);
-                break;
-
-            default:
-                break;
-        }
-    }
-
     parseAreaString(areaString)
     {
         let posWalls = [];
@@ -322,8 +225,45 @@ class Level
                 else
                     continue;
 
-                shape.polygon = this.makeShape(statement[1], statement.slice(2))
+                switch (statement[1].toLowerCase())
+                {
+                    case "rect":
+                    case "rectangle":
+                        shape.polygon = [
+                            {"X": Number(statement[2]), "Y": Number(statement[3])},
+                            {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3])},
+                            {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3]) + Number(statement[5])},
+                            {"X": Number(statement[2]), "Y": Number(statement[3]) + Number(statement[5])},
+                        ];
+                        break;
 
+                    case "circle":
+                    case "circ":
+                    case "oval":
+                        const pointCount = 64;
+                        let circleScale = createVector(Number(statement[4]), statement.length < 6 ? Number(statement[4]) : Number(statement[5]));
+                        let arcLength = statement.length < 7 ? 359 : statement[6];
+                        let circlePoint = createVector(0, 1);
+                        for (var i = 0; i <= arcLength / 360 * arcLength; i++)
+                        {
+                            circlePoint.rotate(360 / pointCount);
+                            shape.polygon.push( { "X": Number(statement[2]) + circlePoint.x * circleScale.x, "Y": Number(statement[3]) + circlePoint.y * circleScale.y } );
+                        }
+                        if (arcLength != 360)
+                            shape.polygon.push( { "X": Number(statement[2]), "Y": Number(statement[3]) } );
+                        break;
+
+                    case "poly":
+                    case "polygon":
+                        for (var i = 2; i < statement.length; i += 2)
+                        {
+                            shape.polygon.push( { "X": Number(statement[i]), "Y": Number(statement[i + 1]) } );
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
                 this.modifyLevelShape(shape, posWalls, negWalls);
             }
         }
@@ -344,53 +284,6 @@ class Level
             gameObjects.pop();
             // gameObjects.pop().deconstructorFunction();
         }
-    }
-
-    shapeHasPoint(shape, pointX, pointY)
-    {
-        switch (shape.shape) {
-            case "rect":
-                return (
-                    pointX > point.data.x
-                    && pointX < point.data.x + point.data.w
-                    && pointY > point.data.y
-                    && pointY < point.data.y + point.data.h
-                ) ? 1 : 0;
-                break;
-
-            case "oval":
-                let weight = Math.max(0.0, 1 - createVector((pointX - shape.data.x) / shape.data.w, (pointY - shape.data.y) / shape.data.h).mag());
-                if (shape.gradient.type == "flat")
-                    return Math.ceil(weight);
-                else if (shape.gradient.type == "radial")
-                    return weight;
-                break;
-
-            default:
-                return false;
-        }
-    }
-
-    getHeight(x, y)
-    {
-        let height = 0;
-        for (var shape of this.heightModifiers)
-        {
-            let shapeWeight = this.shapeHasPoint(shape, x, y);
-            if (shapeWeight != 0)
-            {
-                if (shape.action == "add")
-                    height += shape.height * shapeWeight;
-                else
-                    height = shape.height * shapeWeight;
-            }
-        }
-        return height;
-    }
-
-    getNormal(x, y)
-    {
-        return (   createVector(x + 0.5, y, this.getHeight(x + 0.5, y)).sub(createVector(x - 0.5, y, this.getHeight(x - 0.5, y))).normalize()   ).cross(   createVector(x, y + 0.5, this.getHeight(x, y + 0.5)).sub(createVector(x, y - 0.5, this.getHeight(x, y - 0.5))).normalize()   );
     }
 
     createGameObject(objectData) {
@@ -441,10 +334,21 @@ class Level
         let levelWidth = this.bounds.right - this.bounds.left;
         let levelHeight = this.bounds.bottom - this.bounds.top;
 
-        // Position camera to center bounding rectangle
-        camera.x = (this.bounds.right + this.bounds.left) / 2;
-        camera.y = (this.bounds.bottom + this.bounds.top) / 2;
-        camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
+
+    // Position camera
+    if(cameraMode == "Center")
+        {
+            camera.x = (this.bounds.right + this.bounds.left) / 2;
+            camera.y = (this.bounds.bottom + this.bounds.top) / 2;
+            camera.zoom = 1;
+        } else if (cameraMode == "Follow")
+        {
+            //camera.x = ballPosition.x;
+            camera.x = ball.x;
+            camera.y = ball.y;
+            camera.zoom = 3;
+            // camera.y = ballPosition.y;
+        }
 
         // Create golf ball at "ballPosition"
         ball = Ball(levelDict.ballPosition[0], levelDict.ballPosition[1]);
@@ -523,64 +427,15 @@ class Level
         endShape(CLOSE);
     }
 
-    drawHeight(modifier)
-    {
-        let drawColor;
-        if (modifier.height > 0)
-            drawColor = maxFloorColor;
-        else
-            drawColor = minFloorColor;
-
-        switch (modifier.shape)
-        {
-            case "oval":
-                const ringCount = 24;
-                let opacity = Math.floor(255 / ringCount).toString(16);
-                if (opacity.length == 1)
-                    opacity = "0" + opacity;
-                fill(drawColor + opacity);
-                stroke("#00000000");
-                for (var i = 0; i < ringCount; i++)
-                {
-                    let center = levelToScreen(createVector(modifier.data.x, modifier.data.y));
-                    ellipse(center.x, center.y, modifier.data.w / ringCount * i * camera.zoom * 2, modifier.data.h / ringCount * i * camera.zoom * 2);
-                }
-                break;
-            default:
-
-        }
-    }
-
-    lerpColor(a, b, amount)
-    {
-        var ah = parseInt(a.replace(/#/g, ''), 16),
-            ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
-            bh = parseInt(b.replace(/#/g, ''), 16),
-            br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
-            rr = ar + amount * (br - ar),
-            rg = ag + amount * (bg - ag),
-            rb = ab + amount * (bb - ab);
-
-        return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
-    }
-
     // Draws the stage
     drawStage()
     {
         background(backgroundColor);
 
         stroke("#000000");
-
-        let baseScale = (0 - this.minHeight) / (this.maxHeight - this.minHeight)
-        let baseFloorColor = this.lerpColor(minFloorColor, maxFloorColor, baseScale);//"#" + this.lerpHexColor(maxFloorColor.slice(1, 2), minFloorColor.slice(1, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(3, 2), minFloorColor.slice(3, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(5, 2), minFloorColor.slice(5, 2), baseScale);
-
         for (var wall = 0; wall < this.positiveWalls.length; wall++)
         {
-            this.drawPolygon(this.positiveWalls[wall], baseFloorColor);
-        }
-        for (var hM = 0; hM < this.heightModifiers.length; hM++)
-        {
-            this.drawHeight(this.heightModifiers[hM]);
+            this.drawPolygon(this.positiveWalls[wall], floorColor);
         }
         for (var wall = 0; wall < this.negativeWalls.length; wall++)
         {

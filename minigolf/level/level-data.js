@@ -5,8 +5,8 @@ var levelData = [
         area: `
 
             ADD rect 10000, 0, 300, 150;
-            HEIGHT + 3: ramp (0, 0), (50, 50), 10;
-            HEIGHT = 0: hill (x, y), radius;
+            HEIGHT = 0 -> 3: ramp (0, 0), (50, 50), 10;
+            HEIGHT + 0: hill (x, y), radius;
 
         `,
         obstacles: `

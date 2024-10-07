@@ -260,7 +260,7 @@ async function handleGamePlay() {
             }
 
             //Calculate new ball velocity manually
-            const wallFriction = 0.9;
+            const wallFriction = 0.6;
             let velocityVector = createVector(prevVelX, prevVelY);
             velocityVector.reflect(normalVector).mult(wallFriction);
             ball.vel.x = velocityVector.x;
