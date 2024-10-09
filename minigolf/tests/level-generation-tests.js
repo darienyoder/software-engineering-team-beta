@@ -27,7 +27,7 @@ addTest('LevelGen Basic Rect', async () => {
     for (var h = 1; h < 10; h++) // Otherwise, there'd be no area
     {
         // Ex. "ADD rect 3, 5, 7, 6;"
-        let testArea = parseAreaString("ADD rect " + String(x) + " " + String(y) + " " + String(w) + " " + String(h) + ";")
+        let testArea = level.parseAreaString("ADD rect " + String(x) + " " + String(y) + " " + String(w) + " " + String(h) + ";")
         if (!compareAreas(testArea, [[[
             {"X": x, "Y": y},
             {"X": x + w, "Y": y},
@@ -64,7 +64,7 @@ addTest('LevelGen Shape Addition', async () => {
     for (var h2 = 20; h2 < 30; h2++)
     {
         // Ex. ADD rect 3, 5, 7, 6; ADD rect 5, 9, 23, 28;"
-        let testArea = parseAreaString(
+        let testArea = level.parseAreaString(
         "ADD rect " + String(x1) + " " + String(y1) + " " + String(w1) + " " + String(h1) + ";"
         + "ADD rect" + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";"
     )
@@ -107,7 +107,7 @@ addTest('LevelGen Shape Subtraction', async () => {
     for (var h2 = 20; h2 < 21; h2++)
     {
         // Ex. ADD rect 3, 5, 7, 6; SUB rect 5, 9, 23, 28;"
-        let testArea = parseAreaString(
+        let testArea = level.parseAreaString(
         "ADD rect " + String(x1) + " " + String(y1) + " " + String(w1) + " " + String(h1) + ";"
         + "SUB rect " + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";"
     )
@@ -149,7 +149,7 @@ addTest('LevelGen Donut', async () => {
     for (var h2 = 1; h2 < h1 - y2; h2++)
     {
         // Ex. ADD rect 3, 5, 7, 6; SUB rect 6, 8, 3, 2;"
-        let testArea = parseAreaString(
+        let testArea = level.parseAreaString(
         "ADD rect " + String(x1) + " " + String(y1) + " " + String(w1) + " " + String(h1) + ";"
         + "SUB rect " + String(x2) + " " + String(y2) + " " + String(w2) + " " + String(h2) + ";"
     )
@@ -175,7 +175,7 @@ addTest('LevelGen Donut', async () => {
 addTest('LevelGen Brackets', async () => {
 
     // The SUB statement should not affect the ADD statement outside the brackets
-    let testArea = cleanPolygons(parseAreaString(`
+    let testArea = level.cleanPolygons(level.parseAreaString(`
         ADD rect 0, 0, 5, 10;
         {
             ADD rect 6, 0, 9, 10;
