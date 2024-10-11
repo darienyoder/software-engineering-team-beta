@@ -168,7 +168,16 @@ function levelSelect() {
 }
 
 function drawLevelSelect() {
-    //TBD
+    var squaresPerRow = 10;
+    var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
+    var horizontalOffset = squareSize/2;
+    var verticalOffset = squareSize/2;
+    let levelSquares = [];
+
+    for (var levelNum = 0; levelNum < levelData.length; levelNum++) {
+        levelSquares[levelNum] = square(horizontalOffset + levelNum * (horizontalOffset + squareSize), verticalOffset, squareSize);
+    }
+    
 }
 
 
