@@ -124,7 +124,10 @@ async function draw()
 
     if (gameState === 'menu') {
         drawMainMenu();
-    } else if (gameState === 'playing') {
+    } else if (gameState === 'levelSelect') {
+        drawLevelSelect();
+    }
+    else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
         level.drawStage();
         handleGamePlay();
@@ -160,9 +163,12 @@ function drawMainMenu() {
     fill(0);
 }
 
+function levelSelect() {
+    gameState = 'levelSelect';
+}
+
 function drawLevelSelect() {
-
-
+    //TBD
 }
 
 
@@ -197,7 +203,7 @@ function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
     } else if (gameState === 'menu' && (key === 'z' || key === 'Z')) {
-        drawLevelSelect();
+        levelSelect();
     } else if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
