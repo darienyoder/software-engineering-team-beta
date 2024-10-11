@@ -125,7 +125,7 @@ async function draw()
     if (gameState === 'menu') {
         drawMainMenu();
     } else if (gameState === 'levelSelect') {
-        drawLevelSelect();
+        handleLevelSelect();
     }
     else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
@@ -172,20 +172,20 @@ function levelSquare(x, y, size, levelNum) {
     square(x, y, size);
     textSize(size/1.5);
     fill(0);
-    text(levelNum + 1, x + size/2, y + size/2);
+    text(levelNum, x + size/2, y + size/2);
 }
 
-function drawLevelSelect() {
+function handleLevelSelect() {
     var squaresPerRow = 10;
     var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
     var horizontalOffset = squareSize/2;
     var verticalOffset = squareSize/2;
 
     for (var levelNum = 0; levelNum < levelData.length; levelNum++) {
-        levelSquare(horizontalOffset + levelNum * (horizontalOffset + squareSize), verticalOffset, squareSize, levelNum);
-        
+        var x = horizontalOffset + (levelNum % 10) * (horizontalOffset + squareSize);
+        var y = verticalOffset + floor(levelNum/10) * (verticalOffset + squareSize);
+        levelSquare(x, y, squareSize, levelNum + 1);
     }
-    
     
 }
 
