@@ -167,16 +167,25 @@ function levelSelect() {
     gameState = 'levelSelect';
 }
 
+function levelSquare(x, y, size, levelNum) {
+    fill(color(255, 0, 0));
+    square(x, y, size);
+    textSize(size/1.5);
+    fill(0);
+    text(levelNum + 1, x + size/2, y + size/2);
+}
+
 function drawLevelSelect() {
     var squaresPerRow = 10;
     var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
     var horizontalOffset = squareSize/2;
     var verticalOffset = squareSize/2;
-    let levelSquares = [];
 
     for (var levelNum = 0; levelNum < levelData.length; levelNum++) {
-        levelSquares[levelNum] = square(horizontalOffset + levelNum * (horizontalOffset + squareSize), verticalOffset, squareSize);
+        levelSquare(horizontalOffset + levelNum * (horizontalOffset + squareSize), verticalOffset, squareSize, levelNum);
+        
     }
+    
     
 }
 
