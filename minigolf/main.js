@@ -146,6 +146,7 @@ function drawMainMenu() {
 
     textSize(24);
     text("Press 'Enter' to Start", width / 2, height / 2);
+    text("Press 'z' for Level Select", width / 2, height / 1.7);
 
     // Draw the background rectangle for the color visualization
     fill(floorColor); // Set rectangle color to #408040
@@ -157,6 +158,11 @@ function drawMainMenu() {
     text("Current Trajectory color: \n" + trajectoryColor, width / 2, (height * 2 / 3)+56);
 
     fill(0);
+}
+
+function drawLevelSelect() {
+
+
 }
 
 
@@ -190,10 +196,12 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
+    } else if (gameState === 'menu' && (key === 'z' || key === 'Z')) {
+        drawLevelSelect();
     } else if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
-    }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
+    } else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
     } 
     
