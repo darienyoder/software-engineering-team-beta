@@ -173,7 +173,9 @@ function levelSquare(x, y, size, levelNum) {
     let lvlSqr = square(x, y, size);
     textSize(size/1.5);
     fill(0);
-    text(levelNum, x + size/2, y + size/2);
+    text(levelNum, x + size/2, y + size/2); //puts level number in square
+
+    //if square is clicked
     if (mouse.pressing() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
         playLevel(levelNum - 1);
     }
@@ -185,20 +187,21 @@ function playLevel(levelNum) {
     ballInGoal = false;
     canMove = true;
     setupLevel(levelNum);
-    fullGameMode = false;
+    fullGameMode = false; //prevents it from going to next level
     gameState = 'playing';
 }
 
 function handleLevelSelect() {
     var squaresPerRow = 10;
-    var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
+    //based on width of screen, picks square size so they will be evenly spaced
+    var squareSize = width / ((squaresPerRow * 3 + 1) / 2); 
     var horizontalOffset = squareSize/2;
     var verticalOffset = squareSize/2;
     let lvlSqr = [];
 
-    for (var levelNum = 0; levelNum < levelData.length; levelNum++) {
-        var x = horizontalOffset + (levelNum % 10) * (horizontalOffset + squareSize);
-        var y = verticalOffset + floor(levelNum/10) * (verticalOffset + squareSize);
+    for (var levelNum = 0; levelNum < levelData.length; levelNum++) { //make level squares for however many levels currently exist
+        var x = horizontalOffset + (levelNum % 10) * (horizontalOffset + squareSize); //spaces squares out from walls and each other
+        var y = verticalOffset + floor(levelNum/10) * (verticalOffset + squareSize); //for if there are multiple rows
         lvlSqr[levelNum] = levelSquare(x, y, squareSize, levelNum + 1);
     }
     
@@ -377,17 +380,22 @@ for (var wall of level.walls)
         strokeCount = 0;
         await sleep(3000);
 
-        if (fullGameMode) level.nextLevel();
-        else {
+        if (fullGameMode) {
+            level.nextLevel(); 
+            ballInGoal = false;
+            canMove = true;
+        }
+        else { //if in single level mode
+            
+            //clear everything
             clearGameObjects();
             for (var wall of level.walls)
             {
                 wall.remove();
             }
-            gameState = 'menu';
+
+            gameState = 'menu'; //return to menu
         }
-        ballInGoal = false;
-        canMove = true;
     }
 
     if (sandtrap.overlaps(ball)) 
