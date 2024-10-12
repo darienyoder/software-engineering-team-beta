@@ -87,7 +87,7 @@ function setupLevel() {
     gameObjects.push(tubeB);
     water = Water(460, 40, 'square');
     gameObjects.push(water);
-    volcano = Volcano(80, 75);
+    volcano = Volcano(50, 75);
     gameObjects.push(volcano);
     Windmill(450, 50);
     gameObjects.push(windmillBody);
