@@ -177,7 +177,7 @@ function levelSquare(x, y, size, levelNum) {
     text(levelNum, x + size/2, y + size/2); //puts level number in square
 
     //if square is clicked
-    if (mouse.pressing() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
+    if (mouse.pressed() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
         playLevel(levelNum - 1);
     }
     return lvlSqr;
