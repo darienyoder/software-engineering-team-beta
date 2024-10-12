@@ -60,33 +60,61 @@ addTest('Ball Movement', async () => {
     }
 });
 
+addTest('Ball Angle Bounce Test', async () => {
+    function getBallAngle(ball) {
+        const angleRadians = Math.atan2(ball.vel.y, ball.vel.x);
+        const angleDegrees = angleRadians * (180 / Math.PI);
+        return parseFloat(angleDegrees.toFixed(2));
+    }
+    
+    ball.vel = { x: 0, y: 0 };
+    ball.x = ball.y = 50;
+    await sleep(50); //Let the ball settle
+
+    ball.applyForce(50, -50);
+    await sleep(100); // Wait for the ball to move
+    let initAngle = getBallAngle(ball);
+
+    await sleep(600); // Wait for the ball to bounce
+    let finAngle = getBallAngle(ball);
+
+    // // Simple angle monitoring, uncomment if needed
+    // console.log("initAngle: " + initAngle);
+    // console.log("finAngle: " + finAngle);
+
+    if ((finAngle * -1) !== initAngle) {
+        throw new Error('Expected ball to move');
+    }
+    ball.vel = { x: 0, y: 0 };
+});
+
+
+
+
 // Add this test to your existing tests array
 addTest('Ball Drag Test', async () => {
-    ball.vel.x = frictionTrigger * 2; // Set a velocity greater than 0.2
-    ball.vel.y = 0;
+    ball.vel = { x: (frictionTrigger * 2), y: 0 };
+
     // Check the drag value
     // May also want to check that it's not in a sandtrap here
     if (ball.drag !== friction) {
         throw new Error(`Expected ball.drag to be ${friction} when moving, but got ${ball.drag}`);
     }
 
-    ball.vel.x = frictionTrigger / 2; // velocity that triggers high drag
-    ball.vel.y = frictionTrigger / 2; // velocity that triggers high drag
-
+    ball.vel = { x: (frictionTrigger / 2), y: (frictionTrigger / 2)}
     await sleep(50); //Might need to be proportional to slowFriction
 
     // Check the drag value
     if (ball.drag !== slowFriction) {
         throw new Error(`${ball.velocity} Expected ball.drag to be ${slowFriction} when velocity in trigger range, but got ${ball.drag}`);
     }
-
+    ball.vel = { x: 0, y: 0 };
 });
 
 
 // Test the Sand
 addTest('Sand test', async () => {
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
     ball.x = sandtrap.x - 40;
     ball.y = sandtrap.y + 5;
     
@@ -107,15 +135,13 @@ addTest('Sand test', async () => {
     }
 
     // Reset velocity so it doesn't mess up other tests
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
 });
 
 
 // Test that the windmill works
 addTest('Windmill Push Test', async () => {
-    ball.velocity.x = 0;
-    ball.velocity.y = 0;
+    ball.vel = { x: 0, y: 0 };
     initialX = ball.velocity.x;
     initialY = ball.velocity.y;
     ball.x = windmillBody.x -50;
@@ -127,31 +153,27 @@ addTest('Windmill Push Test', async () => {
     if (ball.x == initialX && ball.y == initialY) {
         throw new Error(`Expected ball to not be at ${initialX.x}, ${initialY.y}, but it is at ${ball.x}, ${ball.y}`);
     }
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
 });
 
 
 // Test that the tubes work as expected
 // Be careful because on some maps, tubes put the ball in goal  
 addTest('Tube Teleportation test', async () => {
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
     ball.x = tubeA.x;
     ball.y = tubeA.y;
     await sleep(1000); // Wait for any animations
     if ((ball.x == tubeA.x) && (ball.y == tubeA.y)) {
         throw new Error(`Expected ball to not be at ${tubeA.x}, ${tubeA.y}, but it is at ${ball.x}, ${ball.y}`);
     }
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
 });
 
 
 // Test the water
 addTest('Water Test', async () => {
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
     ball.x = water.x;
     ball.y = water.y;
     initialX = ball.velocity.x
@@ -161,8 +183,7 @@ addTest('Water Test', async () => {
     if (ball.x == water.x && ball.y == water.y && ball.x != lastHit.x && ball.y != lastHit.y) {
         throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${ball.x}, ${ball.y}`);
     }
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
 });
 
 
@@ -170,8 +191,8 @@ addTest('Water Test', async () => {
 addTest('Volcano Test', async () => {
     ball.x = ballStart.x;
     ball.y = ballStart.y;
-    ball.vel.x = 5;
-    await sleep (300)
+    ball.vel.y = -5; // Fling it upwards so it bounces into the volcano
+    await sleep (600)
 
     // Check both that it's not at the water and is at lastHit
     if (ball.x != ballStart.x || ball.y != ballStart.y) {
@@ -181,15 +202,13 @@ addTest('Volcano Test', async () => {
         throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
     }
     
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
 });
 
 
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
 addTest('Ball in Goal Logic', async () => {
-    ball.vel.x = 0;
-    ball.vel.y = 0;
+    ball.vel = { x: 0, y: 0 };
     //The following lines are a teleport
     ball.x = hole.x;
     ball.y = hole.y;
