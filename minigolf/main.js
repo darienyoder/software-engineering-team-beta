@@ -201,8 +201,8 @@ function handleLevelSelect() {
     let lvlSqr = [];
 
     for (var levelNum = 0; levelNum < levelData.length; levelNum++) { //make level squares for however many levels currently exist
-        var x = horizontalOffset + (levelNum % 10) * (horizontalOffset + squareSize); //spaces squares out from walls and each other
-        var y = verticalOffset + floor(levelNum/10) * (verticalOffset + squareSize); //for if there are multiple rows
+        var x = horizontalOffset + (levelNum % squaresPerRow) * (horizontalOffset + squareSize); //spaces squares out from walls and each other
+        var y = verticalOffset + floor(levelNum/squaresPerRow) * (verticalOffset + squareSize); //for if there are multiple rows
         lvlSqr[levelNum] = levelSquare(x, y, squareSize, levelNum + 1);
     }
     
