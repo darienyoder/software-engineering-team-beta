@@ -9,6 +9,7 @@ var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
 
 var gameState = 'menu';
+var fullGameMode = true;
 
 cameraModeOptions = ["Center", "Follow"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
@@ -72,9 +73,9 @@ function playWaterSound() {
     waterSplash.play();
 }
 
-function setupLevel() {
+function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
-    level.load(0);
+    level.load(levelNum);
     gameObjects.push(ball);
     gameObjects.push(hole);
 
@@ -110,7 +111,7 @@ function startGame() {
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
-    setupLevel();
+    setupLevel(0);
     gameState = 'playing';
 }
 
@@ -169,10 +170,23 @@ function levelSelect() {
 
 function levelSquare(x, y, size, levelNum) {
     fill(color(255, 0, 0));
-    square(x, y, size);
+    let lvlSqr = square(x, y, size);
     textSize(size/1.5);
     fill(0);
     text(levelNum, x + size/2, y + size/2);
+    if (mouse.pressing() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
+        playLevel(levelNum - 1);
+    }
+    return lvlSqr;
+}
+
+function playLevel(levelNum) {
+    strokeCount = 0;
+    ballInGoal = false;
+    canMove = true;
+    setupLevel(levelNum);
+    fullGameMode = false;
+    gameState = 'playing';
 }
 
 function handleLevelSelect() {
@@ -180,11 +194,12 @@ function handleLevelSelect() {
     var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
     var horizontalOffset = squareSize/2;
     var verticalOffset = squareSize/2;
+    let lvlSqr = [];
 
     for (var levelNum = 0; levelNum < levelData.length; levelNum++) {
         var x = horizontalOffset + (levelNum % 10) * (horizontalOffset + squareSize);
         var y = verticalOffset + floor(levelNum/10) * (verticalOffset + squareSize);
-        levelSquare(x, y, squareSize, levelNum + 1);
+        lvlSqr[levelNum] = levelSquare(x, y, squareSize, levelNum + 1);
     }
     
 }
@@ -362,7 +377,15 @@ for (var wall of level.walls)
         strokeCount = 0;
         await sleep(3000);
 
-        level.nextLevel();
+        if (fullGameMode) level.nextLevel();
+        else {
+            clearGameObjects();
+            for (var wall of level.walls)
+            {
+                wall.remove();
+            }
+            gameState = 'menu';
+        }
         ballInGoal = false;
         canMove = true;
     }
