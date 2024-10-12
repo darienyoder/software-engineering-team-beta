@@ -108,6 +108,7 @@ function setupLevel(levelNum) {
 }
 
 function startGame() {
+    fullGameMode = true;
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
