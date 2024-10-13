@@ -298,6 +298,8 @@ class Level
                 return Tubes(objectData.position[0], objectData.position[1], objectData.targetPosition[0], objectData.targetPosition[1]);
             case 'Windmill':
                 return Windmill(objectData.position[0], objectData.position[1]);
+            case 'Volcano':
+                return Volcano(objectData.position[0],objectData.position[1]);
             default:
                 console.warn(`Unknown object type: ${objectData.type}`);
                 return null;
@@ -308,6 +310,7 @@ class Level
     {
         // Delete any existing level
         this.clear();
+        // Check for obstacles and delete them
 
         // Get walls from area string
         let areaPolygons = this.parseAreaString(levelDict.area);

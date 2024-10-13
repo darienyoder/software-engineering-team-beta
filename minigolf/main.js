@@ -75,7 +75,7 @@ function playWaterSound() {
 function setupLevel() {
     // Create the level layout using "level-generation.js"
     level.load(0);
-    gameObjects.push(ball);
+    // gameObjects.push(ball);
     gameObjects.push(hole);
 
     sandtrap = Sandtrap(250, -50);
@@ -89,12 +89,13 @@ function setupLevel() {
     gameObjects.push(water);
     volcano = Volcano(50, 75);
     gameObjects.push(volcano);
-    Windmill(450, 50);
-    gameObjects.push(windmillBody);
-    gameObjects.push(windmillBlade1);
-    gameObjects.push(windmillBlade2);
-    gameObjects.push(windmillBlade3);
-    gameObjects.push(windmillBlade4);
+    let windmill = Windmill(450, 50);
+    windmillBody = windmill[0];
+    windmillBlade1 = windmill[1];
+    windmillBlade2 = windmill[2];
+    windmillBlade3 = windmill[3];
+    windmillBlade4 = windmill[4];
+    gameObjects.push(windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4);
 
     // Creating the putter head
     putter = new Sprite(-1000, -1000, 10, 30, 'n');
@@ -103,6 +104,7 @@ function setupLevel() {
     putter.stroke = 'black';
     //putter.debug = true;
     putter.offset.x = -20;
+    gameObjects.push(ball);
 
 }
 
@@ -231,7 +233,7 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
-        playHitSound(); //Playing the ball hit sound
+        // playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -323,7 +325,7 @@ for (var wall of level.walls)
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        playGoalSound();
+        // playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
@@ -333,7 +335,29 @@ for (var wall of level.walls)
         level.nextLevel();
         ballInGoal = false;
         canMove = true;
+
+        // Remove all objects
+        // Most no longer work after removal
+        // The tubes, windmill, hole, and ball have caveats
+        // New objects will likely need to be initialized per level
+        volcano.remove();
+        // water.remove();
+        // tubeA.remove();
+        // tubes.remove(); // Trying to remove both at once here doesn't work at all. It also stops code under it
+        // tubeB.remove(); // Tube A can still send the ball here if B is missing
+        // sandtrap.remove();
+        // windmillBody.remove();
+        // windmillBlade1.remove();
+        // windmillBlade2.remove();
+        // windmillBlade3.remove();
+        // windmillBlade4.remove();
+        // ball.remove(); // The ball and hole can't be removed properly
+        // hole.remove(); // It gets rid of the current one rather than the previous level's
+                          // It's likely because these two are global
     }
+
+
+    // Tentative
 
     if (sandtrap.overlaps(ball)) 
     {
@@ -351,7 +375,7 @@ for (var wall of level.walls)
     ball.overlaps(tubeB);
 
     if (water.overlaps(ball)){
-        playWaterSound();
+        // playWaterSound();
         ball.vel.x = 0;
         ball.vel.y = 0;
         ball.x = lastHit.x;

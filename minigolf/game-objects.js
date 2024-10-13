@@ -6,8 +6,8 @@ function Ball(x, y)
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    newBall.image = 'assets/ball.png'
-    newBall.image.scale = .025
+    // newBall.image = 'assets/ball.png'
+    // newBall.image.scale = .025
     return newBall;
 }
 
@@ -63,9 +63,9 @@ function Windmill(posX, posY)
     //     ,[posX-75, posY+12.5], [posX-75, posY-12.5], [posX, posY]] // Left
     //     );
     // windmillBlades.color = 'black';
+    // windmillBlades.color = "#B8860B";
+    // windmillBlades.stroke = 'black';
     // windmillBlades.collider = 'kinematic';
-    // windmillBlade3 = new Sprite([[posX,posY], [posX-12.5, posY-75], [posX+12.5, posY-75], [posX, posY]]);
-    // windmillBlade4 = new Sprite([[posX,posY], [posX-75, posY+12.5], [posX-75, posY-12.5], [posX, posY]]);
 
     // Doing the blades all at once caused them to not get filled in (p5play doesn't like concave shapes).
     // If they weren't filled in, they could capture and drag the ball, especially during tests.
@@ -74,29 +74,36 @@ function Windmill(posX, posY)
     windmillBlade1 = new Sprite([[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]]);
     windmillBlade1.y= posY;
     windmillBlade1.offset.y = 50;
-    windmillBlade1.color = 'black';
+    windmillBlade1.color="#B8860B";
+    windmillBlade1.stroke = 'black';
     windmillBlade1.collider = 'kinematic';
 
     // Right blade
     windmillBlade2 = new Sprite([[posX,posY], [posX+75, posY+12.5], [posX+75, posY-12.5], [posX, posY]]);
     windmillBlade2.x= posX;
     windmillBlade2.offset.x = 50;
-    windmillBlade2.color = 'black';
+    windmillBlade2.color = "#B8860B";
+    windmillBlade2.stroke = 'black';
     windmillBlade2.collider = 'kinematic';
 
     // Top Blade
     windmillBlade3 = new Sprite([[posX,posY], [posX-12.5, posY-75], [posX+12.5, posY-75], [posX, posY]]);
     windmillBlade3.y= posY;
     windmillBlade3.offset.y = -50;
-    windmillBlade3.color = 'black';
+    windmillBlade3.color = "#B8860B";
+    windmillBlade3.stroke = "black";
     windmillBlade3.collider = 'kinematic';
 
     // Left Blade
     windmillBlade4 = new Sprite([[posX,posY], [posX-75, posY+12.5], [posX-75, posY-12.5], [posX, posY]]);
     windmillBlade4.x= posX;
     windmillBlade4.offset.x = -50;
-    windmillBlade4.color = 'black';
+    windmillBlade4.color = "#B8860B";
+    windmillBlade4.stroke = "black";
     windmillBlade4.collider = 'kinematic';
+
+    // Come back to this later; 
+    return [windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4];
 }
 
 function Water(posX, posY, shape) {
