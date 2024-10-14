@@ -216,6 +216,13 @@ addTest('Ball in Goal Logic', async () => {
     if (!ballInGoal) throw new Error('Expected ballInGoal to be true after moving into the hole');
 });
 
+addTest('Camera Moving', async () => {
+    cameraMode = "Follow";
+    draw();
+    if (camera.x != ball.x || camera.y != ball.y)
+        throw new Error('Camera position did not match ball position');
+    cameraMode = "Center";
+});
 
 // Test that menu works
 // Test only runs if it starts on 'menu' screen
