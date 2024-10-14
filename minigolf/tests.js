@@ -205,6 +205,27 @@ addTest('Volcano Test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
+// Sound loading test
+addTest('Sound Load Test', async () => {
+    // Preload sounds
+    hitSound = loadSound('assets/golfPutt.wav');
+    holeSound = loadSound('assets/golfGoal.wav');
+    waterSplash = loadSound('assets/waterSplash.wav');
+
+    // Create an array to hold sound objects for checking
+    const sounds = [hitSound, holeSound, waterSplash];
+
+    // Check if sounds are loaded correctly
+    for (const sound of sounds) {
+        if (sound === null) {
+            throw new Error('Expected sound to be loaded but got null');
+        }
+        if (!(sound instanceof Audio)) {
+            throw new Error('Expected sound to be an instance of Audio');
+        }
+    }
+});
+
 
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
 addTest('Ball in Goal Logic', async () => {
