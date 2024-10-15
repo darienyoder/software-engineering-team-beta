@@ -78,14 +78,15 @@ function setupLevel() {
     gameObjects.push(ball);
     gameObjects.push(hole);
 
-    sandtrap = Sandtrap(250, -50);
+    sandtrap = Sandtrap([[170, -50], [210, -68], [240, -75], [260,-73], [280,-70], [320,-55], [170,-50] ]);
+    //sandtrap.debug= true;
     gameObjects.push(sandtrap);
     let tubes = Tubes(465, 215, 25, 225);
     tubeA = tubes[0];
     tubeB = tubes[1];
     gameObjects.push(tubeA);
     gameObjects.push(tubeB);
-    water = Water(460, 40, 'square');
+    water = Water([[400,0], [500,0], [500,80], [450,75], [430, 50], [400,0]]);
     gameObjects.push(water);
     volcano = Volcano(80, 75);
     gameObjects.push(volcano);

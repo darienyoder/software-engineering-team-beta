@@ -25,6 +25,9 @@ function Hole(x, y)
 function Sandtrap(posX, posY, width, height)
 {
     let sandtrap = new Sprite(posX, posY, width, height);
+    sandtrap.addCollider([[140,-20],  [160,-30], [200, -50], [170,-50], [143, -25], [140,-20]]);
+    // using addCollider() you can add to a sprite to allow for concave shapes
+    //sandtrap.debug=true;
     sandtrap.layer = 1;
     sandtrap.collider = 'kinematic';
     sandtrap.color = 'tan';
@@ -99,15 +102,20 @@ function Windmill(posX, posY)
     windmillBlade4.collider = 'kinematic';
 }
 
-function Water(posX, posY, shape) {
+function Water(posX, posY/*, shape*/) {
     
-    if (shape == 'square'){
+    /*if (shape == 'square'){
         water = new Sprite(posX, posY, 75, 75);
     }
-    else{
+    else{*/
         water = new Sprite(posX, posY);
-        water.diameter = 75;
-    }
+        //water.diameter = 75;
+    //}
+    //Just looking at the polygonal sprites, still need to
+    //implement them without hardcoding but could be tricky when using
+    //the addCollider() function (like used in sandtrap)
+
+    //water.debug=true;
     water.layer = 0;
     water.collider = 'kinematic';
     water.color = '#00008B';
