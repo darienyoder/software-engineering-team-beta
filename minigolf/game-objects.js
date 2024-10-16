@@ -11,6 +11,43 @@ class GameObject {
             this.sprites = [_sprites];
     }
 
+    update() {
+        switch (type) {
+            case "ball":
+
+                break;
+
+            case "hole":
+
+                break;
+
+            case "sandtrap":
+                if (sprites[0].overlaps(ball))
+                {
+                    ball.vel.x = ball.vel.x / 3;
+                    ball.vel.y = ball.vel.y / 3;
+                }
+                break;
+
+            case "tubes":
+
+                break;
+
+            case "windmill":
+
+                break;
+
+            case "water":
+
+                break;
+
+            case "lava":
+
+                break;
+
+        }
+    }
+
     // For each element in "sprites",
     // remove the element if it is a sprite,
     // or remove every subelement in the element
@@ -142,7 +179,7 @@ function Windmill(posX, posY)
     windmillBlade4.collider = 'kinematic';
 
     // Come back to this later;
-    return new GameObject("tubes", [windmillBody,
+    return new GameObject("windmill", [windmillBody,
                                     [
                                         windmillBlade1,
                                         windmillBlade2,
@@ -150,10 +187,12 @@ function Windmill(posX, posY)
                                         windmillBlade4
                                     ]
                                  ]);
-    return [windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4];
+    // return [windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4];
 }
 
 function Water(posX, posY, shape) {
+
+    let water;
 
     if (shape == 'square'){
         water = new Sprite(posX, posY, 75, 75);
@@ -166,16 +205,18 @@ function Water(posX, posY, shape) {
     water.collider = 'kinematic';
     water.color = '#00008B';
     water.stroke = '#00008B';
-    return water;
+
+    return new GameObject("water", water);
 }
 
 // Volcano sets ball to beginning
 // May be fun to have it generate "lava" objects
 function Volcano(posX, posY) {
-    volcano = new Sprite([[posX, posY], [posX - 50, posY + 75], [posX + 50, posY + 75], [posX, posY]],'s');
+    let volcano = new Sprite([[posX, posY], [posX - 50, posY + 75], [posX + 50, posY + 75], [posX, posY]],'s');
     volcano.color = '#8B4513';
     volcano.stroke = '#8B0000';
     volcano.layer = 0;
     volcano.collider = 'kinematic';
-    return volcano;
+
+    return new GameObject("lava", volcano);
 }

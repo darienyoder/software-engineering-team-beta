@@ -29,7 +29,7 @@ function preload(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
     waterSplash = loadSound('assets/waterSplash.wav');
-} 
+}
 
 // Runs once when the program starts
 async function setup()
@@ -197,11 +197,17 @@ function keyPressed() {
         runTests();
     }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
-    } 
-    
+    }
+
 }
 
 async function handleGamePlay() {
+
+    // Behavior for all GameObjects, *including* the ball and hole
+    // To add or change behavior, go to game-objects.js
+    for (var object of gameObjects)
+        object.update();
+
 
     // Sets ball position when camera is follow
     if (cameraMode === "Follow") {
@@ -277,13 +283,13 @@ async function handleGamePlay() {
     }
 
     // Iterate through each wall in the level
-for (var wall of level.walls)
+    for (var wall of level.walls)
     {
         // Check if the ball and the wall have collided
         if (ball.collides(wall))
         {
             let normalVector;
-    
+
             // If the wall is a circle (like on rounded corners), the normal is the direction from the wall to the ball
             if (wall.width == wall.height)
             {
@@ -295,7 +301,7 @@ for (var wall of level.walls)
             {
                 let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
                 let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
-    
+
                 if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
                 {
                     normalVector = positiveNormalVector;
@@ -305,13 +311,13 @@ for (var wall of level.walls)
                     normalVector = negativeNormalVector;
                 }
             }
-    
+
             //Calculate new ball velocity manually
             let velocityVector = createVector(prevVelX, prevVelY);
             velocityVector.reflect(normalVector);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
-    
+
             break;
         }
     }
@@ -335,31 +341,12 @@ for (var wall of level.walls)
         level.nextLevel();
         ballInGoal = false;
         canMove = true;
-
-        // Remove all objects
-        // Most no longer work after removal
-        // The tubes, windmill, hole, and ball have caveats
-        // New objects will likely need to be initialized per level
-        volcano.remove();
-        // water.remove();
-        // tubeA.remove();
-        // tubes.remove(); // Trying to remove both at once here doesn't work at all. It also stops code under it
-        // tubeB.remove(); // Tube A can still send the ball here if B is missing
-        // sandtrap.remove();
-        // windmillBody.remove();
-        // windmillBlade1.remove();
-        // windmillBlade2.remove();
-        // windmillBlade3.remove();
-        // windmillBlade4.remove();
-        // ball.remove(); // The ball and hole can't be removed properly
-        // hole.remove(); // It gets rid of the current one rather than the previous level's
-                          // It's likely because these two are global
     }
 
 
     // Tentative
 
-    if (sandtrap.overlaps(ball)) 
+    if (sandtrap.overlaps(ball))
     {
         ball.vel.x = ball.vel.x / 3;
         ball.vel.y = ball.vel.y / 3;
