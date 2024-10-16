@@ -32,6 +32,11 @@
             user-select: none;
             /* Prevent text selection */
         }
+
+        .selected {
+            outline: 2px dashed blue;
+            /* Highlight selected object */
+        }
     </style>
 </head>
 
@@ -43,7 +48,6 @@
         <div draggable="true" id="sandtrap" class="draggable">🏖️</div>
         <div draggable="true" id="tubes" class="draggable">🌀</div>
         <div draggable="true" id="windmill" class="draggable">🌪️</div>
-        <!-- Add more objects here -->
     </div>
     <div id="canvas"></div>
     <div id="properties">
@@ -60,6 +64,7 @@
         const canvas = document.getElementById('canvas');
         const exportBtn = document.getElementById('export-btn');
         const parInput = document.getElementById('par-input');
+        let selectedObject = null; // To track the selected object
 
         // Ensure par input is positive
         parInput.addEventListener('input', () => {
@@ -81,7 +86,6 @@
             if (objectId === 'ball') {
                 const existingBall = document.getElementById('ball-instance');
                 if (existingBall) {
-                    // If a ball already exists, remove it
                     canvas.removeChild(existingBall);
                 }
             }
@@ -107,11 +111,13 @@
             let offsetX, offsetY;
 
             element.addEventListener('mousedown', (e) => {
+                // Select the object
+                selectObject(element);
+
                 offsetX = e.clientX - element.getBoundingClientRect().left;
                 offsetY = e.clientY - element.getBoundingClientRect().top;
 
                 function mouseMoveHandler(e) {
-                    // Snap to grid
                     const x = Math.floor((e.clientX - canvas.getBoundingClientRect().left - offsetX) / 20) * 20;
                     const y = Math.floor((e.clientY - canvas.getBoundingClientRect().top - offsetY) / 20) * 20;
                     element.style.left = `${x}px`;
@@ -126,7 +132,29 @@
                 document.addEventListener('mousemove', mouseMoveHandler);
                 document.addEventListener('mouseup', mouseUpHandler);
             });
+
+            element.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering on canvas click
+                selectObject(element);
+            });
         }
+
+        // Function to select an object
+        function selectObject(element) {
+            if (selectedObject) {
+                selectedObject.classList.remove('selected'); // Remove selection from previous object
+            }
+            selectedObject = element;
+            selectedObject.classList.add('selected'); // Highlight selected object
+        }
+
+        // Handle keydown event for deleting the selected object
+        document.addEventListener('keydown', (e) => {
+            if (selectedObject && (e.key === 'Delete' || e.key === 'Backspace')) {
+                canvas.removeChild(selectedObject);
+                selectedObject = null; // Clear selection
+            }
+        });
 
         // Event listeners for dragging objects in the left panel
         document.querySelectorAll('.draggable').forEach(item => {
