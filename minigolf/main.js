@@ -9,8 +9,9 @@ var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
 
 var gameState = 'menu';
+var fullGameMode = true;
 
-cameraModeOptions = ["Center", "Follow"] // Options that camera mode can take-- should be same as index.html's first camera option
+cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
 let trajectoryColor = 'red'; // Default trajectory color
@@ -29,7 +30,7 @@ function preload(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
     waterSplash = loadSound('assets/waterSplash.wav');
-} 
+}
 
 // Runs once when the program starts
 async function setup()
@@ -38,16 +39,21 @@ async function setup()
     createCanvas();
 
     document.getElementById('cameraButton').addEventListener('click', () => {
+
         // Change the trajectory color on click
         cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
         document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
 
-        if(cameraMode == "Center")
-        {
-        // Set the camera to be at the center of the canvas
-        camera.x = (level.bounds.right + level.bounds.left) / 2;
-        camera.y = (level.bounds.bottom + level.bounds.top) / 2;
-        }
+        if (gameState==='playing'){
+
+            if(cameraMode == "Center")
+            {
+            // Set the camera to be at the center of the canvas
+            camera.x = (level.bounds.right + level.bounds.left) / 2;
+            camera.y = (level.bounds.bottom + level.bounds.top) / 2;
+            }
+
+    }
     });
 
     document.getElementById('colorButton').addEventListener('click', () => {
@@ -72,9 +78,9 @@ function playWaterSound() {
     waterSplash.play();
 }
 
-function setupLevel() {
+function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
-    level.load(0);
+    level.load(levelNum);
     gameObjects.push(ball);
     gameObjects.push(hole);
 
@@ -107,10 +113,11 @@ function setupLevel() {
 }
 
 function startGame() {
+    fullGameMode = true;
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
-    setupLevel();
+    setupLevel(0);
     gameState = 'playing';
 }
 
@@ -124,7 +131,10 @@ async function draw()
 
     if (gameState === 'menu') {
         drawMainMenu();
-    } else if (gameState === 'playing') {
+    } else if (gameState === 'levelSelect') {
+        handleLevelSelect();
+    }
+    else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
         level.drawStage();
         handleGamePlay();
@@ -146,6 +156,7 @@ function drawMainMenu() {
 
     textSize(24);
     text("Press 'Enter' to Start", width / 2, height / 2);
+    text("Press 'z' for Level Select", width / 2, height / 1.7);
 
     // Draw the background rectangle for the color visualization
     fill(floorColor); // Set rectangle color to #408040
@@ -157,6 +168,49 @@ function drawMainMenu() {
     text("Current Trajectory color: \n" + trajectoryColor, width / 2, (height * 2 / 3)+56);
 
     fill(0);
+}
+
+function levelSelect() {
+    gameState = 'levelSelect';
+}
+
+function levelSquare(x, y, size, levelNum) {
+    fill(color(255, 0, 0));
+    let lvlSqr = square(x, y, size);
+    textSize(size/1.5);
+    fill(0);
+    text(levelNum, x + size/2, y + size/2); //puts level number in square
+
+    //if square is clicked
+    if (mouse.pressed() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
+        playLevel(levelNum - 1);
+    }
+    return lvlSqr;
+}
+
+function playLevel(levelNum) {
+    strokeCount = 0;
+    ballInGoal = false;
+    canMove = true;
+    setupLevel(levelNum);
+    fullGameMode = false; //prevents it from going to next level
+    gameState = 'playing';
+}
+
+function handleLevelSelect() {
+    var squaresPerRow = 10;
+    //based on width of screen, picks square size so they will be evenly spaced
+    var squareSize = width / ((squaresPerRow * 3 + 1) / 2); 
+    var horizontalOffset = squareSize/2;
+    var verticalOffset = squareSize/2;
+    let lvlSqr = [];
+
+    for (var levelNum = 0; levelNum < levelData.length; levelNum++) { //make level squares for however many levels currently exist
+        var x = horizontalOffset + (levelNum % squaresPerRow) * (horizontalOffset + squareSize); //spaces squares out from walls and each other
+        var y = verticalOffset + floor(levelNum/squaresPerRow) * (verticalOffset + squareSize); //for if there are multiple rows
+        lvlSqr[levelNum] = levelSquare(x, y, squareSize, levelNum + 1);
+    }
+    
 }
 
 
@@ -190,13 +244,20 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
+
+        //Need this for camera to work
+        if (cameraModeOptions.length<=1){
+        cameraModeOptions.push("Follow");
+        
+    } else if (gameState === 'menu' && (key === 'z' || key === 'Z')) {
+        levelSelect();
     } else if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
-    }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
+    } else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
-    } 
-    
+    }
+
 }
 
 async function handleGamePlay() {
@@ -281,7 +342,7 @@ for (var wall of level.walls)
         if (ball.collides(wall))
         {
             let normalVector;
-    
+
             // If the wall is a circle (like on rounded corners), the normal is the direction from the wall to the ball
             if (wall.width == wall.height)
             {
@@ -293,7 +354,7 @@ for (var wall of level.walls)
             {
                 let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
                 let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
-    
+
                 if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
                 {
                     normalVector = positiveNormalVector;
@@ -303,13 +364,13 @@ for (var wall of level.walls)
                     normalVector = negativeNormalVector;
                 }
             }
-    
+
             //Calculate new ball velocity manually
             let velocityVector = createVector(prevVelX, prevVelY);
             velocityVector.reflect(normalVector);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
-    
+
             break;
         }
     }
@@ -330,12 +391,25 @@ for (var wall of level.walls)
         strokeCount = 0;
         await sleep(3000);
 
-        level.nextLevel();
-        ballInGoal = false;
-        canMove = true;
+        if (fullGameMode) {
+            level.nextLevel(); 
+            ballInGoal = false;
+            canMove = true;
+        }
+        else { //if in single level mode
+            
+            //clear everything
+            clearGameObjects();
+            for (var wall of level.walls)
+            {
+                wall.remove();
+            }
+
+            gameState = 'menu'; //return to menu
+        }
     }
 
-    if (sandtrap.overlaps(ball)) 
+    if (sandtrap.overlaps(ball))
     {
         ball.vel.x = ball.vel.x / 3;
         ball.vel.y = ball.vel.y / 3;
