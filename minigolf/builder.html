@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Level Builder</title>
+    <style>
+        /* Basic styles */
+        #left-panel, #canvas, #properties {
+            float: left;
+            margin: 10px;
+        }
+        #canvas {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            border: 1px solid #ccc;
+            background-image: linear-gradient(transparent 19px, rgba(0, 0, 0, 0.1) 19px, rgba(0, 0, 0, 0.1) 20px);
+            background-size: 20px 20px; /* Grid size */
+        }
+        .draggable {
+            padding: 5px;
+            margin: 5px;
+            background-color: #f0f0f0;
+            cursor: move;
+            user-select: none; /* Prevent text selection */
+        }
+    </style>
+</head>
+<body>
+    <div id="left-panel">
+        <h3>Available Objects</h3>
+        <div draggable="true" id="ball" class="draggable">⚽</div>
+        <div draggable="true" id="hole" class="draggable">🕳️</div>
+        <div draggable="true" id="sandtrap" class="draggable">🏖️</div>
+        <div draggable="true" id="tubes" class="draggable">🌀</div>
+        <div draggable="true" id="windmill" class="draggable">🌪️</div>
+        <!-- Add more objects here -->
+    </div>
+    <div id="canvas"></div>
+    <div id="properties">
+        <h3>Properties</h3>
+        <div>
+            <label for="par-input">Par:</label>
+            <input type="number" id="par-input" min="1" value="2">
+        </div>
+        <div id="property-info"></div>
+        <button id="export-btn">Export Level</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const exportBtn = document.getElementById('export-btn');
+        const parInput = document.getElementById('par-input');
+
+        // Ensure par input is positive
+        parInput.addEventListener('input', () => {
+            const value = parseInt(parInput.value, 10);
+            if (value < 1) {
+                parInput.value = Math.abs(value);
+            }
+        });
+
+        canvas.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('drop', (e) => {
+            const objectId = e.dataTransfer.getData('text/plain');
+            const element = document.getElementById(objectId);
+
+            // Check if the dropped object is a ball
+            if (objectId === 'ball') {
+                const existingBall = document.getElementById('ball-instance');
+                if (existingBall) {
+                    // If a ball already exists, replace it
+                    canvas.removeChild(existingBall);
+                }
+            }
+
+            const newObject = element.cloneNode(true);
+            newObject.id = 'ball-instance'; // Give it a unique ID
+            newObject.style.position = 'absolute';
+
+            // Snap to grid
+            let x = Math.floor(e.offsetX / 20) * 20; // Grid size is 20px
+            let y = Math.floor(e.offsetY / 20) * 20; // Grid size is 20px
+
+            newObject.style.left = `${x}px`;
+            newObject.style.top = `${y}px`;
+            canvas.appendChild(newObject);
+        });
+
+        // Event listeners for dragging objects
+        document.querySelectorAll('.draggable').forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.id);
+            });
+        });
+
+        exportBtn.addEventListener('click', () => {
+            const levels = [];
+            const level = {
+                ballPosition: [],
+                holePosition: [],
+                area: ``,
+                obstacles: [],
+                par: Math.abs(parseInt(parInput.value, 10)), // Get the par value
+            };
+
+            const objects = Array.from(canvas.children);
+            objects.forEach(obj => {
+                const rect = obj.getBoundingClientRect();
+                const x = Math.round(rect.left - canvas.getBoundingClientRect().left);
+                const y = Math.round(rect.top - canvas.getBoundingClientRect().top);
+
+                if (obj.id === 'ball-instance') {
+                    level.ballPosition = [x, y];
+                } else if (obj.id === 'hole') {
+                    level.holePosition = [x, y];
+                } else {
+                    let obstacleData = { type: obj.id, position: [x, y] };
+
+                    if (obj.id === 'sandtrap') {
+                        obstacleData.width = 100; // Example width
+                        obstacleData.height = 30; // Example height
+                    } else if (obj.id === 'tubes') {
+                        obstacleData.targetPosition = [x + 25, y + 25]; // Example target position
+                    }
+
+                    level.obstacles.push(obstacleData);
+                }
+            });
+
+            level.area = `ADD rect 0, 0, 600, 400;`;
+            
+            // Prepare the obstacles for export
+            let obstacleExport = level.obstacles.map(obstacle => {
+                switch (obstacle.type) {
+                    case 'sandtrap':
+                        return `ADD Sandtrap ${obstacle.position[0]} ${obstacle.position[1]} ${obstacle.width} ${obstacle.height};`;
+                    case 'tubes':
+                        return `ADD Tubes ${obstacle.position[0]} ${obstacle.position[1]} ${obstacle.targetPosition[0]} ${obstacle.targetPosition[1]};`;
+                    case 'windmill':
+                        return `ADD Windmill ${obstacle.position[0]} ${obstacle.position[1]};`;
+                    default:
+                        console.warn(`Unknown object type: ${obstacle.type}`);
+                        return '';
+                }
+            }).join('\n');
+
+            level.obstacles = obstacleExport;
+
+            levels.push(level);
+            const levelData = JSON.stringify(levels, null, 2);
+
+            // Save to local storage
+            localStorage.setItem('levels', levelData);
+            console.log('Level saved to local storage:', levelData);
+
+            // Create a blob and download it as a file
+            const blob = new Blob([levelData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'level.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            console.log('Level downloaded as level.json');
+        });
+    </script>
+</body>
+</html>
