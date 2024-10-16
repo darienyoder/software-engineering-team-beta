@@ -1,6 +1,41 @@
 
+class GameObject {
+
+    // "type" specifies what object it is.
+    // "sprites" contains every P5play sprite the object uses.
+    constructor(_type = "", _sprites = []) {
+        this.type = _type;
+        if (Array.isArray(_sprites))
+            this.sprites = _sprites;
+        else
+            this.sprites = [_sprites];
+    }
+
+    // For each element in "sprites",
+    // remove the element if it is a sprite,
+    // or remove every subelement in the element
+    // if it is an array of sprites.
+    delete() {
+
+        for (var sprite of sprites)
+        {
+            if (Array.isArray(sprite))
+            {
+                for (var subSprite of sprite)
+                {
+                    subSprite.remove();
+                }
+            }
+            else
+            {
+                sprite.remove();
+            }
+        }
+    }
+}
+
 function Ball(x, y)
-{ 
+{
     let newBall = new Sprite(x, y);
     newBall.diameter = 20;
     newBall.color = "#ffffff";
@@ -8,7 +43,8 @@ function Ball(x, y)
     newBall.drag = friction;
     // newBall.image = 'assets/ball.png'
     // newBall.image.scale = .025
-    return newBall;
+
+    return new GameObject("ball", newBall);
 }
 
 function Hole(x, y)
@@ -19,7 +55,8 @@ function Hole(x, y)
     newHole.layer = 1;
     newHole.color = 'grey';
     newHole.stroke = 'yellow';
-    return newHole;
+
+    return new GameObject("hole", newHole);
 }
 
 function Sandtrap(posX, posY, width, height)
@@ -29,7 +66,8 @@ function Sandtrap(posX, posY, width, height)
     sandtrap.collider = 'kinematic';
     sandtrap.color = 'tan';
     sandtrap.stroke = 'tan';
-    return sandtrap;
+
+    return new GameObject("sandtrap", sandtrap);
 }
 
 function Tubes(tubeaX, tubeaY, tubebX, tubebY)
@@ -46,7 +84,8 @@ function Tubes(tubeaX, tubeaY, tubebX, tubebY)
     tubeB.layer = 1;
     tubeB.color = '#4f2956';
     tubeB.stroke = '#4f2956';
-    return [tubeA, tubeB];
+
+    return new GameObject("tubes", [tubeA, tubeB]);
 }
 
 function Windmill(posX, posY)
@@ -102,12 +141,20 @@ function Windmill(posX, posY)
     windmillBlade4.stroke = "black";
     windmillBlade4.collider = 'kinematic';
 
-    // Come back to this later; 
+    // Come back to this later;
+    return new GameObject("tubes", [windmillBody,
+                                    [
+                                        windmillBlade1,
+                                        windmillBlade2,
+                                        windmillBlade3,
+                                        windmillBlade4
+                                    ]
+                                 ]);
     return [windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4];
 }
 
 function Water(posX, posY, shape) {
-    
+
     if (shape == 'square'){
         water = new Sprite(posX, posY, 75, 75);
     }
