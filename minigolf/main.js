@@ -346,29 +346,6 @@ async function handleGamePlay() {
 
     // Tentative
 
-    if (sandtrap.overlaps(ball))
-    {
-        ball.vel.x = ball.vel.x / 3;
-        ball.vel.y = ball.vel.y / 3;
-    }
-
-    if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
-        ball.x = tubeB.x;
-        ball.y = tubeB.y;
-        ball.vel.x = 3;
-        ball.vel.y = 0;
-    }
-
-    ball.overlaps(tubeB);
-
-    if (water.overlaps(ball)){
-        // playWaterSound();
-        ball.vel.x = 0;
-        ball.vel.y = 0;
-        ball.x = lastHit.x;
-        ball.y = lastHit.y;
-    }
-
     if(volcano.overlaps(ball)){
         ball.vel.x = 0;
         ball.vel.y = 0;

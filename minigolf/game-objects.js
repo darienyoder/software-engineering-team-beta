@@ -30,6 +30,15 @@ class GameObject {
                 break;
 
             case "tubes":
+                if (sprites[0].overlaps(ball) && ball.vel.x <= 1.5 && ball.vel.y <= 1.5)
+                {
+                    ball.x = sprites[1].x;
+                    ball.y = sprites[1].y;
+                    ball.vel.x = 3;
+                    ball.vel.y = 0;
+                }
+
+                ball.overlaps(sprites[1]);
 
                 break;
 
@@ -39,9 +48,26 @@ class GameObject {
 
             case "water":
 
+                if (sprites[0].overlaps(ball))
+                {
+                    // playWaterSound();
+                    ball.vel.x = 0;
+                    ball.vel.y = 0;
+                    ball.x = lastHit.x;
+                    ball.y = lastHit.y;
+                }
+
                 break;
 
             case "lava":
+
+                if (sprites[1].overlaps(ball))
+                {
+                    ball.vel.x = 0;
+                    ball.vel.y = 0;
+                    ball.x = ballStart.x;
+                    ball.y = ballStart.y;
+                }
 
                 break;
 
