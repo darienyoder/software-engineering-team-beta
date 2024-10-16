@@ -10,7 +10,7 @@ var message = '', messageTime = 0;
 
 var gameState = 'menu';
 
-cameraModeOptions = ["Center", "Follow"] // Options that camera mode can take-- should be same as index.html's first camera option
+cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
 let trajectoryColor = 'red'; // Default trajectory color
@@ -38,16 +38,21 @@ async function setup()
     createCanvas();
 
     document.getElementById('cameraButton').addEventListener('click', () => {
+
         // Change the trajectory color on click
         cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
         document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
+        
+        if (gameState==='playing'){
 
-        if(cameraMode == "Center")
-        {
-        // Set the camera to be at the center of the canvas
-        camera.x = (level.bounds.right + level.bounds.left) / 2;
-        camera.y = (level.bounds.bottom + level.bounds.top) / 2;
-        }
+            if(cameraMode == "Center")
+            {
+            // Set the camera to be at the center of the canvas
+            camera.x = (level.bounds.right + level.bounds.left) / 2;
+            camera.y = (level.bounds.bottom + level.bounds.top) / 2;
+            }
+
+    }
     });
 
     document.getElementById('colorButton').addEventListener('click', () => {
@@ -190,6 +195,11 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
+        
+        //Need this for camera to work
+        if (cameraModeOptions.length()<=1){
+        cameraModeOptions.push("Follow");
+        }
     } else if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
