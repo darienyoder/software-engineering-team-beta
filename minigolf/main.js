@@ -200,7 +200,7 @@ function playLevel(levelNum) {
 function handleLevelSelect() {
     var squaresPerRow = 10;
     //based on width of screen, picks square size so they will be evenly spaced
-    var squareSize = width / ((squaresPerRow * 3 + 1) / 2); 
+    var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
     var horizontalOffset = squareSize/2;
     var verticalOffset = squareSize/2;
     let lvlSqr = [];
@@ -210,7 +210,7 @@ function handleLevelSelect() {
         var y = verticalOffset + floor(levelNum/squaresPerRow) * (verticalOffset + squareSize); //for if there are multiple rows
         lvlSqr[levelNum] = levelSquare(x, y, squareSize, levelNum + 1);
     }
-    
+
 }
 
 
@@ -247,8 +247,9 @@ function keyPressed() {
 
         //Need this for camera to work
         if (cameraModeOptions.length<=1){
-        cameraModeOptions.push("Follow");
-        
+            cameraModeOptions.push("Follow");
+        }
+
     } else if (gameState === 'menu' && (key === 'z' || key === 'Z')) {
         levelSelect();
     } else if (gameState === 'playing' && key === '`') {
@@ -392,12 +393,12 @@ for (var wall of level.walls)
         await sleep(3000);
 
         if (fullGameMode) {
-            level.nextLevel(); 
+            level.nextLevel();
             ballInGoal = false;
             canMove = true;
         }
         else { //if in single level mode
-            
+
             //clear everything
             clearGameObjects();
             for (var wall of level.walls)
