@@ -58,7 +58,7 @@ try:
     # Open your HTML file via the local server
     driver.get(f'http://localhost:{PORT}/{HTML_FILE}')
 
-    time.sleep(20)
+    time.sleep(35) #increase wait time to allow page to completely load
 
     # Execute additional JavaScript functions if needed
     driver.execute_script("startGame()")
