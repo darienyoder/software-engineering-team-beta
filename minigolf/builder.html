@@ -37,6 +37,11 @@
             outline: 2px dashed blue;
             /* Highlight selected object */
         }
+
+        #shape-inputs {
+            display: none;
+            /* Initially hidden */
+        }
     </style>
 </head>
 
@@ -48,6 +53,20 @@
         <div draggable="true" id="sandtrap" class="draggable">🏖️</div>
         <div draggable="true" id="tubes" class="draggable">🌀</div>
         <div draggable="true" id="windmill" class="draggable">🌪️</div>
+        <button id="draw-area-btn">Draw Area</button>
+        <div id="shape-inputs">
+            <h4>Define Shape</h4>
+            <select id="shape-operation">
+                <option value="ADD">Add</option>
+                <option value="SUB">Subtract</option>
+            </select>
+            <input type="text" id="shape-type" placeholder="rect/oval">
+            <input type="number" id="shape-x" placeholder="X">
+            <input type="number" id="shape-y" placeholder="Y">
+            <input type="number" id="shape-width" placeholder="Width">
+            <input type="number" id="shape-height" placeholder="Height">
+            <button id="add-shape-btn">Add Shape</button>
+        </div>
     </div>
     <div id="canvas"></div>
     <div id="properties">
@@ -64,6 +83,15 @@
         const canvas = document.getElementById('canvas');
         const exportBtn = document.getElementById('export-btn');
         const parInput = document.getElementById('par-input');
+        const drawAreaBtn = document.getElementById('draw-area-btn');
+        const shapeInputs = document.getElementById('shape-inputs');
+        const shapeOperationInput = document.getElementById('shape-operation');
+        const shapeTypeInput = document.getElementById('shape-type');
+        const shapeXInput = document.getElementById('shape-x');
+        const shapeYInput = document.getElementById('shape-y');
+        const shapeWidthInput = document.getElementById('shape-width');
+        const shapeHeightInput = document.getElementById('shape-height');
+        const addShapeBtn = document.getElementById('add-shape-btn');
         let selectedObject = null; // To track the selected object
 
         // Ensure par input is positive
@@ -71,6 +99,51 @@
             const value = parseInt(parInput.value, 10);
             if (value < 1) {
                 parInput.value = Math.abs(value);
+            }
+        });
+
+        drawAreaBtn.addEventListener('click', () => {
+            shapeInputs.style.display = shapeInputs.style.display === 'none' ? 'block' : 'none';
+        });
+
+        addShapeBtn.addEventListener('click', () => {
+            const operation = shapeOperationInput.value;
+            const type = shapeTypeInput.value.toLowerCase();
+            const x = parseInt(shapeXInput.value, 10);
+            const y = parseInt(shapeYInput.value, 10);
+            const width = parseInt(shapeWidthInput.value, 10);
+            const height = parseInt(shapeHeightInput.value, 10);
+
+            let shape;
+            if (type === 'rect') {
+                shape = document.createElement('div');
+                shape.style.position = 'absolute';
+                shape.style.left = `${x}px`;
+                shape.style.top = `${y}px`;
+                shape.style.width = `${width}px`;
+                shape.style.height = `${height}px`;
+                shape.style.backgroundColor = operation === 'ADD' ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+            } else if (type === 'oval') {
+                shape = document.createElement('div');
+                shape.style.position = 'absolute';
+                shape.style.left = `${x - width / 2}px`; // Center oval
+                shape.style.top = `${y - height / 2}px`;
+                shape.style.width = `${width}px`;
+                shape.style.height = `${height}px`;
+                shape.style.borderRadius = '50%';
+                shape.style.backgroundColor = operation === 'ADD' ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+            }
+
+            if (shape) {
+                shape.setAttribute('data-operation', operation); // Store operation type
+                shape.setAttribute('data-type', type); // Store shape type
+                canvas.appendChild(shape);
+                makeDraggable(shape);
+                shapeTypeInput.value = '';
+                shapeXInput.value = '';
+                shapeYInput.value = '';
+                shapeWidthInput.value = '';
+                shapeHeightInput.value = '';
             }
         });
 
@@ -168,7 +241,7 @@
             const level = {
                 ballPosition: [],
                 holePosition: [],
-                area: ``,
+                area: '',
                 obstacles: [],
                 par: Math.abs(parseInt(parInput.value, 10)), // Get the par value
             };
@@ -181,7 +254,7 @@
 
                 if (obj.id.includes('ball-instance')) {
                     level.ballPosition = [x, y];
-                } else if (obj.id === 'hole') {
+                } else if (obj.id.includes('hole')) {
                     level.holePosition = [x, y];
                 } else {
                     let obstacleData = { type: obj.id.replace('-instance', ''), position: [x, y] };
@@ -197,7 +270,7 @@
                 }
             });
 
-            level.area = `ADD rect 0, 0, 600, 400;`;
+            level.area = constructAreaDefinition(objects);
 
             // Prepare the obstacles for export
             let obstacleExport = level.obstacles.map(obstacle => {
@@ -233,6 +306,23 @@
             URL.revokeObjectURL(url);
             console.log('Level downloaded as level.json');
         });
+
+        function constructAreaDefinition(objects) {
+            let areaDefinition = '';
+            objects.forEach(obj => {
+                if (!obj.id.includes('instance') && obj.hasAttribute('data-operation')) {
+                    const operation = obj.getAttribute('data-operation');
+                    const type = obj.getAttribute('data-type');
+                    const rect = obj.getBoundingClientRect();
+                    const x = Math.round(rect.left - canvas.getBoundingClientRect().left);
+                    const y = Math.round(rect.top - canvas.getBoundingClientRect().top);
+                    const width = Math.round(rect.width);
+                    const height = Math.round(rect.height);
+                    areaDefinition += `${operation} ${type} ${x}, ${y}, ${width}, ${height};\n`;
+                }
+            });
+            return areaDefinition;
+        }
     </script>
 </body>
 
