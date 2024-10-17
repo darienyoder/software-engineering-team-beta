@@ -75,28 +75,7 @@ function playWaterSound() {
 function setupLevel() {
     // Create the level layout using "level-generation.js"
     level.load(0);
-    // gameObjects.push(ball);
-    // gameObjects.push(hole);
-    //
-    // sandtrap = Sandtrap(250, -50);
-    // gameObjects.push(sandtrap);
-    // let tubes = Tubes(465, 215, 25, 225);
-    // tubeA = tubes[0];
-    // tubeB = tubes[1];
-    // gameObjects.push(tubeA);
-    // gameObjects.push(tubeB);
-    // water = Water(460, 40, 'square');
-    // gameObjects.push(water);
-    // volcano = Volcano(50, 75);
-    // gameObjects.push(volcano);
-    // let windmill = Windmill(450, 50);
-    // windmillBody = windmill[0];
-    // windmillBlade1 = windmill[1];
-    // windmillBlade2 = windmill[2];
-    // windmillBlade3 = windmill[3];
-    // windmillBlade4 = windmill[4];
-    // gameObjects.push(windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4);
-
+    
     // Creating the putter head
     putter = new Sprite(-1000, -1000, 10, 30, 'n');
     putter.layer = 1;
