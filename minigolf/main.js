@@ -19,11 +19,16 @@ let prevVelX = 0;
 let prevVelY = 0;
 var ballLastPosition = 0;
 
+async function preload()
+{
+    heightShader = createShader(vertSrc, fragSrc);
+}
+
 // Runs once when the program starts
 async function setup()
 {
     // Initialize canvas
-    createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+    createCanvas(null, null, WEBGL);
 
     document.getElementById('colorButton').addEventListener('click', () => {
         // Change the trajectory color on click

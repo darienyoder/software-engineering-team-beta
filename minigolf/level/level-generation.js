@@ -37,7 +37,7 @@ void main() {
 }
 `;
 
-var heightShader = createShader(vertSrc, fragSrc);;
+var heightShader;
 
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
@@ -471,8 +471,8 @@ class Level
         let levelHeight = this.bounds.bottom - this.bounds.top;
 
         // Position camera to center bounding rectangle
-        camera.x = (this.bounds.right + this.bounds.left) / 2;
-        camera.y = (this.bounds.bottom + this.bounds.top) / 2;
+        camera.x = (this.bounds.right + this.bounds.left) / 2 + (this.bounds.right - this.bounds.left) / 2 + this.levelMargin / 4;
+        camera.y = (this.bounds.bottom + this.bounds.top) / 2 + (this.bounds.bottom - this.bounds.top) / 2 + this.levelMargin / 4;
         camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
 
         // Create golf ball at "ballPosition"
@@ -541,10 +541,10 @@ class Level
 
     drawPolygon(path, pathColor)
     {
-        // fill(pathColor);
+        fill(pathColor);
 
         // Apply the p5.Shader object.
-        shader(shaderProgram);
+        // shader(shaderProgram);
 
         beginShape();
         for (var point = 0; point < path.length; point++)
