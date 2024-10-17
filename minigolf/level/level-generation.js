@@ -10,6 +10,35 @@ var maxFloorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
 
+
+let vertSrc = `
+precision highp float;
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+
+attribute vec3 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+
+void main() {
+  vTexCoord = aTexCoord;
+  vec4 positionVec4 = vec4(aPosition, 1.0);
+  gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+}
+`;
+
+
+let fragSrc = `
+precision highp float;
+
+void main() {
+  // Set each pixel's RGBA value to yellow.
+  gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+}
+`;
+
+var heightShader = createShader(vertSrc, fragSrc);;
+
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
 // "level.clear()" deletes the current level.
@@ -512,7 +541,11 @@ class Level
 
     drawPolygon(path, pathColor)
     {
-        fill(pathColor);
+        // fill(pathColor);
+
+        // Apply the p5.Shader object.
+        shader(shaderProgram);
+
         beginShape();
         for (var point = 0; point < path.length; point++)
         {

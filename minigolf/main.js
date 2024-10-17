@@ -23,7 +23,7 @@ var ballLastPosition = 0;
 async function setup()
 {
     // Initialize canvas
-    createCanvas();
+    createCanvas(window.innerWidth, window.innerHeight, WEBGL);
 
     document.getElementById('colorButton').addEventListener('click', () => {
         // Change the trajectory color on click
