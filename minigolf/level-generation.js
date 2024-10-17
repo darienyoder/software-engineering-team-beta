@@ -281,8 +281,7 @@ class Level
         }
         while (gameObjects.length != 0)
         {
-            gameObjects.pop();
-            // gameObjects.pop().deconstructorFunction();
+            gameObjects.pop().delete();
         }
     }
 
@@ -337,7 +336,7 @@ class Level
         let levelWidth = this.bounds.right - this.bounds.left;
         let levelHeight = this.bounds.bottom - this.bounds.top;
 
-        
+
     // Position camera
     if(cameraMode == "Center")
         {
@@ -351,16 +350,21 @@ class Level
             // camera.y = ballPosition.y;
         }
         camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
-        
+
         // Create golf ball at "ballPosition"
         ball = Ball(levelDict.ballPosition[0], levelDict.ballPosition[1]);
         ballStart = createVector(levelDict.ballPosition[0], levelDict.ballPosition[1]);
         lastHit = ballStart;
 
+        gameObjects.push(ball);
+        ball = ball.sprites[0];
+
         // Create hole at "holePosition"
         hole = Hole(levelDict.holePosition[0], levelDict.holePosition[1]);
+        gameObjects.push(hole);
+        hole = hole.sprites[0];
         // Create obstacles
-        // this.createObstacles(levelDict.obstacles);
+        this.createObstacles(levelDict.obstacles);
     }
 
     createObstacles(obstaclesString) {

@@ -76,26 +76,26 @@ function setupLevel() {
     // Create the level layout using "level-generation.js"
     level.load(0);
     // gameObjects.push(ball);
-    gameObjects.push(hole);
-
-    sandtrap = Sandtrap(250, -50);
-    gameObjects.push(sandtrap);
-    let tubes = Tubes(465, 215, 25, 225);
-    tubeA = tubes[0];
-    tubeB = tubes[1];
-    gameObjects.push(tubeA);
-    gameObjects.push(tubeB);
-    water = Water(460, 40, 'square');
-    gameObjects.push(water);
-    volcano = Volcano(50, 75);
-    gameObjects.push(volcano);
-    let windmill = Windmill(450, 50);
-    windmillBody = windmill[0];
-    windmillBlade1 = windmill[1];
-    windmillBlade2 = windmill[2];
-    windmillBlade3 = windmill[3];
-    windmillBlade4 = windmill[4];
-    gameObjects.push(windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4);
+    // gameObjects.push(hole);
+    //
+    // sandtrap = Sandtrap(250, -50);
+    // gameObjects.push(sandtrap);
+    // let tubes = Tubes(465, 215, 25, 225);
+    // tubeA = tubes[0];
+    // tubeB = tubes[1];
+    // gameObjects.push(tubeA);
+    // gameObjects.push(tubeB);
+    // water = Water(460, 40, 'square');
+    // gameObjects.push(water);
+    // volcano = Volcano(50, 75);
+    // gameObjects.push(volcano);
+    // let windmill = Windmill(450, 50);
+    // windmillBody = windmill[0];
+    // windmillBlade1 = windmill[1];
+    // windmillBlade2 = windmill[2];
+    // windmillBlade3 = windmill[3];
+    // windmillBlade4 = windmill[4];
+    // gameObjects.push(windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4);
 
     // Creating the putter head
     putter = new Sprite(-1000, -1000, 10, 30, 'n');
@@ -104,7 +104,7 @@ function setupLevel() {
     putter.stroke = 'black';
     //putter.debug = true;
     putter.offset.x = -20;
-    gameObjects.push(ball);
+    // gameObjects.push(ball);
 
 }
 
@@ -131,7 +131,7 @@ async function draw()
         level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
-        clearGameObjects(); // Clear objects before showing game over
+        // clearGameObjects(); // Clear objects before showing game over
         drawGameOver();
     }
 }
@@ -163,17 +163,17 @@ function drawMainMenu() {
 
 
 
-function clearGameObjects() {
-    clear();
-
-    for (var obj of gameObjects)
-        obj.remove();
-
-    // for (var wall of walls)
-    //     wall.remove();
-
-    // background(backgroundColor);
-}
+// function clearGameObjects() {
+//     clear();
+//
+//     for (var obj of gameObjects)
+//         obj.remove();
+//
+//     // for (var wall of walls)
+//     //     wall.remove();
+//
+//     // background(backgroundColor);
+// }
 
 function drawGameOver() {
     background("white");
@@ -258,13 +258,13 @@ async function handleGamePlay() {
         await sleep(2*forceMagnitude);
 
         // Apply the calculated force to the ball if its in sand
-        if (ball.overlaps(sandtrap)){
-            ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
-        }
-        else{
+        // if (ball.overlaps(sandtrap)){
+        //     ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
+        // }
+        // else{
             //Apply calculated for normally
             ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
-        }
+        // }
 
         // Hide the putter
         putter.visible = false;
@@ -345,19 +345,6 @@ async function handleGamePlay() {
 
 
     // Tentative
-
-    if(volcano.overlaps(ball)){
-        ball.vel.x = 0;
-        ball.vel.y = 0;
-        ball.x = ballStart.x;
-        ball.y = ballStart.y;
-    }
-
-    ball.overlaps(windmillBody);
-    windmillBlade1.rotationSpeed = -1;
-    windmillBlade2.rotationSpeed = -1;
-    windmillBlade3.rotationSpeed = -1;
-    windmillBlade4.rotationSpeed = -1;
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){

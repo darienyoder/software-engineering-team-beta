@@ -1,3 +1,4 @@
+var gameObjects = [];
 
 class GameObject {
 
@@ -11,8 +12,9 @@ class GameObject {
             this.sprites = [_sprites];
     }
 
+    // Runs every frame
     update() {
-        switch (type) {
+        switch (this.type) {
             case "ball":
 
                 break;
@@ -22,7 +24,7 @@ class GameObject {
                 break;
 
             case "sandtrap":
-                if (sprites[0].overlaps(ball))
+                if (this.sprites[0].overlaps(ball))
                 {
                     ball.vel.x = ball.vel.x / 3;
                     ball.vel.y = ball.vel.y / 3;
@@ -30,25 +32,28 @@ class GameObject {
                 break;
 
             case "tubes":
-                if (sprites[0].overlaps(ball) && ball.vel.x <= 1.5 && ball.vel.y <= 1.5)
+                if (this.sprites[0].overlaps(ball) && ball.vel.x <= 1.5 && ball.vel.y <= 1.5)
                 {
-                    ball.x = sprites[1].x;
-                    ball.y = sprites[1].y;
+                    ball.x = this.sprites[1].x;
+                    ball.y = this.sprites[1].y;
                     ball.vel.x = 3;
                     ball.vel.y = 0;
                 }
 
-                ball.overlaps(sprites[1]);
+                ball.overlaps(this.sprites[1]);
 
                 break;
 
             case "windmill":
+                ball.overlaps(this.sprites[0]);
+                for (var blade of this.sprites[1])
+                    blade.rotationSpeed = -1;
 
                 break;
 
             case "water":
 
-                if (sprites[0].overlaps(ball))
+                if (this.sprites[0].overlaps(ball))
                 {
                     // playWaterSound();
                     ball.vel.x = 0;
@@ -61,7 +66,7 @@ class GameObject {
 
             case "lava":
 
-                if (sprites[1].overlaps(ball))
+                if (this.sprites[1].overlaps(ball))
                 {
                     ball.vel.x = 0;
                     ball.vel.y = 0;
@@ -80,7 +85,7 @@ class GameObject {
     // if it is an array of sprites.
     delete() {
 
-        for (var sprite of sprites)
+        for (var sprite of this.sprites)
         {
             if (Array.isArray(sprite))
             {
