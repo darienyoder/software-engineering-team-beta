@@ -15,34 +15,52 @@
     		}
 
 			.settingsButton {
-				padding: 10px;
-				background-color: #007bff;
-				color: white;
-				border: none;
-				border-radius: 5px;
-				cursor: pointer;
-				min-width: 180px; /* arbitrary length, adjust if necessary*/
-        	}
-        	.settingsButton:hover {
-            	background-color: #0056b3;
-        	}
+            	padding: 10px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                min-width: 180px; /* arbitrary length, adjust if necessary */
+				display: none;
+            }
+            .settingsButton:hover {
+                background-color: #0056b3;
+            }
+            #menuButton {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 10px;
+                background-color: #626563;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            #menuButton:hover {
+                background-color: #3e433f;
+            }
 			#colorButton {
 				position: fixed;
-            	bottom: 20px;
+            	bottom: 60px;
             	right: 20px;
 			}
 			#cameraButton {
 				position: fixed;
-            	bottom: 60px;
+            	bottom: 100px;
             	right: 20px;
 			}
     	</style>
     </head>
     <body>
     	<main></main>
-		<button class="settingsButton" id="colorButton">Change Trajectory Color</button>
-		<button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
-    	<!-- P5play -->
+		<button id="menuButton">⚙️</button>
+        <div id="settingsMenu">
+            <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
+            <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
+        </div>
+		<!-- P5play -->
     	<script src="https://q5js.org/q5.js"></script>
     	<script src="https://p5play.org/v3/planck.min.js"></script>
     	<script src="https://p5play.org/v3/p5play.js"></script>
@@ -63,5 +81,18 @@
     	<script src="tests.js"></script>
     	<script src="tests/level-generation-tests.js"></script>
 
+		<!--Button Menu-->
+		<script>
+            const menuButton = document.getElementById('menuButton');
+            const settingsButtons = document.querySelectorAll('.settingsButton');
+
+            menuButton.addEventListener('click', () => {
+                settingsButtons.forEach(button => {
+                    button.style.display = button.style.display === 'none' ? 'block' : 'none';
+                });
+            });
+        </script>
     </body>
 </html>
+
+

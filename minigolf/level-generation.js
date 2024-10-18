@@ -342,7 +342,8 @@ class Level
         {
             camera.x = (this.bounds.right + this.bounds.left) / 2;
             camera.y = (this.bounds.bottom + this.bounds.top) / 2;
-        } else if (cameraMode == "Follow")
+        } 
+    else if (cameraMode == "Follow")
         {
             //camera.x = ballPosition.x;
             camera.x = ball.x;
