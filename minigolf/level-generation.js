@@ -281,8 +281,7 @@ class Level
         }
         while (gameObjects.length != 0)
         {
-            gameObjects.pop();
-            // gameObjects.pop().deconstructorFunction();
+            gameObjects.pop().delete();
         }
     }
 
@@ -298,6 +297,8 @@ class Level
                 return Tubes(objectData.position[0], objectData.position[1], objectData.targetPosition[0], objectData.targetPosition[1]);
             case 'Windmill':
                 return Windmill(objectData.position[0], objectData.position[1]);
+            case 'Volcano':
+                return Volcano(objectData.position[0],objectData.position[1]);
             default:
                 console.warn(`Unknown object type: ${objectData.type}`);
                 return null;
@@ -308,6 +309,7 @@ class Level
     {
         // Delete any existing level
         this.clear();
+        // Check for obstacles and delete them
 
         // Get walls from area string
         let areaPolygons = this.parseAreaString(levelDict.area);
@@ -334,7 +336,7 @@ class Level
         let levelWidth = this.bounds.right - this.bounds.left;
         let levelHeight = this.bounds.bottom - this.bounds.top;
 
-        
+
     // Position camera
     if(cameraMode == "Center")
         {
@@ -349,16 +351,21 @@ class Level
             // camera.y = ballPosition.y;
         }
         camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
-        
+
         // Create golf ball at "ballPosition"
         ball = Ball(levelDict.ballPosition[0], levelDict.ballPosition[1]);
         ballStart = createVector(levelDict.ballPosition[0], levelDict.ballPosition[1]);
         lastHit = ballStart;
 
+        gameObjects.push(ball);
+        ball = ball.sprites[0];
+
         // Create hole at "holePosition"
         hole = Hole(levelDict.holePosition[0], levelDict.holePosition[1]);
+        gameObjects.push(hole);
+        hole = hole.sprites[0];
         // Create obstacles
-        // this.createObstacles(levelDict.obstacles);
+        this.createObstacles(levelDict.obstacles);
     }
 
     createObstacles(obstaclesString) {
