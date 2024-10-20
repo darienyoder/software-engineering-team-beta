@@ -12,18 +12,49 @@ var wallColor = "#684917";
 
 
 const vertexShaderSource = `
-    attribute vec2 coordinates;
-    void main(void) {
-        gl_Position = vec4(coordinates, 0.0, 1.0);
-    }
+attribute vec2 coordinates;
+void main(void) {
+    gl_Position = vec4(coordinates, 0.0, 1.0);
+}
+
 `;
 
 const fragmentShaderSource = `
 
-void main(void)
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform float time;
+uniform vec2 screenSize;
+uniform vec4 bounds;
+
+vec2 reverseYCoordinates( vec2 screenCoords )
 {
-    gl_FragColor = vec4(gl_FragCoord.xy / vec2(1920, 1080), 0.0, 1.0);
+	return vec2(screenCoords.x, screenSize.y - screenCoords.y);
 }
+
+vec2 screenToLevel( vec2 screenCoords )
+{
+	return bounds.xy + reverseYCoordinates(screenCoords.xy) / screenSize.xy * bounds.zw;
+}
+
+float getHeight(vec2 coords)
+{
+    float height = 0.0;
+
+    return height;
+}
+
+void main( void )
+{
+    vec2 coords = screenToLevel( gl_FragCoord.xy );
+
+	vec3 color = vec3(0, 1, 0) * getHeight(coords);
+
+	gl_FragColor.rgb = color;
+}
+
 `;
 
 function createGlShader(gl, source, type) {
@@ -489,6 +520,9 @@ class Level
         hole = Hole(levelDict.holePosition[0], levelDict.holePosition[1]);
         // Create obstacles
         // this.createObstacles(levelDict.obstacles);
+
+
+        this.drawStage();
     }
 
     createObstacles(obstaclesString) {
@@ -643,9 +677,8 @@ class Level
         this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
         this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
 
-
-
-        stroke("#000000");
+        this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "bounds"), this.bounds.left, this.bounds.top, this.bounds.right - this.bounds.left, this.bounds.bottom - this.bounds.top);
+        this.ctx.uniform2f(this.ctx.getUniformLocation(this.shaderProgram, "screenSize"), this.canvas.width, this.canvas.height);
 
         let baseScale = (0 - this.minHeight) / (this.maxHeight - this.minHeight)
         let baseFloorColor = this.lerpColor(minFloorColor, maxFloorColor, baseScale);//"#" + this.lerpHexColor(maxFloorColor.slice(1, 2), minFloorColor.slice(1, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(3, 2), minFloorColor.slice(3, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(5, 2), minFloorColor.slice(5, 2), baseScale);
@@ -662,6 +695,5 @@ class Level
         {
             this.drawPolygon(this.negativeWalls[wall], backgroundColor);
         }
-        stroke("#000000");
     }
 }

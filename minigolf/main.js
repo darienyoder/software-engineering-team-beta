@@ -117,7 +117,7 @@ async function draw()
         drawMainMenu();
     } else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        level.drawStage();
+        // level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
         clearGameObjects(); // Clear objects before showing game over
