@@ -38,13 +38,16 @@ class Level
     {
         let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness);
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
-        newWall.strokeWeight = 0.0;
+        newWall.strokeWeight = 1;
         newWall.color = wallColor;
+        newWall.stroke = 'black';
         newWall.collider = "static";
         this.walls.push(newWall);
 
+        // Corners
         newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness);
-        newWall.strokeWeight = 0.0;
+        newWall.strokeWeight = .15;
+        newWall.stroke = wallColor;
         newWall.color = wallColor;
         newWall.collider = "static";
         this.walls.push(newWall);
