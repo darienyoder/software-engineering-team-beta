@@ -81,27 +81,7 @@ function playWaterSound() {
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
-    gameObjects.push(ball);
-    gameObjects.push(hole);
-
-    sandtrap = Sandtrap(250, -50);
-    gameObjects.push(sandtrap);
-    let tubes = Tubes(465, 215, 25, 225);
-    tubeA = tubes[0];
-    tubeB = tubes[1];
-    gameObjects.push(tubeA);
-    gameObjects.push(tubeB);
-    water = Water(460, 40, 'square');
-    gameObjects.push(water);
-    volcano = Volcano(80, 75);
-    gameObjects.push(volcano);
-    Windmill(450, 50);
-    gameObjects.push(windmillBody);
-    gameObjects.push(windmillBlade1);
-    gameObjects.push(windmillBlade2);
-    gameObjects.push(windmillBlade3);
-    gameObjects.push(windmillBlade4);
-
+  
     // Creating the putter head
     putter = new Sprite(-1000, -1000, 10, 30, 'n');
     putter.layer = 1;
@@ -109,6 +89,7 @@ function setupLevel(levelNum) {
     putter.stroke = 'black';
     //putter.debug = true;
     putter.offset.x = -20;
+    // gameObjects.push(ball);
 
 }
 
@@ -139,7 +120,7 @@ async function draw()
         level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
-        clearGameObjects(); // Clear objects before showing game over
+        // clearGameObjects(); // Clear objects before showing game over
         drawGameOver();
     }
 }
@@ -215,17 +196,17 @@ function handleLevelSelect() {
 
 
 
-function clearGameObjects() {
-    clear();
-
-    for (var obj of gameObjects)
-        obj.remove();
-
-    // for (var wall of walls)
-    //     wall.remove();
-
-    // background(backgroundColor);
-}
+// function clearGameObjects() {
+//     clear();
+//
+//     for (var obj of gameObjects)
+//         obj.remove();
+//
+//     // for (var wall of walls)
+//     //     wall.remove();
+//
+//     // background(backgroundColor);
+// }
 
 function drawGameOver() {
     background("white");
@@ -263,6 +244,12 @@ function keyPressed() {
 
 async function handleGamePlay() {
 
+    // Behavior for all GameObjects, *including* the ball and hole
+    // To add or change behavior, go to game-objects.js
+    for (var object of gameObjects)
+        object.update();
+
+
     // Sets ball position when camera is follow
     if (cameraMode === "Follow") {
         // Make camera follow the ball's position
@@ -293,7 +280,7 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
-        playHitSound(); //Playing the ball hit sound
+        // playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -312,13 +299,13 @@ async function handleGamePlay() {
         await sleep(2*forceMagnitude);
 
         // Apply the calculated force to the ball if its in sand
-        if (ball.overlaps(sandtrap)){
-            ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
-        }
-        else{
+        // if (ball.overlaps(sandtrap)){
+        //     ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
+        // }
+        // else{
             //Apply calculated for normally
             ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
-        }
+        // }
 
         // Hide the putter
         putter.visible = false;
@@ -337,7 +324,7 @@ async function handleGamePlay() {
     }
 
     // Iterate through each wall in the level
-for (var wall of level.walls)
+    for (var wall of level.walls)
     {
         // Check if the ball and the wall have collided
         if (ball.collides(wall))
@@ -385,7 +372,7 @@ for (var wall of level.walls)
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        playGoalSound();
+        // playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
@@ -409,42 +396,6 @@ for (var wall of level.walls)
             gameState = 'menu'; //return to menu
         }
     }
-
-    if (sandtrap.overlaps(ball))
-    {
-        ball.vel.x = ball.vel.x / 3;
-        ball.vel.y = ball.vel.y / 3;
-    }
-
-    if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
-        ball.x = tubeB.x;
-        ball.y = tubeB.y;
-        ball.vel.x = 3;
-        ball.vel.y = 0;
-    }
-
-    ball.overlaps(tubeB);
-
-    if (water.overlaps(ball)){
-        playWaterSound();
-        ball.vel.x = 0;
-        ball.vel.y = 0;
-        ball.x = lastHit.x;
-        ball.y = lastHit.y;
-    }
-
-    if(volcano.overlaps(ball)){
-        ball.vel.x = 0;
-        ball.vel.y = 0;
-        ball.x = ballStart.x;
-        ball.y = ballStart.y;
-    }
-
-    ball.overlaps(windmillBody);
-    windmillBlade1.rotationSpeed = -1;
-    windmillBlade2.rotationSpeed = -1;
-    windmillBlade3.rotationSpeed = -1;
-    windmillBlade4.rotationSpeed = -1;
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){
