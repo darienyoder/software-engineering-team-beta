@@ -11,33 +11,27 @@ var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
 
 
-let vertSrc = `
-precision highp float;
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
+const vertexShaderSource = `
+    attribute vec2 coordinates;
+    void main(void) {
+        gl_Position = vec4(coordinates, 0.0, 1.0);
+    }
+`;
 
-attribute vec3 aPosition;
-attribute vec2 aTexCoord;
-varying vec2 vTexCoord;
+const fragmentShaderSource = `
 
-void main() {
-  vTexCoord = aTexCoord;
-  vec4 positionVec4 = vec4(aPosition, 1.0);
-  gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+void main(void)
+{
+    gl_FragColor = vec4(gl_FragCoord.xy / vec2(1920, 1080), 0.0, 1.0);
 }
 `;
 
-
-let fragSrc = `
-precision highp float;
-
-void main() {
-  // Set each pixel's RGBA value to yellow.
-  gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+function createGlShader(gl, source, type) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return shader;
 }
-`;
-
-var heightShader;
 
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
@@ -46,7 +40,7 @@ var heightShader;
 
 class Level
 {
-    constructor()
+    constructor(canvas)
     {
         // Constants
         this.levelMargin = 50; // Number of pixels between the level's edge and the edge of the window
@@ -56,6 +50,17 @@ class Level
         this.clipper = new ClipperLib.Clipper();
         this.levelPolytree = new ClipperLib.PolyTree(); // Tree used for clipping polygons
         this.polynode = null;
+
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("webgl");
+        this.vertexShader = createGlShader(this.ctx, vertexShaderSource, this.ctx.VERTEX_SHADER);
+        this.fragmentShader = createGlShader(this.ctx, fragmentShaderSource, this.ctx.FRAGMENT_SHADER);
+
+        this.shaderProgram = this.ctx.createProgram();
+        this.ctx.attachShader(this.shaderProgram, this.vertexShader);
+        this.ctx.attachShader(this.shaderProgram, this.fragmentShader);
+        this.ctx.linkProgram(this.shaderProgram);
+        this.ctx.useProgram(this.shaderProgram);
 
         // Level Data
         this.number = -1;
@@ -471,8 +476,8 @@ class Level
         let levelHeight = this.bounds.bottom - this.bounds.top;
 
         // Position camera to center bounding rectangle
-        camera.x = (this.bounds.right + this.bounds.left) / 2 + (this.bounds.right - this.bounds.left) / 2 + this.levelMargin / 4;
-        camera.y = (this.bounds.bottom + this.bounds.top) / 2 + (this.bounds.bottom - this.bounds.top) / 2 + this.levelMargin / 4;
+        camera.x = (this.bounds.right + this.bounds.left) / 2;// + (this.bounds.right - this.bounds.left) / 2 + this.levelMargin / 4;
+        camera.y = (this.bounds.bottom + this.bounds.top) / 2;// + (this.bounds.bottom - this.bounds.top) / 2 + this.levelMargin / 4;
         camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
 
         // Create golf ball at "ballPosition"
@@ -541,23 +546,57 @@ class Level
 
     drawPolygon(path, pathColor)
     {
-        fill(pathColor);
-
-        // Apply the p5.Shader object.
-        // shader(shaderProgram);
-
-        beginShape();
-        for (var point = 0; point < path.length; point++)
-        {
-            let pointVector = createVector(path[point].X, path[point].Y);
-            pointVector = levelToScreen(pointVector);
-            vertex(pointVector.x, pointVector.y);
+        // Define polygon vertices
+        let vertices = new Float32Array(path.length * 2);
+        for (var vert in path) {
+            let pointVector = levelToScreen(createVector(path[vert].X, path[vert].Y)).div(createVector(this.canvas.width / 4, this.canvas.height / 4)).div(2).sub(1, 1).mult(1, -1);
+            vertices[vert * 2] = pointVector.x;
+            vertices[vert * 2 + 1] = pointVector.y;
         }
-        endShape(CLOSE);
+
+        let triangleIndices = earcut(vertices);
+
+        for (var i = 0; i < triangleIndices.length / 3; i++) {
+
+            let tri = new Float32Array([
+                vertices[triangleIndices[i * 3] * 2], vertices[triangleIndices[i * 3] * 2 + 1],  // Vertex 1 (X, Y)
+                vertices[triangleIndices[i * 3 + 1] * 2], vertices[triangleIndices[i * 3 + 1] * 2 + 1],  // Vertex 1 (X, Y)
+                vertices[triangleIndices[i * 3 + 2] * 2], vertices[triangleIndices[i * 3 + 2] * 2 + 1],  // Vertex 2 (X, Y)
+            ]);
+
+            // Create a buffer and load vertices
+            const vertexBuffer = this.ctx.createBuffer();
+            this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, vertexBuffer);
+            this.ctx.bufferData(this.ctx.ARRAY_BUFFER, tri, this.ctx.STATIC_DRAW);
+
+            const coord = this.ctx.getAttribLocation(this.shaderProgram, "coordinates");
+            this.ctx.vertexAttribPointer(coord, 2, this.ctx.FLOAT, false, 0, 0);
+            this.ctx.enableVertexAttribArray(coord);
+
+            // Draw the polygon
+            this.ctx.drawArrays(this.ctx.TRIANGLES, 0, 3);
+        }
+
+
+
+        // fill(pathColor);
+        //
+        // // Apply the p5.Shader object.
+        // // shader(shaderProgram);
+        //
+        // beginShape();
+        // for (var point = 0; point < path.length; point++)
+        // {
+        //     let pointVector = createVector(path[point].X, path[point].Y);
+        //     pointVector = levelToScreen(pointVector);
+        //     vertex(pointVector.x, pointVector.y);
+        // }
+        // endShape(CLOSE);
     }
 
     drawHeight(modifier)
     {
+        return;
         let drawColor;
         if (modifier.height > 0)
             drawColor = maxFloorColor;
@@ -600,7 +639,11 @@ class Level
     // Draws the stage
     drawStage()
     {
-        background(backgroundColor);
+        this.ctx.clearColor(1.0, 1.0, 1.0, 1.0);
+        this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
+        this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+
 
         stroke("#000000");
 
@@ -609,7 +652,7 @@ class Level
 
         for (var wall = 0; wall < this.positiveWalls.length; wall++)
         {
-            this.drawPolygon(this.positiveWalls[wall], baseFloorColor);
+            this.drawPolygon(this.positiveWalls[wall], floorColor);
         }
         for (var hM = 0; hM < this.heightModifiers.length; hM++)
         {

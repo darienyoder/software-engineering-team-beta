@@ -372,11 +372,11 @@ class Level
             camera.zoom = 1;
         } else if (cameraMode == "Follow")
         {
-            //camera.x = ballPosition.x;
+            camera.x = ballPosition.x;
             camera.x = ball.x;
             camera.y = ball.y;
             camera.zoom = 3;
-            // camera.y = ballPosition.y;
+            camera.y = ballPosition.y;
         }
 
         // Create golf ball at "ballPosition"

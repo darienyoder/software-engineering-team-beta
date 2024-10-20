@@ -3,7 +3,7 @@ const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at wh
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
 var gameObjects = [], strokeCounts = []; strokeCount = 0;
-var level = new Level(); // The level object; builds the stage
+var level; // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
@@ -19,22 +19,47 @@ let prevVelX = 0;
 let prevVelY = 0;
 var ballLastPosition = 0;
 
+// The canvas for drawing terrain. Goes under the main canvas.
+var webglCanvas;
+var webglContext;
+
 async function preload()
 {
-    heightShader = createShader(vertSrc, fragSrc);
+    // heightShader = createShader(vertSrc, fragSrc);
 }
 
 // Runs once when the program starts
 async function setup()
 {
     // Initialize canvas
-    createCanvas(null, null, WEBGL);
+    createCanvas();
 
     document.getElementById('colorButton').addEventListener('click', () => {
         // Change the trajectory color on click
         currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
         trajectoryColor = trajectoryColors[currentColorIndex];
     });
+
+    // Create WebGL Canvas
+    webglCanvas = document.createElement("canvas");
+    webglCanvas.id = "webglCanvas";
+    webglCanvas.setAttribute('width', window.innerWidth);
+	webglCanvas.setAttribute('height', window.innerHeight);
+    webglCanvas.style.width = "100%";
+    webglCanvas.style.height = "auto";
+    webglCanvas.style.position = "fixed";
+    webglCanvas.style.x = 0;
+    webglCanvas.style.y = 0;
+    webglCanvas.style.zIndex = 1;
+    document.getElementById("defaultCanvas0").style.zIndex = 2;
+    document.getElementsByTagName("main")[0].insertBefore(webglCanvas, document.getElementById("defaultCanvas0"));
+
+    // // Setup WebGL canvas for drawing
+    // webglContext = webglCanvas.getContext("webgl");
+    // webglContext.clearColor(0, 0, 0, 0);
+    // webglContext.clear(webglContext.COLOR_BUFFER_BIT);
+
+    level = new Level(webglCanvas);
 }
 
 function setupLevel() {
@@ -86,7 +111,7 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-    background("white");
+    // background("white");
 
     if (gameState === 'menu') {
         drawMainMenu();
