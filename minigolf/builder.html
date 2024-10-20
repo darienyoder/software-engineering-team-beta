@@ -42,10 +42,27 @@
             display: none;
             /* Initially hidden */
         }
+
+        #returnButton {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #returnButton:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
 <body>
+    <button id="returnButton">🏠 Return to game</button>
     <div id="left-panel">
         <h3>Available Objects</h3>
         <div draggable="true" id="ball" class="draggable">⚽</div>
@@ -80,6 +97,12 @@
     </div>
 
     <script>
+        document.getElementById('returnButton').addEventListener('click', () => {
+            const currentPath = window.location.pathname;
+            const newPath = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/index.html';
+            window.location.href = newPath;
+        });
+
         const canvas = document.getElementById('canvas');
         const exportBtn = document.getElementById('export-btn');
         const parInput = document.getElementById('par-input');
