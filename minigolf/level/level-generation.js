@@ -25,9 +25,20 @@ const fragmentShaderSource = `
 precision mediump float;
 #endif
 
-uniform float time;
+uniform float minHeight;
+uniform float maxHeight;
+
+const vec3 minHeightColor = vec3(0, 0.1, 0);
+const vec3 maxHeightColor = vec3(0, 1.0, 0);
+
 uniform vec2 screenSize;
 uniform vec4 bounds;
+
+const int maxModifiers = 10;
+uniform int action[maxModifiers];
+uniform float height[maxModifiers];
+uniform int shape[maxModifiers];
+uniform vec4 data[maxModifiers];
 
 vec2 reverseYCoordinates( vec2 screenCoords )
 {
@@ -39,18 +50,41 @@ vec2 screenToLevel( vec2 screenCoords )
 	return bounds.xy + reverseYCoordinates(screenCoords.xy) / screenSize.xy * bounds.zw;
 }
 
+float shapeHasPoint(int shapeType, vec4 shapeData, vec2 point)
+{
+    if (shapeType == 0)
+    {
+        return max(0.0, 1.0 - length(vec2((point.x - shapeData.x) / shapeData.z, (point.y - shapeData.y) / shapeData.w)));
+    }
+    return 0.0;
+}
+
 float getHeight(vec2 coords)
 {
-    float height = 0.0;
+    float pointHeight = 0.0;
 
-    return height;
+    for (int i = 0; i < maxModifiers; ++i)
+    {
+        if (action[i] == -1)
+            break;
+        float weight = shapeHasPoint(shape[i], data[i], coords);
+        if (weight != 0.0)
+        {
+            if (action[i] == 0)
+                pointHeight += height[i] * weight;
+            else
+                pointHeight = height[i] * weight;
+        }
+    }
+
+    return pointHeight;
 }
 
 void main( void )
 {
     vec2 coords = screenToLevel( gl_FragCoord.xy );
 
-	vec3 color = vec3(0, 1, 0) * getHeight(coords);
+	vec3 color = mix( minHeightColor, maxHeightColor, (getHeight(coords) - minHeight) / (maxHeight - minHeight) );
 
 	gl_FragColor.rgb = color;
 }
@@ -132,6 +166,31 @@ class Level
                 }
             },
         ];
+
+        const maxModifiers = 10;
+        let actions = new Int8Array(maxModifiers);
+        let heights = new Float32Array(maxModifiers);
+        let shapes = new Int8Array(maxModifiers);
+        let datas = new Float32Array(maxModifiers * 4);
+        for (var i = 0; i < this.heightModifiers.length; i++)
+        {
+            let modifier = this.heightModifiers[i];
+            actions[i] = modifier.action == "add" ? 1 : 0;
+            heights[i] = modifier.height;
+            shapes[i] = ["oval"].indexOf(modifier.shape);
+            datas[i * 4 + 0] = modifier.data.x;
+            datas[i * 4 + 1] = modifier.data.y;
+            datas[i * 4 + 2] = modifier.data.w;
+            datas[i * 4 + 3] = modifier.data.h;
+        }
+        actions[this.heightModifiers.length] = -1;
+
+        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "action"), actions);
+        this.ctx.uniform1fv(this.ctx.getUniformLocation(this.shaderProgram, "height"), heights);
+        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "shape"), shapes);
+        this.ctx.uniform4fv(this.ctx.getUniformLocation(this.shaderProgram, "data"), datas);
+        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "minHeight"), this.minHeight);
+        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "maxHeight"), this.maxHeight);
 
     }
 
