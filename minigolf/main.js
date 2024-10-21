@@ -185,8 +185,8 @@ function playLevel(levelNum) {
 }
 
 function handleLevelSelect() {
-    //text("x = " + floor(mouse.x), width/2, height/2);
-    //text("y = " + floor(mouse.y), width/2, height/1.7);
+    text("x = " + floor(mouse.x), width/2, height/2);
+    text("y = " + floor(mouse.y), width/2, height/1.7);
 
     var squaresPerRow = 10;
     //based on width of screen, picks square size so they will be evenly spaced
@@ -287,8 +287,8 @@ async function handleGamePlay() {
     }
 
     
-    //text("x = " + floor(mouse.x), width/2, height/2);
-    //text("y = " + floor(mouse.y), width/2, height/1.7);
+    text("x = " + floor(mouse.x), width/2, height/2);
+    text("y = " + floor(mouse.y), width/2, height/1.7);
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
