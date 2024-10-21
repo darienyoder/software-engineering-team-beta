@@ -280,7 +280,7 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
-        // playHitSound(); //Playing the ball hit sound
+        playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
