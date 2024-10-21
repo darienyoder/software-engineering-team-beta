@@ -395,6 +395,9 @@ class Level
                     case 'Windmill':
                         objectData.position = [Number(parts[2]), Number(parts[3])];
                         break;
+                    case 'Volcano':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        break;
                     // Add more cases for other object types as needed
                 }
 
