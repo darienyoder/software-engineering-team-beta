@@ -3,7 +3,7 @@
     <head>
     	<meta charset="UTF-8" />
     	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    	<link rel="icon" href="favicon.png">
+    	<link rel="icon" href="data:," />
     	<title>Minigolf</title>
     	<style>
     		html,
@@ -13,26 +13,54 @@
     			padding: 0;
     			overscroll-behavior: none;
     		}
+
+			.settingsButton {
+            	padding: 10px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                min-width: 180px; /* arbitrary length, adjust if necessary */
+				display: none;
+            }
+            .settingsButton:hover {
+                background-color: #0056b3;
+            }
+            #menuButton {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 10px;
+                background-color: #626563;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            #menuButton:hover {
+                background-color: #3e433f;
+            }
 			#colorButton {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        	}
-        	#colorButton:hover {
-            	background-color: #0056b3;
-        	}
+				position: fixed;
+            	bottom: 60px;
+            	right: 20px;
+			}
+			#cameraButton {
+				position: fixed;
+            	bottom: 100px;
+            	right: 20px;
+			}
     	</style>
     </head>
     <body>
     	<main></main>
-		<button id="colorButton">Change Trajectory Color</button>
-
+		<button id="menuButton">⚙️</button>
+        <div id="settingsMenu">
+            <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
+            <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
+        </div>
+      
     	<!-- P5.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
@@ -48,14 +76,27 @@
     	<script src="libraries/earcut.js"></script>
 
     	<!-- Project Scripts -->
+        <script src="game-objects.js"></script>
     	<script src="level-data.js"></script>
     	<script src="level-generation.js"></script>
-    	<script src="game-objects.js"></script>
     	<script src="main.js"></script>
 
         <!-- Tests -->
     	<script src="tests.js"></script>
     	<script src="tests/level-generation-tests.js"></script>
 
+		<!--Button Menu-->
+		<script>
+            const menuButton = document.getElementById('menuButton');
+            const settingsButtons = document.querySelectorAll('.settingsButton');
+
+            menuButton.addEventListener('click', () => {
+                settingsButtons.forEach(button => {
+                    button.style.display = button.style.display === 'none' ? 'block' : 'none';
+                });
+            });
+        </script>
     </body>
 </html>
+
+

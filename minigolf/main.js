@@ -9,6 +9,10 @@ var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
 
 var gameState = 'menu';
+var fullGameMode = true;
+
+cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
+var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
 let trajectoryColor = 'red'; // Default trajectory color
 const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
@@ -28,11 +32,39 @@ async function preload()
     // heightShader = createShader(vertSrc, fragSrc);
 }
 
+// Sound variables
+let hitSound, holeSound, waterSplash;
+
+// Loading sound files
+function preload(){
+    hitSound = loadSound('assets/golfPutt.wav');
+    holeSound = loadSound('assets/golfGoal.wav');
+    waterSplash = loadSound('assets/waterSplash.wav');
+}
+
 // Runs once when the program starts
 async function setup()
 {
     // Initialize canvas
     createCanvas();
+
+    document.getElementById('cameraButton').addEventListener('click', () => {
+
+        // Change the trajectory color on click
+        cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
+        document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
+
+        if (gameState==='playing'){
+
+            if(cameraMode == "Center")
+            {
+            // Set the camera to be at the center of the canvas
+            camera.x = (level.bounds.right + level.bounds.left) / 2;
+            camera.y = (level.bounds.bottom + level.bounds.top) / 2;
+            }
+
+    }
+    });
 
     document.getElementById('colorButton').addEventListener('click', () => {
         // Change the trajectory color on click
@@ -62,30 +94,25 @@ async function setup()
     level = new Level(webglCanvas);
 }
 
-function setupLevel() {
+//Hit sound function
+function playHitSound() {
+    hitSound.play();
+}
+
+//Hole sound function
+function playGoalSound() {
+    holeSound.play();
+}
+
+//Hole sound function
+function playWaterSound() {
+    waterSplash.play();
+}
+
+function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
-    level.load(0);
-    gameObjects.push(ball);
-    gameObjects.push(hole);
-
-    sandtrap = Sandtrap(250, -50);
-    gameObjects.push(sandtrap);
-    let tubes = Tubes(465, 215, 25, 225);
-    tubeA = tubes[0];
-    tubeB = tubes[1];
-    gameObjects.push(tubeA);
-    gameObjects.push(tubeB);
-    water = Water(460, 40, 'square');
-    gameObjects.push(water);
-    volcano = Volcano(80, 75);
-    gameObjects.push(volcano);
-    Windmill(450, 50);
-    gameObjects.push(windmillBody);
-    gameObjects.push(windmillBlade1);
-    gameObjects.push(windmillBlade2);
-    gameObjects.push(windmillBlade3);
-    gameObjects.push(windmillBlade4);
-
+    level.load(levelNum);
+  
     // Creating the putter head
     putter = new Sprite(-1000, -1000, 10, 30, 'n');
     putter.layer = 1;
@@ -93,14 +120,16 @@ function setupLevel() {
     putter.stroke = 'black';
     //putter.debug = true;
     putter.offset.x = -20;
+    // gameObjects.push(ball);
 
 }
 
 function startGame() {
+    fullGameMode = true;
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
-    setupLevel();
+    setupLevel(0);
     gameState = 'playing';
     ballLastPosition = createVector(0, 0);
 }
@@ -115,12 +144,15 @@ async function draw()
 
     if (gameState === 'menu') {
         drawMainMenu();
-    } else if (gameState === 'playing') {
+    } else if (gameState === 'levelSelect') {
+        handleLevelSelect();
+    }
+    else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
         // level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
-        clearGameObjects(); // Clear objects before showing game over
+        // clearGameObjects(); // Clear objects before showing game over
         drawGameOver();
     }
 }
@@ -137,6 +169,7 @@ function drawMainMenu() {
 
     textSize(24);
     text("Press 'Enter' to Start", width / 2, height / 2);
+    text("Press 'z' for Level Select", width / 2, height / 1.7);
 
     // Draw the background rectangle for the color visualization
     fill(floorColor); // Set rectangle color to #408040
@@ -150,19 +183,62 @@ function drawMainMenu() {
     fill(0);
 }
 
-
-
-function clearGameObjects() {
-    clear();
-
-    for (var obj of gameObjects)
-        obj.remove();
-
-    // for (var wall of walls)
-    //     wall.remove();
-
-    // background(backgroundColor);
+function levelSelect() {
+    gameState = 'levelSelect';
 }
+
+function levelSquare(x, y, size, levelNum) {
+    fill(color(255, 0, 0));
+    let lvlSqr = square(x, y, size);
+    textSize(size/1.5);
+    fill(0);
+    text(levelNum, x + size/2, y + size/2); //puts level number in square
+
+    //if square is clicked
+    if (mouse.pressed() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
+        playLevel(levelNum - 1);
+    }
+    return lvlSqr;
+}
+
+function playLevel(levelNum) {
+    strokeCount = 0;
+    ballInGoal = false;
+    canMove = true;
+    setupLevel(levelNum);
+    fullGameMode = false; //prevents it from going to next level
+    gameState = 'playing';
+}
+
+function handleLevelSelect() {
+    var squaresPerRow = 10;
+    //based on width of screen, picks square size so they will be evenly spaced
+    var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
+    var horizontalOffset = squareSize/2;
+    var verticalOffset = squareSize/2;
+    let lvlSqr = [];
+
+    for (var levelNum = 0; levelNum < levelData.length; levelNum++) { //make level squares for however many levels currently exist
+        var x = horizontalOffset + (levelNum % squaresPerRow) * (horizontalOffset + squareSize); //spaces squares out from walls and each other
+        var y = verticalOffset + floor(levelNum/squaresPerRow) * (verticalOffset + squareSize); //for if there are multiple rows
+        lvlSqr[levelNum] = levelSquare(x, y, squareSize, levelNum + 1);
+    }
+
+}
+
+
+
+// function clearGameObjects() {
+//     clear();
+//
+//     for (var obj of gameObjects)
+//         obj.remove();
+//
+//     // for (var wall of walls)
+//     //     wall.remove();
+//
+//     // background(backgroundColor);
+// }
 
 function drawGameOver() {
     background("white");
@@ -181,16 +257,38 @@ function drawGameOver() {
 function keyPressed() {
     if (gameState === 'menu' && key === 'Enter') {
         startGame();
+
+        //Need this for camera to work
+        if (cameraModeOptions.length<=1){
+            cameraModeOptions.push("Follow");
+        }
+
+    } else if (gameState === 'menu' && (key === 'z' || key === 'Z')) {
+        levelSelect();
     } else if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
-    }else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
+    } else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
     }
 
 }
 
 async function handleGamePlay() {
+
+    // Behavior for all GameObjects, *including* the ball and hole
+    // To add or change behavior, go to game-objects.js
+    for (var object of gameObjects)
+        object.update();
+
+
+    // Sets ball position when camera is follow
+    if (cameraMode === "Follow") {
+        // Make camera follow the ball's position
+        camera.x = ball.x;
+        camera.y = ball.y;
+    }
+
     // Draw the stroke counter
     drawStrokeCount();
 
@@ -217,6 +315,9 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && (canMove || true) && pullStart) {
+        
+        // playHitSound(); //Playing the ball hit sound
+      
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -235,13 +336,13 @@ async function handleGamePlay() {
         await sleep(2*forceMagnitude);
 
         // Apply the calculated force to the ball if its in sand
-        if (ball.overlaps(sandtrap)){
-            ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
-        }
-        else{
+        // if (ball.overlaps(sandtrap)){
+        //     ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
+        // }
+        // else{
             //Apply calculated for normally
             ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
-        }
+        // }
 
         // Hide the putter
         putter.visible = false;
@@ -309,51 +410,30 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
+        // playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
         strokeCount = 0;
         await sleep(3000);
 
-        level.nextLevel();
-        ballInGoal = false;
-        canMove = true;
+        if (fullGameMode) {
+            level.nextLevel();
+            ballInGoal = false;
+            canMove = true;
+        }
+        else { //if in single level mode
+
+            //clear everything
+            clearGameObjects();
+            for (var wall of level.walls)
+            {
+                wall.remove();
+            }
+
+            gameState = 'menu'; //return to menu
+        }
     }
-
-    if (sandtrap.overlaps(ball))
-    {
-        ball.vel.x = ball.vel.x / 3;
-        ball.vel.y = ball.vel.y / 3;
-    }
-
-    if (tubeA.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5) {
-        ball.x = tubeB.x;
-        ball.y = tubeB.y;
-        ball.vel.x = 3;
-        ball.vel.y = 0;
-    }
-
-    ball.overlaps(tubeB);
-
-    if (water.overlaps(ball)){
-        ball.vel.x = 0;
-        ball.vel.y = 0;
-        ball.x = lastHit.x;
-        ball.y = lastHit.y;
-    }
-
-    if(volcano.overlaps(ball)){
-        ball.vel.x = 0;
-        ball.vel.y = 0;
-        ball.x = ballStart.x;
-        ball.y = ballStart.y;
-    }
-
-    ball.overlaps(windmillBody);
-    windmillBlade1.rotationSpeed = -1;
-    windmillBlade2.rotationSpeed = -1;
-    windmillBlade3.rotationSpeed = -1;
-    windmillBlade4.rotationSpeed = -1;
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){
