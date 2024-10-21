@@ -3,7 +3,7 @@ const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at wh
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
 var gameObjects = [], strokeCounts = []; strokeCount = 0;
-var level = new Level(); // The level object; builds the stage
+var level; // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
@@ -21,6 +21,16 @@ let currentColorIndex = 0;
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
 let prevVelY = 0;
+var ballLastPosition = 0;
+
+// The canvas for drawing terrain. Goes under the main canvas.
+var webglCanvas;
+var webglContext;
+
+async function preload()
+{
+    // heightShader = createShader(vertSrc, fragSrc);
+}
 
 // Sound variables
 let hitSound, holeSound, waterSplash;
@@ -61,6 +71,27 @@ async function setup()
         currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
         trajectoryColor = trajectoryColors[currentColorIndex];
     });
+
+    // Create WebGL Canvas
+    webglCanvas = document.createElement("canvas");
+    webglCanvas.id = "webglCanvas";
+    webglCanvas.setAttribute('width', window.innerWidth);
+	webglCanvas.setAttribute('height', window.innerHeight);
+    webglCanvas.style.width = "100%";
+    webglCanvas.style.height = "auto";
+    webglCanvas.style.position = "fixed";
+    webglCanvas.style.x = 0;
+    webglCanvas.style.y = 0;
+    webglCanvas.style.zIndex = 1;
+    document.getElementById("defaultCanvas0").style.zIndex = 2;
+    document.getElementsByTagName("main")[0].insertBefore(webglCanvas, document.getElementById("defaultCanvas0"));
+
+    // // Setup WebGL canvas for drawing
+    // webglContext = webglCanvas.getContext("webgl");
+    // webglContext.clearColor(0, 0, 0, 0);
+    // webglContext.clear(webglContext.COLOR_BUFFER_BIT);
+
+    level = new Level(webglCanvas);
 }
 
 //Hit sound function
@@ -100,6 +131,7 @@ function startGame() {
     canMove = true;
     setupLevel(0);
     gameState = 'playing';
+    ballLastPosition = createVector(0, 0);
 }
 
 // Runs 60 times per second
@@ -108,7 +140,7 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-    background("white");
+    // background("white");
 
     if (gameState === 'menu') {
         drawMainMenu();
@@ -117,7 +149,7 @@ async function draw()
     }
     else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        level.drawStage();
+        // level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
@@ -261,11 +293,14 @@ async function handleGamePlay() {
     drawStrokeCount();
 
     // When mouse is pressed...
-    if (mouse.presses() && canMove) {
+    if (mouse.presses() && (canMove || true)) {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
     }
+
+    ball.velocity.x += level.getNormal(ball.x, ball.y).x;
+    ball.velocity.y += level.getNormal(ball.x, ball.y).y;
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
@@ -279,8 +314,10 @@ async function handleGamePlay() {
 
 
     // When mouse is released...
-    if (mouse.releases() && canMove && pullStart) {
+    if (mouse.releases() && (canMove || true) && pullStart) {
+        
         // playHitSound(); //Playing the ball hit sound
+      
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -354,8 +391,9 @@ async function handleGamePlay() {
             }
 
             //Calculate new ball velocity manually
+            const wallFriction = 0.6;
             let velocityVector = createVector(prevVelX, prevVelY);
-            velocityVector.reflect(normalVector);
+            velocityVector.reflect(normalVector).mult(wallFriction);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
 
@@ -399,7 +437,7 @@ async function handleGamePlay() {
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){
-        if (ball.vel.x==0 && ball.vel.y==0){
+        if (ballLastPosition.sub(ball.position).mag() < 0.01) {//(ball.vel.x==0 && ball.vel.y==0){
             canMove=true //Player can take the next shot
             if(!message) {
             message = "Take Your Shot"; //Set the message

@@ -5,8 +5,98 @@ const SUB = 1;
 var ballStart, lastHit;
 
 var floorColor = "#408040";
+var minFloorColor = "#102010";
+var maxFloorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
+
+
+const vertexShaderSource = `
+attribute vec2 coordinates;
+void main(void) {
+    gl_Position = vec4(coordinates, 0.0, 1.0);
+}
+
+`;
+
+const fragmentShaderSource = `
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform float minHeight;
+uniform float maxHeight;
+
+const vec3 minHeightColor = vec3(0, 0.1, 0);
+const vec3 maxHeightColor = vec3(0, 1.0, 0);
+
+uniform vec2 screenSize;
+uniform vec4 bounds;
+
+const int maxModifiers = 10;
+uniform int action[maxModifiers];
+uniform float height[maxModifiers];
+uniform int shape[maxModifiers];
+uniform vec4 data[maxModifiers];
+
+vec2 reverseYCoordinates( vec2 screenCoords )
+{
+	return vec2(screenCoords.x, screenSize.y - screenCoords.y);
+}
+
+vec2 screenToLevel( vec2 screenCoords )
+{
+	return bounds.xy + reverseYCoordinates(screenCoords.xy) / screenSize.xy * bounds.zw;
+}
+
+float shapeHasPoint(int shapeType, vec4 shapeData, vec2 point)
+{
+    if (shapeType == 0)
+    {
+        return max(0.0, 1.0 - length(vec2((point.x - shapeData.x) / shapeData.z, (point.y - shapeData.y) / shapeData.w)));
+    }
+    return 0.0;
+}
+
+float getHeight(vec2 coords)
+{
+    float pointHeight = 0.0;
+
+    for (int i = 0; i < maxModifiers; ++i)
+    {
+        if (action[i] == -1)
+            break;
+        float weight = shapeHasPoint(shape[i], data[i], coords);
+        if (weight != 0.0)
+        {
+            if (action[i] == 0)
+                pointHeight += height[i] * weight;
+            else
+                pointHeight = height[i] * weight;
+        }
+    }
+
+    return pointHeight;
+}
+
+void main( void )
+{
+    vec2 coords = screenToLevel( gl_FragCoord.xy );
+
+	vec3 color = mix( minHeightColor, maxHeightColor, (getHeight(coords) - minHeight) / (maxHeight - minHeight) );
+
+	gl_FragColor.rgb = color;
+}
+
+`;
+
+function createGlShader(gl, source, type) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return shader;
+}
 
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
@@ -15,7 +105,7 @@ var wallColor = "#684917";
 
 class Level
 {
-    constructor()
+    constructor(canvas)
     {
         // Constants
         this.levelMargin = 50; // Number of pixels between the level's edge and the edge of the window
@@ -26,11 +116,81 @@ class Level
         this.levelPolytree = new ClipperLib.PolyTree(); // Tree used for clipping polygons
         this.polynode = null;
 
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("webgl");
+        this.vertexShader = createGlShader(this.ctx, vertexShaderSource, this.ctx.VERTEX_SHADER);
+        this.fragmentShader = createGlShader(this.ctx, fragmentShaderSource, this.ctx.FRAGMENT_SHADER);
+
+        this.shaderProgram = this.ctx.createProgram();
+        this.ctx.attachShader(this.shaderProgram, this.vertexShader);
+        this.ctx.attachShader(this.shaderProgram, this.fragmentShader);
+        this.ctx.linkProgram(this.shaderProgram);
+        this.ctx.useProgram(this.shaderProgram);
+
         // Level Data
         this.number = -1;
         this.walls = []; // Wall sprites
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
+
+        this.maxHeight = 2.0;
+        this.minHeight = -2.0;
+
+        this.heightModifiers = [
+            {
+                action: "add",
+                height: 2.0,
+                shape: "oval",
+                data: {
+                    x: 10075,
+                    y: 0,
+                    w: 75,
+                    h: 75,
+                },
+                gradient: {
+                    type: "radial",
+                }
+            },
+            {
+                action: "add",
+                height: -2.0,
+                shape: "oval",
+                data: {
+                    x: 10225,
+                    y: 150,
+                    w: 75,
+                    h: 75,
+                },
+                gradient: {
+                    type: "radial",
+                }
+            },
+        ];
+
+        const maxModifiers = 10;
+        let actions = new Int8Array(maxModifiers);
+        let heights = new Float32Array(maxModifiers);
+        let shapes = new Int8Array(maxModifiers);
+        let datas = new Float32Array(maxModifiers * 4);
+        for (var i = 0; i < this.heightModifiers.length; i++)
+        {
+            let modifier = this.heightModifiers[i];
+            actions[i] = modifier.action == "add" ? 1 : 0;
+            heights[i] = modifier.height;
+            shapes[i] = ["oval"].indexOf(modifier.shape);
+            datas[i * 4 + 0] = modifier.data.x;
+            datas[i * 4 + 1] = modifier.data.y;
+            datas[i * 4 + 2] = modifier.data.w;
+            datas[i * 4 + 3] = modifier.data.h;
+        }
+        actions[this.heightModifiers.length] = -1;
+
+        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "action"), actions);
+        this.ctx.uniform1fv(this.ctx.getUniformLocation(this.shaderProgram, "height"), heights);
+        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "shape"), shapes);
+        this.ctx.uniform4fv(this.ctx.getUniformLocation(this.shaderProgram, "data"), datas);
+        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "minHeight"), this.minHeight);
+        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "maxHeight"), this.maxHeight);
 
     }
 
@@ -153,6 +313,67 @@ class Level
         return [posWalls, negWalls];
     }
 
+    makeRect(x, y, w, h)
+    {
+        return [
+            {"X": x, "Y": y},
+            {"X": x + w, "Y": y},
+            {"X": x + w, "Y": y + h},
+            {"X": x, "Y": y + h},
+        ];
+    }
+
+    makeOval(x, y, w, h = 0, arcLength = 359)
+    {
+        let polygon = [];
+        const pointCount = 32;
+        let circleScale = createVector(w, h);
+        let circlePoint = createVector(0, 1);
+        for (var i = 0; i <= arcLength / 360 * arcLength; i++)
+        {
+            circlePoint.rotate(360 / pointCount);
+            polygon.push( { "X": x + circlePoint.x * circleScale.x, "Y": y + circlePoint.y * circleScale.y } );
+        }
+        if (arcLength != 360)
+            polygon.push( { "X": x, "Y": y } );
+        return polygon;
+    }
+
+    makePolygon(points)
+    {
+        let polygon = [];
+        for (var i = 0; i < points.length; i += 2)
+        {
+            polygon.push( { "X": Number(points[i]), "Y": Number(points[i + 1]) } );
+        }
+        return polygon;
+    }
+
+    makeShape(shapeName, args)
+    {
+        switch (shapeName.toLowerCase())
+        {
+            case "rect":
+            case "rectangle":
+                return this.makeRect(Number(args[0]), Number(args[1]), Number(args[2]), Number(args[3]));
+                break;
+
+            case "circle":
+            case "circ":
+            case "oval":
+                return this.makeOval(Number(args[0]), Number(args[1]), Number(args[2]), args.length < 4 ? Number(args[2]) : Number(args[3]), args.length < 5 ? 359 : args[4]);
+                break;
+
+            case "poly":
+            case "polygon":
+                return this.makePolygon(args);
+                break;
+
+            default:
+                break;
+        }
+    }
+
     parseAreaString(areaString)
     {
         let posWalls = [];
@@ -225,45 +446,8 @@ class Level
                 else
                     continue;
 
-                switch (statement[1].toLowerCase())
-                {
-                    case "rect":
-                    case "rectangle":
-                        shape.polygon = [
-                            {"X": Number(statement[2]), "Y": Number(statement[3])},
-                            {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3])},
-                            {"X": Number(statement[2]) + Number(statement[4]), "Y": Number(statement[3]) + Number(statement[5])},
-                            {"X": Number(statement[2]), "Y": Number(statement[3]) + Number(statement[5])},
-                        ];
-                        break;
+                shape.polygon = this.makeShape(statement[1], statement.slice(2))
 
-                    case "circle":
-                    case "circ":
-                    case "oval":
-                        const pointCount = 32
-                        let circleScale = createVector(Number(statement[4]), statement.length < 6 ? Number(statement[4]) : Number(statement[5]));
-                        let arcLength = statement.length < 7 ? 359 : statement[6];
-                        let circlePoint = createVector(0, 1);
-                        for (var i = 0; i <= arcLength / 360 * arcLength; i++)
-                        {
-                            circlePoint.rotate(360 / pointCount);
-                            shape.polygon.push( { "X": Number(statement[2]) + circlePoint.x * circleScale.x, "Y": Number(statement[3]) + circlePoint.y * circleScale.y } );
-                        }
-                        if (arcLength != 360)
-                            shape.polygon.push( { "X": Number(statement[2]), "Y": Number(statement[3]) } );
-                        break;
-
-                    case "poly":
-                    case "polygon":
-                        for (var i = 2; i < statement.length; i += 2)
-                        {
-                            shape.polygon.push( { "X": Number(statement[i]), "Y": Number(statement[i + 1]) } );
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
                 this.modifyLevelShape(shape, posWalls, negWalls);
             }
         }
@@ -283,6 +467,53 @@ class Level
         {
             gameObjects.pop().delete();
         }
+    }
+
+    shapeHasPoint(shape, pointX, pointY)
+    {
+        switch (shape.shape) {
+            case "rect":
+                return (
+                    pointX > point.data.x
+                    && pointX < point.data.x + point.data.w
+                    && pointY > point.data.y
+                    && pointY < point.data.y + point.data.h
+                ) ? 1 : 0;
+                break;
+
+            case "oval":
+                let weight = Math.max(0.0, 1 - createVector((pointX - shape.data.x) / shape.data.w, (pointY - shape.data.y) / shape.data.h).mag());
+                if (shape.gradient.type == "flat")
+                    return Math.ceil(weight);
+                else if (shape.gradient.type == "radial")
+                    return weight;
+                break;
+
+            default:
+                return false;
+        }
+    }
+
+    getHeight(x, y)
+    {
+        let height = 0;
+        for (var shape of this.heightModifiers)
+        {
+            let shapeWeight = this.shapeHasPoint(shape, x, y);
+            if (shapeWeight != 0)
+            {
+                if (shape.action == "add")
+                    height += shape.height * shapeWeight;
+                else
+                    height = shape.height * shapeWeight;
+            }
+        }
+        return height;
+    }
+
+    getNormal(x, y)
+    {
+        return (   createVector(x + 0.5, y, this.getHeight(x + 0.5, y)).sub(createVector(x - 0.5, y, this.getHeight(x - 0.5, y))).normalize()   ).cross(   createVector(x, y + 0.5, this.getHeight(x, y + 0.5)).sub(createVector(x, y - 0.5, this.getHeight(x, y - 0.5))).normalize()   );
     }
 
     createGameObject(objectData) {
@@ -338,20 +569,9 @@ class Level
         let levelWidth = this.bounds.right - this.bounds.left;
         let levelHeight = this.bounds.bottom - this.bounds.top;
 
-
-    // Position camera
-    if(cameraMode == "Center")
-        {
-            camera.x = (this.bounds.right + this.bounds.left) / 2;
-            camera.y = (this.bounds.bottom + this.bounds.top) / 2;
-        }
-    else if (cameraMode == "Follow")
-        {
-            //camera.x = ballPosition.x;
-            camera.x = ball.x;
-            camera.y = ball.y;
-            // camera.y = ballPosition.y;
-        }
+        // Position camera to center bounding rectangle
+        camera.x = (this.bounds.right + this.bounds.left) / 2;
+        camera.y = (this.bounds.bottom + this.bounds.top) / 2;
         camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
 
         // Create golf ball at "ballPosition"
@@ -368,6 +588,8 @@ class Level
         hole = hole.sprites[0];
         // Create obstacles
         this.createObstacles(levelDict.obstacles);
+
+        this.drawStage();
     }
 
     createObstacles(obstaclesString) {
@@ -431,31 +653,120 @@ class Level
 
     drawPolygon(path, pathColor)
     {
-        fill(pathColor);
-        beginShape();
-        for (var point = 0; point < path.length; point++)
-        {
-            let pointVector = createVector(path[point].X, path[point].Y);
-            pointVector = levelToScreen(pointVector);
-            vertex(pointVector.x, pointVector.y);
+        // Define polygon vertices
+        let vertices = new Float32Array(path.length * 2);
+        for (var vert in path) {
+            let pointVector = levelToScreen(createVector(path[vert].X, path[vert].Y)).div(createVector(this.canvas.width / 4, this.canvas.height / 4)).div(2).sub(1, 1).mult(1, -1);
+            vertices[vert * 2] = pointVector.x;
+            vertices[vert * 2 + 1] = pointVector.y;
         }
-        endShape(CLOSE);
+
+        let triangleIndices = earcut(vertices);
+
+        for (var i = 0; i < triangleIndices.length / 3; i++) {
+
+            let tri = new Float32Array([
+                vertices[triangleIndices[i * 3] * 2], vertices[triangleIndices[i * 3] * 2 + 1],  // Vertex 1 (X, Y)
+                vertices[triangleIndices[i * 3 + 1] * 2], vertices[triangleIndices[i * 3 + 1] * 2 + 1],  // Vertex 1 (X, Y)
+                vertices[triangleIndices[i * 3 + 2] * 2], vertices[triangleIndices[i * 3 + 2] * 2 + 1],  // Vertex 2 (X, Y)
+            ]);
+
+            // Create a buffer and load vertices
+            const vertexBuffer = this.ctx.createBuffer();
+            this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, vertexBuffer);
+            this.ctx.bufferData(this.ctx.ARRAY_BUFFER, tri, this.ctx.STATIC_DRAW);
+
+            const coord = this.ctx.getAttribLocation(this.shaderProgram, "coordinates");
+            this.ctx.vertexAttribPointer(coord, 2, this.ctx.FLOAT, false, 0, 0);
+            this.ctx.enableVertexAttribArray(coord);
+
+            // Draw the polygon
+            this.ctx.drawArrays(this.ctx.TRIANGLES, 0, 3);
+        }
+
+
+
+        // fill(pathColor);
+        //
+        // // Apply the p5.Shader object.
+        // // shader(shaderProgram);
+        //
+        // beginShape();
+        // for (var point = 0; point < path.length; point++)
+        // {
+        //     let pointVector = createVector(path[point].X, path[point].Y);
+        //     pointVector = levelToScreen(pointVector);
+        //     vertex(pointVector.x, pointVector.y);
+        // }
+        // endShape(CLOSE);
+    }
+
+    drawHeight(modifier)
+    {
+        return;
+        let drawColor;
+        if (modifier.height > 0)
+            drawColor = maxFloorColor;
+        else
+            drawColor = minFloorColor;
+
+        switch (modifier.shape)
+        {
+            case "oval":
+                const ringCount = 24;
+                let opacity = Math.floor(255 / ringCount).toString(16);
+                if (opacity.length == 1)
+                    opacity = "0" + opacity;
+                fill(drawColor + opacity);
+                stroke("#00000000");
+                for (var i = 0; i < ringCount; i++)
+                {
+                    let center = levelToScreen(createVector(modifier.data.x, modifier.data.y));
+                    ellipse(center.x, center.y, modifier.data.w / ringCount * i * camera.zoom * 2, modifier.data.h / ringCount * i * camera.zoom * 2);
+                }
+                break;
+            default:
+
+        }
+    }
+
+    lerpColor(a, b, amount)
+    {
+        var ah = parseInt(a.replace(/#/g, ''), 16),
+            ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+            bh = parseInt(b.replace(/#/g, ''), 16),
+            br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+            rr = ar + amount * (br - ar),
+            rg = ag + amount * (bg - ag),
+            rb = ab + amount * (bb - ab);
+
+        return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
     }
 
     // Draws the stage
     drawStage()
     {
-        background(backgroundColor);
+        this.ctx.clearColor(1.0, 1.0, 1.0, 1.0);
+        this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
+        this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
 
-        stroke("#000000");
+        this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "bounds"), this.bounds.left, this.bounds.top, this.bounds.right - this.bounds.left, this.bounds.bottom - this.bounds.top);
+        this.ctx.uniform2f(this.ctx.getUniformLocation(this.shaderProgram, "screenSize"), this.canvas.width, this.canvas.height);
+
+        let baseScale = (0 - this.minHeight) / (this.maxHeight - this.minHeight)
+        let baseFloorColor = this.lerpColor(minFloorColor, maxFloorColor, baseScale);//"#" + this.lerpHexColor(maxFloorColor.slice(1, 2), minFloorColor.slice(1, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(3, 2), minFloorColor.slice(3, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(5, 2), minFloorColor.slice(5, 2), baseScale);
+
         for (var wall = 0; wall < this.positiveWalls.length; wall++)
         {
             this.drawPolygon(this.positiveWalls[wall], floorColor);
+        }
+        for (var hM = 0; hM < this.heightModifiers.length; hM++)
+        {
+            this.drawHeight(this.heightModifiers[hM]);
         }
         for (var wall = 0; wall < this.negativeWalls.length; wall++)
         {
             this.drawPolygon(this.negativeWalls[wall], backgroundColor);
         }
-        stroke("#000000");
     }
 }
