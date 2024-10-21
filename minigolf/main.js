@@ -173,12 +173,21 @@ function playLevel(levelNum) {
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
+    
+    //camera options need this to work properly
+    if (cameraModeOptions.length<=1){
+        cameraModeOptions.push("Follow");
+    }
+
     setupLevel(levelNum);
     fullGameMode = false; //prevents it from going to next level
     gameState = 'playing';
 }
 
 function handleLevelSelect() {
+    //text("x = " + floor(mouse.x), width/2, height/2);
+    //text("y = " + floor(mouse.y), width/2, height/1.7);
+
     var squaresPerRow = 10;
     //based on width of screen, picks square size so they will be evenly spaced
     var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
@@ -202,8 +211,8 @@ function handleLevelSelect() {
 //     for (var obj of gameObjects)
 //         obj.remove();
 //
-//     // for (var wall of walls)
-//     //     wall.remove();
+//      for (var wall of walls)
+//          wall.remove();
 //
 //     // background(backgroundColor);
 // }
@@ -277,6 +286,9 @@ async function handleGamePlay() {
         ball.drag = friction;
     }
 
+    
+    //text("x = " + floor(mouse.x), width/2, height/2);
+    //text("y = " + floor(mouse.y), width/2, height/1.7);
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
@@ -387,12 +399,7 @@ async function handleGamePlay() {
         else { //if in single level mode
 
             //clear everything
-            clearGameObjects();
-            for (var wall of level.walls)
-            {
-                wall.remove();
-            }
-
+            level.clear();
             gameState = 'menu'; //return to menu
         }
     }
