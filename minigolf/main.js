@@ -83,13 +83,24 @@ function setupLevel(levelNum) {
     level.load(levelNum);
   
     // Creating the putter head
-    putter = new Sprite(-1000, -1000, 10, 30, 'n');
+    putter = new Sprite([[50,50], [58,50], [58,70], [50,70], [48,68], [46,64], /*[95, 112], [95,108], */ [46,56], [48,52], [50,50]]);
+    // Adding the club/ handle
+    putter.addCollider( 3, -35, 3, 50 );
+    putter.visible = false;
+    putter.overlaps(allSprites);
     putter.layer = 1;
     putter.color = 130,130,130;
     putter.stroke = 'black';
-    //putter.debug = true;
-    putter.offset.x = -20;
-    // gameObjects.push(ball);
+    putter.debug = false;
+    putter.offset.x = -10;
+
+    // Using this Sprite to help with the putter
+    rotationArc = new Sprite (10,10,5);
+    rotationArc.visible = false;
+    rotationArc.debug = false;
+    rotationArc.offset.x = 25;
+    rotationArc.overlaps(allSprites);
+    rotationArc.addCollider(0,0,100);
 
 }
 
@@ -265,6 +276,8 @@ async function handleGamePlay() {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
+        putter.moveTo(ball.x, ball.y,100);
+        rotationArc.moveTo(ball.x, ball.y,100);
     }
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
@@ -291,12 +304,35 @@ async function handleGamePlay() {
         // Reset the pullStart
         pullStart = null;
 
-        // Swinging the putter
-        putter.moveTo(ball.x - (5*(forceMagnitude/6))*forceDirection.x , ball.y - (5*(forceMagnitude/6))*forceDirection.y, .04*forceMagnitude);
-        // ^^ why is the modifier 5/6 ?
-        await sleep(2 * forceMagnitude); //Sorry, the slow putt speed was bothering me
-        putter.moveTo(ball.x, ball.y, .04*forceMagnitude);
-        await sleep(2*forceMagnitude);
+        // Swigning the putter
+        // To swing the putter around a point on the club
+        // I used the rotation around the ball, like the square putter had previously,
+        // but then once the mouse is released I need to change that pivot point to be on the club
+        // so the putter can swing like it should.
+        // The point it pivots around is the sprites 'location' so even though it has an offset
+        // and the putter appears behind the ball, its location is the same as the balls
+        // By using the rotationArc sprite im able to get the degree direction it is facing
+        // which is used to move the putters 'location' and its offset location (where it appears).
+        // so hopefully it looks like the putter never moved but the pivot point is now on the handle
+
+        putter.visible = false; // hides the putter while it does its move but still looks goofy
+
+        putter.offset.x = 0;    // This moves the pivot point onto the handle
+        putter.offset.y = 30;
+
+        putter.move(20,rotationArc.rotation-180,500); // Moves the putter 
+        await sleep(0); // without this here the first move wont
+        // The moving of the putter has a split second where you see it go crazy
+        // im not sure how to fix that with this solution but im going to try a different approach
+        
+        putter.move(-60,rotationArc.rotation+90,500);
+        putter.visible = true;
+
+        // This is the swing
+        putter.rotate(90,forceMagnitude/50);
+        await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
+        putter.rotate(-90,forceMagnitude/50);
+        await sleep(forceMagnitude * 5);
 
         // Apply the calculated force to the ball if its in sand
         // if (ball.overlaps(sandtrap)){
@@ -309,6 +345,10 @@ async function handleGamePlay() {
 
         // Hide the putter
         putter.visible = false;
+        // Resets to rotate around the ball again
+        putter.offset.x = -10;
+        putter.offset.y = 0;
+
 
         if (pullDistance > 0) {
             incrementShots();
@@ -510,8 +550,8 @@ function drawMessage() {
 
 function drawPutter(){
     // Draw the putter back in
-    putter.moveTo(ball.x, ball.y,100);
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
+    rotationArc.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
 }
