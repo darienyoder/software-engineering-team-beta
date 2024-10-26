@@ -14,9 +14,9 @@ var fullGameMode = true;
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
-let trajectoryColor = 'red'; // Default trajectory color
+let trajectoryColor = 'blue'; // Default trajectory color
 const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
-let currentColorIndex = 0;
+let currentColorIndex = 4;
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
