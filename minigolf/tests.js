@@ -147,7 +147,6 @@ addTest('Windmill Push Test', async () => {
     ball.x = windmillBody.x -50;
     ball.y = windmillBody.y -50;
     await sleep (2500)
-    // ball.velocity.x = 0.2; // velocity that triggers high drag
 
     // Check the drag value
     if (ball.x == initialX && ball.y == initialY) {

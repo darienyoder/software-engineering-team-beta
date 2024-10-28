@@ -7,6 +7,7 @@ var ballStart, lastHit;
 var floorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
+var wallStroke = 'black';
 
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
@@ -40,7 +41,7 @@ class Level
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
         newWall.strokeWeight = 1;
         newWall.color = wallColor;
-        newWall.stroke = 'black';
+        newWall.stroke = wallStroke;
         newWall.collider = "static";
         this.walls.push(newWall);
 
