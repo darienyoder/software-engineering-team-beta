@@ -190,10 +190,11 @@ addTest('Water Test', async () => {
 addTest('Volcano Test', async () => {
     ball.x = ballStart.x;
     ball.y = ballStart.y;
-    ball.vel.y = -5; // Fling it upwards so it bounces into the volcano
+    ball.x = getObjectsByType("lava")[0].sprites[0].x; // Currently broken
+    ball.y = getObjectsByType("lava")[0].sprites[0].y; // It says volcano is undefined
     await sleep (600)
 
-    // Check both that it's not at the water and is at lastHit
+    // Check that it's at ballStart and isn't moving
     if (ball.x != ballStart.x || ball.y != ballStart.y) {
         throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
     }
