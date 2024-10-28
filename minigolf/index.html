@@ -14,6 +14,34 @@
     			overscroll-behavior: none;
     		}
 
+            .homeButton {    
+                padding: 15px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 15px;
+                cursor: pointer;
+                min-width: 180px; /* arbitrary length, adjust if necessary */
+            }
+            .homeButton:hover {
+                background-color: #0056b3;
+            }
+            .homeButton:active {
+                background-color: #003874;
+            }
+            #levelSelectButton {
+                position: absolute;
+                left: 50%;
+                top: 60%;
+                transform: translate(-50%, -60%);
+            }
+            #startButton {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
 			.settingsButton {
             	padding: 10px;
                 background-color: #007bff;
@@ -55,6 +83,10 @@
     </head>
     <body>
     	<main></main>
+
+        <button id="startButton" class="homeButton">Start Game</button>
+        <button id="levelSelectButton" class="homeButton">Level Select</button>
+        
 		<button id="menuButton">⚙️</button>
         <div id="settingsMenu">
             <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
