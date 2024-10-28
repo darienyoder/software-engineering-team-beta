@@ -30,27 +30,52 @@ class Level
         // Level Data
         this.number = -1;
         this.walls = []; // Wall sprites
+        this.backWalls = []; // Wall outlines
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
 
     }
 
+    createBackWallSegment(fromVector, toVector){
+        // Behind
+        let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness+1);
+        newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
+        newWall.strokeWeight = 2;
+        newWall.color = wallColor;
+        newWall.stroke = 'black';
+        newWall.collider = "static";
+        newWall.layer = 1;
+        this.walls.push(newWall);
+
+        // Back Corners
+        newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness+1);
+        newWall.strokeWeight = 0;
+        newWall.color = wallColor;
+        // newWall.stroke = 'red';
+        newWall.collider = "static";
+        this.walls.push(newWall);
+    }
+
     createWallSegment(fromVector, toVector)
     {
+        // front
+        // If both this and Behind walls are present, the second one turns into a giant monstrocity
         let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness);
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
-        newWall.strokeWeight = 1;
+        newWall.strokeWeight = 0;
         newWall.color = wallColor;
-        newWall.stroke = wallStroke;
+        newWall.stroke = wallColor;
         newWall.collider = "static";
+        newWall.layer = 2;
         this.walls.push(newWall);
 
         // Corners
         newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness);
-        newWall.strokeWeight = .15;
-        newWall.stroke = wallColor;
+        newWall.strokeWeight = 0;
+        // newWall.stroke = 'yellow';
         newWall.color = wallColor;
         newWall.collider = "static";
+        newWall.layer = 2;
         this.walls.push(newWall);
     }
 
@@ -327,6 +352,7 @@ class Level
         {
             for (var point = 0; point < polygon.length; point++)
             {
+                this.createBackWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
                 this.createWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
             }
         }
@@ -334,6 +360,7 @@ class Level
         {
             for (var point = 0; point < polygon.length; point++)
             {
+                this.createBackWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
                 this.createWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
             }
         }
