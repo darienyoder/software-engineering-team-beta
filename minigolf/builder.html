@@ -25,12 +25,19 @@
         }
 
         .draggable {
-            padding: 5px;
-            margin: 5px;
+            width: 50px;
+            /* Set width for draggable objects */
+            height: 50px;
+            /* Set height for draggable objects */
             background-color: #f0f0f0;
             cursor: move;
             user-select: none;
             /* Prevent text selection */
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .selected {
@@ -196,9 +203,27 @@
 
             newObject.style.left = `${x}px`;
             newObject.style.top = `${y}px`;
-            canvas.appendChild(newObject);
 
-            // Add drag functionality for the new object
+            // Change the background image for the dropped object
+            switch (objectId) {
+                case 'ball':
+                    newObject.style.backgroundImage = "url('assets/ball.png')";
+                    break;
+                case 'hole':
+                    newObject.style.backgroundImage = "url('assets/hole.png')";
+                    break;
+                case 'sandtrap':
+                    newObject.style.backgroundImage = "url('assets/sandtrap.png')";
+                    break;
+                case 'tubes':
+                    newObject.style.backgroundImage = "url('assets/tubes.png')";
+                    break;
+                case 'windmill':
+                    newObject.style.backgroundImage = "url('assets/windmill.png')";
+                    break;
+            }
+
+            canvas.appendChild(newObject);
             makeDraggable(newObject);
         });
 
