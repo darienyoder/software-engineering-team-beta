@@ -66,7 +66,7 @@ class GameObject {
 
             case "lava":
 
-                if (this.sprites[1].overlaps(ball))
+                if (this.sprites[0].overlaps(ball))
                 {
                     ball.vel.x = 0;
                     ball.vel.y = 0;
@@ -102,6 +102,17 @@ class GameObject {
     }
 }
 
+function getObjectsByType(objectType)
+{
+    let filteredObjects = [];
+
+    for (var object of gameObjects)
+        if (object.type == objectType)
+            filteredObjects.push(object);
+
+    return filteredObjects;
+}
+
 function Ball(x, y)
 {
     let newBall = new Sprite(x, y);
@@ -109,8 +120,8 @@ function Ball(x, y)
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    // newBall.image = 'assets/ball.png'
-    // newBall.image.scale = .025
+    newBall.image = 'assets/ball.png'
+    newBall.image.scale = .025
 
     return new GameObject("ball", newBall);
 }
@@ -222,7 +233,7 @@ function Windmill(posX, posY)
     // return [windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4];
 }
 
-function Water(posX, posY, shape) {
+function Water(posX, posY, shape = "square") {
 
     let water;
 

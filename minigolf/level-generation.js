@@ -303,6 +303,8 @@ class Level
                 return Windmill(objectData.position[0], objectData.position[1]);
             case 'Volcano':
                 return Volcano(objectData.position[0],objectData.position[1]);
+            case 'Water':
+                return Water(objectData.position[0], objectData.position[1]);
             default:
                 console.warn(`Unknown object type: ${objectData.type}`);
                 return null;
@@ -346,7 +348,7 @@ class Level
         {
             camera.x = (this.bounds.right + this.bounds.left) / 2;
             camera.y = (this.bounds.bottom + this.bounds.top) / 2;
-        } 
+        }
     else if (cameraMode == "Follow")
         {
             //camera.x = ballPosition.x;
@@ -394,6 +396,9 @@ class Level
                         objectData.targetPosition = [Number(parts[4]), Number(parts[5])];
                         break;
                     case 'Windmill':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        break;
+                    case 'Water':
                         objectData.position = [Number(parts[2]), Number(parts[3])];
                         break;
                     case 'Volcano':

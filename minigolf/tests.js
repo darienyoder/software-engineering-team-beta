@@ -9,7 +9,7 @@ async function runTests() {
     let allPassed = true;
     for (const test of tests) {
         setupTestEnvironment();
-        
+
         try {
             await test.testFunction();
             console.log(`✔️ ${test.name} passed`);
@@ -28,7 +28,7 @@ async function runTests() {
 }
 
 function setupTestEnvironment() {
-
+    level.loadLevelFromDict(testLevel);
 };
 
 // Test that menu works
@@ -66,7 +66,7 @@ addTest('Ball Angle Bounce Test', async () => {
         const angleDegrees = angleRadians * (180 / Math.PI);
         return parseFloat(angleDegrees.toFixed(2));
     }
-    
+
     ball.vel = { x: 0, y: 0 };
     ball.x = ball.y = 50;
     await sleep(50); //Let the ball settle
@@ -115,9 +115,9 @@ addTest('Ball Drag Test', async () => {
 // Test the Sand
 addTest('Sand test', async () => {
     ball.vel = { x: 0, y: 0 };
-    ball.x = sandtrap.x - 40;
-    ball.y = sandtrap.y + 5;
-    
+    ball.x = getObjectsByType("sandtrap")[0].sprites[0].x - 40;
+    ball.y = getObjectsByType("sandtrap")[0].sprites[0].y + 5;
+
     // Commented out code makes sure it fails (if volcano has been removed)
     // ball.x = ballStart.x - 20;
     // ball.y = ballStart.y;
@@ -144,8 +144,8 @@ addTest('Windmill Push Test', async () => {
     ball.vel = { x: 0, y: 0 };
     initialX = ball.velocity.x;
     initialY = ball.velocity.y;
-    ball.x = windmillBody.x -50;
-    ball.y = windmillBody.y -50;
+    ball.x = getObjectsByType("windmill")[0].sprites[0].x -50;
+    ball.y = getObjectsByType("windmill")[0].sprites[0].y -50;
     await sleep (2500)
 
     // Check the drag value
@@ -157,14 +157,14 @@ addTest('Windmill Push Test', async () => {
 
 
 // Test that the tubes work as expected
-// Be careful because on some maps, tubes put the ball in goal  
+// Be careful because on some maps, tubes put the ball in goal
 addTest('Tube Teleportation test', async () => {
     ball.vel = { x: 0, y: 0 };
-    ball.x = tubeA.x;
-    ball.y = tubeA.y;
+    ball.x = getObjectsByType("tubes")[0].sprites[0].x;
+    ball.y = getObjectsByType("tubes")[0].sprites[0].y;
     await sleep(1000); // Wait for any animations
-    if ((ball.x == tubeA.x) && (ball.y == tubeA.y)) {
-        throw new Error(`Expected ball to not be at ${tubeA.x}, ${tubeA.y}, but it is at ${ball.x}, ${ball.y}`);
+    if ((ball.x == getObjectsByType("tubes")[0].sprites[0].x) && (ball.y == getObjectsByType("tubes")[0].sprites[0].y)) {
+        throw new Error(`Expected ball to not be at ${getObjectsByType("tubes")[0].sprites[0].x}, ${getObjectsByType("tubes")[0].sprites[0].y}, but it is at ${ball.x}, ${ball.y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
@@ -173,14 +173,14 @@ addTest('Tube Teleportation test', async () => {
 // Test the water
 addTest('Water Test', async () => {
     ball.vel = { x: 0, y: 0 };
-    ball.x = water.x;
-    ball.y = water.y;
+    ball.x = getObjectsByType("water")[0].sprites[0].x;
+    ball.y = getObjectsByType("water")[0].sprites[0].y;
     initialX = ball.velocity.x
     await sleep (100)
 
     // Check both that it's not at the water and is at lastHit
-    if (ball.x == water.x && ball.y == water.y && ball.x != lastHit.x && ball.y != lastHit.y) {
-        throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${ball.x}, ${ball.y}`);
+    if (ball.x == getObjectsByType("water")[0].sprites[0].x && ball.y == getObjectsByType("water")[0].sprites[0].y && ball.x != lastHit.x && ball.y != lastHit.y) {
+        throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${getObjectsByType("water")[0].sprites[0].x}, ${getObjectsByType("water")[0].sprites[0].y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
@@ -200,7 +200,7 @@ addTest('Volcano Test', async () => {
     if (ball.vel.x != 0 || ball.vel.y != 0) {
         throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
     }
-    
+
     ball.vel = { x: 0, y: 0 };
 });
 

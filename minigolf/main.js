@@ -14,9 +14,9 @@ var fullGameMode = true;
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
-let trajectoryColor = 'red'; // Default trajectory color
+let trajectoryColor = 'blue'; // Default trajectory color
 const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
-let currentColorIndex = 0;
+let currentColorIndex = 4;
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
@@ -96,6 +96,7 @@ function setupLevel(levelNum) {
 function startGame() {
     fullGameMode = true;
     strokeCount = 0;
+    strokeCounts=[];
     ballInGoal = false;
     canMove = true;
     setupLevel(0);
@@ -163,7 +164,7 @@ function levelSquare(x, y, size, levelNum) {
     text(levelNum, x + size/2, y + size/2); //puts level number in square
 
     //if square is clicked
-    if (mouse.pressed() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
+    if (mouse.pressed() && mouseX > x && mouseX < (x+size) && mouseY > y && mouseY < (y+size)) {
         playLevel(levelNum - 1);
     }
     return lvlSqr;
@@ -173,12 +174,19 @@ function playLevel(levelNum) {
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
+    
+    //camera options need this to work properly
+    if (cameraModeOptions.length<=1){
+        cameraModeOptions.push("Follow");
+    }
+
     setupLevel(levelNum);
     fullGameMode = false; //prevents it from going to next level
     gameState = 'playing';
 }
 
 function handleLevelSelect() {
+
     var squaresPerRow = 10;
     //based on width of screen, picks square size so they will be evenly spaced
     var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
@@ -202,8 +210,8 @@ function handleLevelSelect() {
 //     for (var obj of gameObjects)
 //         obj.remove();
 //
-//     // for (var wall of walls)
-//     //     wall.remove();
+//      for (var wall of walls)
+//          wall.remove();
 //
 //     // background(backgroundColor);
 // }
@@ -280,7 +288,7 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
-        // playHitSound(); //Playing the ball hit sound
+        playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -387,12 +395,7 @@ async function handleGamePlay() {
         else { //if in single level mode
 
             //clear everything
-            clearGameObjects();
-            for (var wall of level.walls)
-            {
-                wall.remove();
-            }
-
+            level.clear();
             gameState = 'menu'; //return to menu
         }
     }
