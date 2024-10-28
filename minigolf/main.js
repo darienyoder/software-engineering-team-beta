@@ -14,23 +14,23 @@ var fullGameMode = true;
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
-let trajectoryColor = 'blue'; // Default trajectory color
+let trajectoryColor = 'red'; // Default trajectory color
 const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
-let currentColorIndex = 4;
+let currentColorIndex = 0;
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
 let prevVelY = 0;
 
 // Sound variables
-let hitSound, holeSound, waterSplash;
+// let hitSound, holeSound, waterSplash;
 
 // Loading sound files
-function preload(){
-    hitSound = loadSound('assets/golfPutt.wav');
-    holeSound = loadSound('assets/golfGoal.wav');
-    waterSplash = loadSound('assets/waterSplash.wav');
-}
+// function preload(){
+//     hitSound = loadSound('assets/golfPutt.wav');
+//     holeSound = loadSound('assets/golfGoal.wav');
+//     waterSplash = loadSound('assets/waterSplash.wav');
+// }
 
 // Runs once when the program starts
 async function setup()
@@ -63,20 +63,20 @@ async function setup()
     });
 }
 
-//Hit sound function
-function playHitSound() {
-    hitSound.play();
-}
+// //Hit sound function
+// function playHitSound() {
+//     hitSound.play();
+// }
 
-//Hole sound function
-function playGoalSound() {
-    holeSound.play();
-}
+// //Hole sound function
+// function playGoalSound() {
+//     holeSound.play();
+// }
 
-//Hole sound function
-function playWaterSound() {
-    waterSplash.play();
-}
+// //Hole sound function
+// function playWaterSound() {
+//     waterSplash.play();
+// }
 
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
@@ -96,7 +96,6 @@ function setupLevel(levelNum) {
 function startGame() {
     fullGameMode = true;
     strokeCount = 0;
-    strokeCounts=[];
     ballInGoal = false;
     canMove = true;
     setupLevel(0);
@@ -164,7 +163,7 @@ function levelSquare(x, y, size, levelNum) {
     text(levelNum, x + size/2, y + size/2); //puts level number in square
 
     //if square is clicked
-    if (mouse.pressed() && mouseX > x && mouseX < (x+size) && mouseY > y && mouseY < (y+size)) {
+    if (mouse.pressed() && mouse.x > x && mouse.x < (x+size) && mouse.y > y && mouse.y < (y+size)) {
         playLevel(levelNum - 1);
     }
     return lvlSqr;
@@ -174,19 +173,12 @@ function playLevel(levelNum) {
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
-    
-    //camera options need this to work properly
-    if (cameraModeOptions.length<=1){
-        cameraModeOptions.push("Follow");
-    }
-
     setupLevel(levelNum);
     fullGameMode = false; //prevents it from going to next level
     gameState = 'playing';
 }
 
 function handleLevelSelect() {
-
     var squaresPerRow = 10;
     //based on width of screen, picks square size so they will be evenly spaced
     var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
@@ -210,8 +202,8 @@ function handleLevelSelect() {
 //     for (var obj of gameObjects)
 //         obj.remove();
 //
-//      for (var wall of walls)
-//          wall.remove();
+//     // for (var wall of walls)
+//     //     wall.remove();
 //
 //     // background(backgroundColor);
 // }
@@ -288,7 +280,7 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
-        playHitSound(); //Playing the ball hit sound
+        // playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -395,7 +387,12 @@ async function handleGamePlay() {
         else { //if in single level mode
 
             //clear everything
-            level.clear();
+            clearGameObjects();
+            for (var wall of level.walls)
+            {
+                wall.remove();
+            }
+
             gameState = 'menu'; //return to menu
         }
     }
