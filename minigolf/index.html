@@ -91,6 +91,12 @@
             bottom: 100px;
             right: 20px;
         }
+
+        #levelBuilder {
+            position: fixed;
+            bottom: 60px;
+            left: 20px;
+        }
     </style>
 </head>
 
@@ -99,6 +105,7 @@
 
     <button id="startButton" class="homeButton">Start Game</button>
     <button id="levelSelectButton" class="homeButton">Level Select</button>
+    <button class="settingsButton" id="levelBuilder">Level Builder</button>
 
     <button id="menuButton">⚙️</button>
     <div id="settingsMenu">
@@ -130,6 +137,13 @@
     <script>
         const menuButton = document.getElementById('menuButton');
         const settingsButtons = document.querySelectorAll('.settingsButton');
+
+        const levelBuilderButton = document.getElementById('levelBuilder');
+        levelBuilderButton.addEventListener('click', () => {
+            const currentPath = window.location.pathname;
+            const newPath = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/builder.html';
+            window.location.href = newPath;
+        });
 
         menuButton.addEventListener('click', () => {
             settingsButtons.forEach(button => {
