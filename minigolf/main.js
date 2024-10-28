@@ -293,7 +293,6 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
-        playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -332,6 +331,7 @@ async function handleGamePlay() {
         putter.rotate(90,forceMagnitude/50);
         await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
         putter.rotate(-90,forceMagnitude/50);
+        playHitSound(); //Playing the ball hit sound
         await sleep(forceMagnitude * 5);
 
         // Apply the calculated force to the ball if its in sand
