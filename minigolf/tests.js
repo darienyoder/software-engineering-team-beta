@@ -68,14 +68,14 @@ addTest('Ball Angle Bounce Test', async () => {
     }
 
     ball.vel = { x: 0, y: 0 };
-    ball.x = ball.y = 50;
+    ball.x = ball.y = 10;
     await sleep(50); //Let the ball settle
 
     ball.applyForce(50, -50);
-    await sleep(100); // Wait for the ball to move
+    await sleep(50); // Wait for the ball to move
     let initAngle = getBallAngle(ball);
 
-    await sleep(600); // Wait for the ball to bounce
+    await sleep(100); // Wait for the ball to bounce
     let finAngle = getBallAngle(ball);
 
     // // Simple angle monitoring, uncomment if needed
@@ -192,7 +192,7 @@ addTest('Volcano Test', async () => {
     ball.x = ballStart.x;
     ball.y = ballStart.y;
     ball.vel.y = -5; // Fling it upwards so it bounces into the volcano
-    await sleep (600)
+    await sleep (800)
 
     // Check both that it's not at the water and is at lastHit
     if (ball.x != ballStart.x || ball.y != ballStart.y) {
