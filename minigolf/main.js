@@ -1,4 +1,4 @@
-const strokeForce = 100; // The speed of the ball when it is hit
+const strokeForce = 25; // The speed of the ball when it is hit
 const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
