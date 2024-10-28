@@ -116,12 +116,12 @@ function getObjectsByType(objectType)
 function Ball(x, y)
 {
     let newBall = new Sprite(x, y);
-    newBall.diameter = 20;
+    newBall.diameter = 10;
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    // newBall.image = 'assets/ball.png'
-    // newBall.image.scale = .025
+    newBall.image = 'assets/ball.png'
+    newBall.image.scale = .025
 
     return new GameObject("ball", newBall);
 }
