@@ -37,9 +37,9 @@ let hitSound, holeSound, waterSplash;
 
 // Loading sound files
 function preload(){
-    hitSound = loadSound('assets/golfPutt.wav');
-    holeSound = loadSound('assets/golfGoal.wav');
-    waterSplash = loadSound('assets/waterSplash.wav');
+    // hitSound = loadSound('assets/golfPutt.wav');
+    // holeSound = loadSound('assets/golfGoal.wav');
+    // waterSplash = loadSound('assets/waterSplash.wav');
 }
 
 // Runs once when the program starts
@@ -112,7 +112,7 @@ function playWaterSound() {
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
-  
+
     // Creating the putter head
     putter = new Sprite(-1000, -1000, 10, 30, 'n');
     putter.layer = 1;
@@ -149,7 +149,7 @@ async function draw()
     }
     else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        // level.drawStage();
+        level.drawStage();
         handleGamePlay();
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
@@ -270,6 +270,8 @@ function keyPressed() {
         runTests();
     } else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
         startGame();
+    } else if (key === '0') {
+        showTopography = 1 - showTopography;
     }
 
 }
@@ -315,9 +317,9 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && (canMove || true) && pullStart) {
-        
+
         // playHitSound(); //Playing the ball hit sound
-      
+
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -552,4 +554,16 @@ function drawPutter(){
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
+}
+
+function distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py) {
+   var ldx = lx2 - lx1,
+       ldy = ly2 - ly1,
+       lineLengthSquared = ldx*ldx + ldy*ldy;
+   return distanceSquaredToLineSegment2(lx1, ly1, ldx, ldy, lineLengthSquared, px, py);
+}
+
+function distanceToLineSegment(lx1, ly1, lx2, ly2, px, py)
+{
+   return Math.sqrt(distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py));
 }

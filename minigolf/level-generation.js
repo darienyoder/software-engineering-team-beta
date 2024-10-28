@@ -2,101 +2,20 @@ const ADD = 0;
 const SUBTRACT = 1;
 const SUB = 1;
 
+var showTopography = 0;
+
 var ballStart, lastHit;
 
 var floorColor = "#408040";
-var minFloorColor = "#102010";
-var maxFloorColor = "#408040";
+var minFloorColor = "#264c26";
+var maxFloorColor = "#72e572";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
 
-
-const vertexShaderSource = `
-attribute vec2 coordinates;
-void main(void) {
-    gl_Position = vec4(coordinates, 0.0, 1.0);
-}
-
-`;
-
-const fragmentShaderSource = `
-
-#ifdef GL_ES
-precision mediump float;
-#endif
-
-uniform float minHeight;
-uniform float maxHeight;
-
-const vec3 minHeightColor = vec3(0, 0.1, 0);
-const vec3 maxHeightColor = vec3(0, 1.0, 0);
-
-uniform vec2 screenSize;
-uniform vec4 bounds;
-
-const int maxModifiers = 10;
-uniform int action[maxModifiers];
-uniform float height[maxModifiers];
-uniform int shape[maxModifiers];
-uniform vec4 data[maxModifiers];
-
-vec2 reverseYCoordinates( vec2 screenCoords )
-{
-	return vec2(screenCoords.x, screenSize.y - screenCoords.y);
-}
-
-vec2 screenToLevel( vec2 screenCoords )
-{
-	return bounds.xy + reverseYCoordinates(screenCoords.xy) / screenSize.xy * bounds.zw;
-}
-
-float shapeHasPoint(int shapeType, vec4 shapeData, vec2 point)
-{
-    if (shapeType == 0)
-    {
-        return max(0.0, 1.0 - length(vec2((point.x - shapeData.x) / shapeData.z, (point.y - shapeData.y) / shapeData.w)));
-    }
-    return 0.0;
-}
-
-float getHeight(vec2 coords)
-{
-    float pointHeight = 0.0;
-
-    for (int i = 0; i < maxModifiers; ++i)
-    {
-        if (action[i] == -1)
-            break;
-        float weight = shapeHasPoint(shape[i], data[i], coords);
-        if (weight != 0.0)
-        {
-            if (action[i] == 0)
-                pointHeight += height[i] * weight;
-            else
-                pointHeight = height[i] * weight;
-        }
-    }
-
-    return pointHeight;
-}
-
-void main( void )
-{
-    vec2 coords = screenToLevel( gl_FragCoord.xy );
-
-	vec3 color = mix( minHeightColor, maxHeightColor, (getHeight(coords) - minHeight) / (maxHeight - minHeight) );
-
-	gl_FragColor.rgb = color;
-}
-
-`;
-
-function createGlShader(gl, source, type) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    return shader;
-}
+// Any terrain at these heights will be treated as their respective obstacles.
+// Values are arbitrary.
+const SAND_HEIGHT = 01134;
+const WATER_HEIGHT = 843;
 
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
@@ -132,66 +51,6 @@ class Level
         this.walls = []; // Wall sprites
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
-
-        this.maxHeight = 2.0;
-        this.minHeight = -2.0;
-
-        this.heightModifiers = [
-            {
-                action: "add",
-                height: 2.0,
-                shape: "oval",
-                data: {
-                    x: 10075,
-                    y: 0,
-                    w: 75,
-                    h: 75,
-                },
-                gradient: {
-                    type: "radial",
-                }
-            },
-            {
-                action: "add",
-                height: -2.0,
-                shape: "oval",
-                data: {
-                    x: 10225,
-                    y: 150,
-                    w: 75,
-                    h: 75,
-                },
-                gradient: {
-                    type: "radial",
-                }
-            },
-        ];
-
-        const maxModifiers = 10;
-        let actions = new Int8Array(maxModifiers);
-        let heights = new Float32Array(maxModifiers);
-        let shapes = new Int8Array(maxModifiers);
-        let datas = new Float32Array(maxModifiers * 4);
-        for (var i = 0; i < this.heightModifiers.length; i++)
-        {
-            let modifier = this.heightModifiers[i];
-            actions[i] = modifier.action == "add" ? 1 : 0;
-            heights[i] = modifier.height;
-            shapes[i] = ["oval"].indexOf(modifier.shape);
-            datas[i * 4 + 0] = modifier.data.x;
-            datas[i * 4 + 1] = modifier.data.y;
-            datas[i * 4 + 2] = modifier.data.w;
-            datas[i * 4 + 3] = modifier.data.h;
-        }
-        actions[this.heightModifiers.length] = -1;
-
-        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "action"), actions);
-        this.ctx.uniform1fv(this.ctx.getUniformLocation(this.shaderProgram, "height"), heights);
-        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "shape"), shapes);
-        this.ctx.uniform4fv(this.ctx.getUniformLocation(this.shaderProgram, "data"), datas);
-        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "minHeight"), this.minHeight);
-        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "maxHeight"), this.maxHeight);
-
     }
 
     createWallSegment(fromVector, toVector)
@@ -288,6 +147,42 @@ class Level
         }
     }
 
+    //
+    parseLevelHeight(operation, magnitude, shapeType, shapeArgs)
+    {
+        let shapeName, shapeData;
+        switch (shapeType.toLowerCase()) {
+            case "hill":
+                shapeName = "oval";
+                shapeData = {
+                    x: shapeArgs[0],
+                    y: shapeArgs[1],
+                    w: shapeArgs[2],
+                    h: shapeArgs[3],
+                };
+                break;
+            case "ramp":
+                shapeName = "line";
+                shapeData = {
+                    x1: shapeArgs[0],
+                    y1: shapeArgs[1],
+                    w: shapeArgs[2],
+                    h: shapeArgs[3],
+                };
+                break;
+        }
+
+        return {
+            action: (operation == 0) ? "set" : "add",
+            height: magnitude,
+            shape: shapeName,
+            data: shapeData,
+            gradient: {
+                type: "radial",
+            }
+        };
+    }
+
     // Eliminates any overlapping shapes in the area
     cleanPolygons(area)
     {
@@ -374,7 +269,7 @@ class Level
         }
     }
 
-    parseAreaString(areaString)
+    parseAreaString(areaString, heightData = [])
     {
         let posWalls = [];
         let negWalls = [];
@@ -407,7 +302,7 @@ class Level
                     blockDepth--;
             }
 
-            let subAreaPolygons = this.parseAreaString( areaString.slice(blockEnter + 1, blockEnter + blockLength) );
+            let subAreaPolygons = this.parseAreaString( areaString.slice(blockEnter + 1, blockEnter + blockLength), heightData );
 
             let subAreaReplacement = ";";
             for (var polygon of subAreaPolygons[0])
@@ -432,7 +327,9 @@ class Level
             areaString = areaString.replace(areaString.slice(blockEnter, blockEnter + blockLength + 1), subAreaReplacement);
         }
 
-        let statements = areaString.replaceAll(",", "").replaceAll("(", "").replaceAll(")", "").split(";");
+        while (areaString.includes("  "))
+            areaString = areaString.replaceAll("  ", " ");
+        let statements = areaString.replaceAll(",", "").replaceAll("(", "").replaceAll(")", "").replaceAll(":", "").split(";");
         for (var statement of statements)
         {
             statement = statement.trim().split(" ");
@@ -444,7 +341,14 @@ class Level
                 else if (statement[0].toLowerCase() == "sub")
                     shape.operation = SUBTRACT;
                 else
+                {
+                    if (statement[0].toLowerCase() == "height" && statement.length > 4)
+                    {
+                        let heightOperation = statement[1] == "=" ? 0 : 1;
+                        heightData.push( this.parseLevelHeight(heightOperation, statement[2], statement[3], statement.slice(4)) );
+                    }
                     continue;
+                }
 
                 shape.polygon = this.makeShape(statement[1], statement.slice(2))
 
@@ -467,6 +371,7 @@ class Level
         {
             gameObjects.pop().delete();
         }
+        this.heightModifiers = [];
     }
 
     shapeHasPoint(shape, pointX, pointY)
@@ -542,10 +447,9 @@ class Level
     {
         // Delete any existing level
         this.clear();
-        // Check for obstacles and delete them
 
         // Get walls from area string
-        let areaPolygons = this.parseAreaString(levelDict.area);
+        let areaPolygons = this.parseAreaString(levelDict.area, this.heightModifiers);
         this.positiveWalls = areaPolygons[0];
         this.negativeWalls = areaPolygons[1];
 
@@ -565,6 +469,7 @@ class Level
             }
         }
 
+        // Get level bounding rectangle
         this.bounds = ClipperLib.Clipper.GetBounds(this.positiveWalls);
         let levelWidth = this.bounds.right - this.bounds.left;
         let levelHeight = this.bounds.bottom - this.bounds.top;
@@ -589,7 +494,53 @@ class Level
         // Create obstacles
         this.createObstacles(levelDict.obstacles);
 
-        this.drawStage();
+
+        this.maxHeight = 1;
+        this.minHeight = -1;
+
+        // Draw shader
+        const maxModifiers = 10;
+        let actions = new Int8Array(maxModifiers);
+        let heights = new Float32Array(maxModifiers);
+        let shapes = new Int8Array(maxModifiers);
+        let datas = new Float32Array(maxModifiers * 4);
+        let datas2 = new Float32Array(maxModifiers * 4);
+        for (var i = 0; i < this.heightModifiers.length; i++)
+        {
+            let modifier = this.heightModifiers[i];
+            actions[i] = modifier.action == "set" ? 0 : 1;
+            heights[i] = modifier.height;
+            switch (modifier.shape) {
+                case "oval":
+                    shapes[i] = 0;
+                    datas[i * 4 + 0] = modifier.data.x;
+                    datas[i * 4 + 1] = modifier.data.y;
+                    datas[i * 4 + 2] = modifier.data.w;
+                    datas[i * 4 + 3] = modifier.data.h;
+
+                    this.maxHeight = Math.max(this.maxHeight, this.getHeight(modifier.data.x, modifier.data.y));
+                    this.minHeight = Math.min(this.minHeight, this.getHeight(modifier.data.x, modifier.data.y));
+                    break;
+                case "line":
+                    shapes[i] = 1;
+                    datas[i * 4 + 0] = modifier.data.x1;
+                    datas[i * 4 + 1] = modifier.data.y1;
+                    datas[i * 4 + 2] = modifier.data.x2;
+                    datas[i * 4 + 3] = modifier.data.y2;
+
+                    datas2[i * 4 + 0] = modifier.data.w;
+                    break;
+            }
+        }
+        actions[this.heightModifiers.length] = -1;
+
+        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "action"), actions);
+        this.ctx.uniform1fv(this.ctx.getUniformLocation(this.shaderProgram, "height"), heights);
+        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "shape"), shapes);
+        this.ctx.uniform4fv(this.ctx.getUniformLocation(this.shaderProgram, "data"), datas);
+        this.ctx.uniform4fv(this.ctx.getUniformLocation(this.shaderProgram, "data2"), datas2);
+        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "minHeight"), this.minHeight);
+        this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "maxHeight"), this.maxHeight);
     }
 
     createObstacles(obstaclesString) {
@@ -683,22 +634,6 @@ class Level
             // Draw the polygon
             this.ctx.drawArrays(this.ctx.TRIANGLES, 0, 3);
         }
-
-
-
-        // fill(pathColor);
-        //
-        // // Apply the p5.Shader object.
-        // // shader(shaderProgram);
-        //
-        // beginShape();
-        // for (var point = 0; point < path.length; point++)
-        // {
-        //     let pointVector = createVector(path[point].X, path[point].Y);
-        //     pointVector = levelToScreen(pointVector);
-        //     vertex(pointVector.x, pointVector.y);
-        // }
-        // endShape(CLOSE);
     }
 
     drawHeight(modifier)
@@ -752,6 +687,11 @@ class Level
 
         this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "bounds"), this.bounds.left, this.bounds.top, this.bounds.right - this.bounds.left, this.bounds.bottom - this.bounds.top);
         this.ctx.uniform2f(this.ctx.getUniformLocation(this.shaderProgram, "screenSize"), this.canvas.width, this.canvas.height);
+
+        let date = new Date();
+        this.ctx.uniform1i(this.ctx.getUniformLocation(this.shaderProgram, "time"), date.getTime() * 5.0);
+
+        this.ctx.uniform1i(this.ctx.getUniformLocation(this.shaderProgram, "showTopography"), showTopography);
 
         let baseScale = (0 - this.minHeight) / (this.maxHeight - this.minHeight)
         let baseFloorColor = this.lerpColor(minFloorColor, maxFloorColor, baseScale);//"#" + this.lerpHexColor(maxFloorColor.slice(1, 2), minFloorColor.slice(1, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(3, 2), minFloorColor.slice(3, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(5, 2), minFloorColor.slice(5, 2), baseScale);
