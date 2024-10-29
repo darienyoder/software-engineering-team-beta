@@ -31,6 +31,7 @@ uniform float height[maxModifiers];
 uniform int shape[maxModifiers];
 uniform vec4 data[maxModifiers];
 uniform vec4 data2[maxModifiers];
+uniform int gradient[maxModifiers];
 
 uniform int showTopography;
 
@@ -74,13 +75,24 @@ float distanceToLineSegment(vec2 lineStart, vec2 lineEnd, vec2 point)
    return sqrt(distanceSquaredToLineSegment(lineStart.x, lineStart.y, lineEnd.x, lineEnd.y, point.x, point.y));
 }
 
-float shapeHasPoint(int shapeType, vec4 shapeData, vec4 shapeData2, vec2 point)
+float shapeHasPoint(int shapeType, vec4 shapeData, vec4 shapeData2, int grad, vec2 point)
 {
     if (shapeType == 0)
-        return max(0.0, 1.0 - length(vec2((point.x - shapeData.x) / shapeData.z, (point.y - shapeData.y) / shapeData.w)));
+    {
+        float weight = max(0.0, 1.0 - length(vec2((point.x - shapeData.x) / shapeData.z, (point.y - shapeData.y) / shapeData.w)));
+        if (grad == 0)
+            return ceil(weight);
+        else
+            return weight;
+    }
     if (shapeType == 1)
-        return (distanceToLineSegment(shapeData.xy, shapeData.zw, point.xy) < shapeData2.x) ? 1.0 : 0.0;
-
+    {
+        float weight = (distanceToLineSegment(shapeData.xy, shapeData.zw, point.xy) < shapeData2.x) ? 1.0 : 0.0;
+        if (grad == 0)
+            return ceil(weight);
+        else
+            return weight;
+    }
     return 0.0;
 }
 
@@ -92,7 +104,7 @@ float getHeight(vec2 coords)
     {
         if (action[i] == -1)
             break;
-        float weight = shapeHasPoint(shape[i], data[i], data2[i], coords);
+        float weight = shapeHasPoint(shape[i], data[i], data2[i], gradient[i], coords);
         if (weight != 0.0)
         {
             if (action[i] == 1)
@@ -117,7 +129,7 @@ void main( void )
     float pointHeight = getHeight(coords);
 	vec3 color = mix( minHeightColor, maxHeightColor, (pointHeight - minHeight) / (maxHeight - minHeight) );
     if (pointHeight == SAND_HEIGHT)
-        color = vec3(1, 1, 0);
+        color = vec3(0.824,0.706,0.549);
     else if (pointHeight == WATER_HEIGHT)
         color = vec3(0, 0, 1);
 

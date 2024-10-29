@@ -1,14 +1,18 @@
 var levelData = [
     {
-        ballPosition: [75, 75],
-        holePosition: [225, 75],
+        ballPosition: [50, 75],
+        holePosition: [250, 75],
         area: `
 
             ADD rect 0, 0, 300, 150;
-            HEIGHT + 3: hill 150, 75, 50, 50;
-            HEIGHT + -3: hill 150, 75, 100, 100;
+            // HEIGHT + 6: hill -100, 75, 500, 500;
+            HEIGHT + -3: hill 280, 120, 50, 50;
+            HEIGHT = 01134: oval 150, 75, 70, 70;
+            HEIGHT = 0: oval 150, 75, 50, 50;
+            HEIGHT + -3: hill 150, 75, 50, 50;
+            HEIGHT = 843: oval 250, 15, 40, 25;
 
-            HEIGHT = 3: line 0, 0, 300, 150, 50;
+            // HEIGHT = 3: line 0, 0, 300, 150, 50;
 
             // HEIGHT = 3: ramp (x1, y1), (x2, y2), width;
             // HEIGHT + 3: rect x, y, h, w;

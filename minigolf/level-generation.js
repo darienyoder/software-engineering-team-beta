@@ -150,7 +150,7 @@ class Level
     //
     parseLevelHeight(operation, magnitude, shapeType, shapeArgs)
     {
-        let shapeName, shapeData;
+        let shapeName, shapeData, grad;
         switch (shapeType.toLowerCase()) {
             case "hill":
                 shapeName = "oval";
@@ -160,6 +160,17 @@ class Level
                     w: shapeArgs[2],
                     h: shapeArgs[3],
                 };
+                grad = "radial";
+                break;
+            case "oval":
+                shapeName = "oval";
+                shapeData = {
+                    x: shapeArgs[0],
+                    y: shapeArgs[1],
+                    w: shapeArgs[2],
+                    h: shapeArgs[3],
+                };
+                grad = "flat";
                 break;
             case "ramp":
                 shapeName = "line";
@@ -169,6 +180,7 @@ class Level
                     w: shapeArgs[2],
                     h: shapeArgs[3],
                 };
+                grad = "flat";
                 break;
         }
 
@@ -178,7 +190,7 @@ class Level
             shape: shapeName,
             data: shapeData,
             gradient: {
-                type: "radial",
+                type: grad,
             }
         };
     }
@@ -495,8 +507,8 @@ class Level
         this.createObstacles(levelDict.obstacles);
 
 
-        this.maxHeight = 1;
-        this.minHeight = -1;
+        this.maxHeight = 3;
+        this.minHeight = -3;
 
         // Draw shader
         const maxModifiers = 10;
@@ -505,11 +517,13 @@ class Level
         let shapes = new Int8Array(maxModifiers);
         let datas = new Float32Array(maxModifiers * 4);
         let datas2 = new Float32Array(maxModifiers * 4);
+        let gradients = new Int8Array(maxModifiers);
         for (var i = 0; i < this.heightModifiers.length; i++)
         {
             let modifier = this.heightModifiers[i];
             actions[i] = modifier.action == "set" ? 0 : 1;
             heights[i] = modifier.height;
+            gradients[i] = (["flat", "radial"]).indexOf(modifier.gradient.type);
             switch (modifier.shape) {
                 case "oval":
                     shapes[i] = 0;
@@ -518,8 +532,13 @@ class Level
                     datas[i * 4 + 2] = modifier.data.w;
                     datas[i * 4 + 3] = modifier.data.h;
 
-                    this.maxHeight = Math.max(this.maxHeight, this.getHeight(modifier.data.x, modifier.data.y));
-                    this.minHeight = Math.min(this.minHeight, this.getHeight(modifier.data.x, modifier.data.y));
+                    let pointHeight = this.getHeight(modifier.data.x, modifier.data.y);
+                    if (pointHeight != SAND_HEIGHT && pointHeight != WATER_HEIGHT)
+                    {
+                        // this.maxHeight = Math.max(this.maxHeight, pointHeight);
+                        // this.minHeight = Math.min(this.minHeight, pointHeight);
+                        // alert(pointHeight)
+                    }
                     break;
                 case "line":
                     shapes[i] = 1;
@@ -539,6 +558,7 @@ class Level
         this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "shape"), shapes);
         this.ctx.uniform4fv(this.ctx.getUniformLocation(this.shaderProgram, "data"), datas);
         this.ctx.uniform4fv(this.ctx.getUniformLocation(this.shaderProgram, "data2"), datas2);
+        this.ctx.uniform1iv(this.ctx.getUniformLocation(this.shaderProgram, "gradient"), gradients);
         this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "minHeight"), this.minHeight);
         this.ctx.uniform1f(this.ctx.getUniformLocation(this.shaderProgram, "maxHeight"), this.maxHeight);
     }
