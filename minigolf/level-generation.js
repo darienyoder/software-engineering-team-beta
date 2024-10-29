@@ -7,6 +7,7 @@ var ballStart, lastHit;
 var floorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
+var wallStroke = 'black';
 
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
@@ -29,24 +30,55 @@ class Level
         // Level Data
         this.number = -1;
         this.walls = []; // Wall sprites
+        this.backWalls = []; // Wall outlines
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
 
     }
 
-    createWallSegment(fromVector, toVector)
-    {
-        let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness);
+    createBackWallSegment(fromVector, toVector){
+        // Behind
+        let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness+1);
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
-        newWall.strokeWeight = 0.0;
+        newWall.strokeWeight = 2;
         newWall.color = wallColor;
+        newWall.stroke = wallStroke;
         newWall.collider = "static";
+        newWall.layer = 1;
         this.walls.push(newWall);
 
+        // // Back Corners
+        // // Has potential to be nice for colored corners,
+        // // But I can't figure out how to properly hide parts of the circle I don't want
+        // newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness+1);
+        // newWall.strokeWeight = 0;
+        // newWall.color = wallColor;
+        // newWall.stroke = 'black';
+        // newWall.collider = "static";
+        // this.walls.push(newWall);
+    }
+
+    createWallSegment(fromVector, toVector)
+    {
+        // front
+        let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness);
+        newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
+        newWall.strokeWeight = 0;
+        newWall.color = wallColor;
+        newWall.stroke = wallColor;
+        newWall.collider = "static";
+        newWall.layer = 2;
+        this.walls.push(newWall);
+
+        // Front Corners
+        // The stroke of back corners are still visible through them
+        // Except for exactly one where this is the visible corner instead of the back
         newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness);
-        newWall.strokeWeight = 0.0;
+        newWall.strokeWeight = 3;
+        newWall.stroke = wallColor;
         newWall.color = wallColor;
         newWall.collider = "static";
+        newWall.layer = 2;
         this.walls.push(newWall);
     }
 
@@ -323,6 +355,7 @@ class Level
         {
             for (var point = 0; point < polygon.length; point++)
             {
+                this.createBackWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
                 this.createWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
             }
         }
@@ -330,6 +363,7 @@ class Level
         {
             for (var point = 0; point < polygon.length; point++)
             {
+                this.createBackWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
                 this.createWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
             }
         }
