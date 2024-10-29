@@ -116,7 +116,7 @@ function getObjectsByType(objectType)
 function Ball(x, y)
 {
     let newBall = new Sprite(x, y);
-    newBall.diameter = 20;
+    newBall.diameter = 10;
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;

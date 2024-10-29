@@ -1,4 +1,4 @@
-const strokeForce = 100; // The speed of the ball when it is hit
+const strokeForce = 25; // The speed of the ball when it is hit
 const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
@@ -35,6 +35,27 @@ function preload(){
 // Runs once when the program starts
 async function setup()
 {
+    // Starts the game / goes into level select once buttons are pressed if in the menu
+    document.getElementById('startButton').addEventListener('click', () => {
+        if(gameState == 'menu') {
+            startGame();
+            document.getElementById('startButton').style.display = 'none';
+            document.getElementById('levelSelectButton').style.display = 'none';
+        }    
+
+        //Need this for camera to work
+        if (cameraModeOptions.length<=1) {
+            cameraModeOptions.push("Follow");
+        }
+    })
+    document.getElementById('levelSelectButton').addEventListener('click', () => {
+        if(gameState == 'menu') {
+            levelSelect()
+            document.getElementById('startButton').style.display = 'none';
+            document.getElementById('levelSelectButton').style.display = 'none';
+        }
+    })
+
     // Initialize canvas
     createCanvas();
 
@@ -136,8 +157,6 @@ function drawMainMenu() {
     text("Golf Game", width / 2, height / 4);
 
     textSize(24);
-    text("Press 'Enter' to Start", width / 2, height / 2);
-    text("Press 'z' for Level Select", width / 2, height / 1.7);
 
     // Draw the background rectangle for the color visualization
     fill(floorColor); // Set rectangle color to #408040
@@ -223,17 +242,7 @@ function drawGameOver() {
 }
 
 function keyPressed() {
-    if (gameState === 'menu' && key === 'Enter') {
-        startGame();
-
-        //Need this for camera to work
-        if (cameraModeOptions.length<=1){
-            cameraModeOptions.push("Follow");
-        }
-
-    } else if (gameState === 'menu' && (key === 'z' || key === 'Z')) {
-        levelSelect();
-    } else if (gameState === 'playing' && key === '`') {
+    if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
     } else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
@@ -280,7 +289,6 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && canMove && pullStart) {
-        playHitSound(); //Playing the ball hit sound
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -311,6 +319,7 @@ async function handleGamePlay() {
         putter.visible = false;
 
         if (pullDistance > 0) {
+            playHitSound(); //Playing the ball hit sound
             incrementShots();
             // Just clicking does not increment shots anymore
         }
@@ -394,6 +403,9 @@ async function handleGamePlay() {
             }
 
             gameState = 'menu'; //return to menu
+            document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
+            document.getElementById('levelSelectButton').style.display = 'block';
+            
         }
     }
 

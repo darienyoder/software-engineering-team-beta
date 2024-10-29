@@ -68,14 +68,14 @@ addTest('Ball Angle Bounce Test', async () => {
     }
 
     ball.vel = { x: 0, y: 0 };
-    ball.x = ball.y = 50;
+    ball.x = ball.y = 10;
     await sleep(50); //Let the ball settle
 
     ball.applyForce(50, -50);
-    await sleep(100); // Wait for the ball to move
+    await sleep(50); // Wait for the ball to move
     let initAngle = getBallAngle(ball);
 
-    await sleep(600); // Wait for the ball to bounce
+    await sleep(100); // Wait for the ball to bounce
     let finAngle = getBallAngle(ball);
 
     // // Simple angle monitoring, uncomment if needed
@@ -190,6 +190,7 @@ addTest('Water Test', async () => {
 addTest('Volcano Test', async () => {
     ball.x = ballStart.x;
     ball.y = ballStart.y;
+  
     ball.x = getObjectsByType("lava")[0].sprites[0].x; // Currently broken
     ball.y = getObjectsByType("lava")[0].sprites[0].y; // It says volcano is undefined
     await sleep (600)
