@@ -42,24 +42,25 @@ class Level
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
         newWall.strokeWeight = 2;
         newWall.color = wallColor;
-        newWall.stroke = 'black';
+        newWall.stroke = wallStroke;
         newWall.collider = "static";
         newWall.layer = 1;
         this.walls.push(newWall);
 
-        // Back Corners
-        newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness+1);
-        newWall.strokeWeight = 0;
-        newWall.color = wallColor;
-        // newWall.stroke = 'red';
-        newWall.collider = "static";
-        this.walls.push(newWall);
+        // // Back Corners
+        // // Has potential to be nice for colored corners,
+        // // But I can't figure out how to properly hide parts of the circle I don't want
+        // newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness+1);
+        // newWall.strokeWeight = 0;
+        // newWall.color = wallColor;
+        // newWall.stroke = 'black';
+        // newWall.collider = "static";
+        // this.walls.push(newWall);
     }
 
     createWallSegment(fromVector, toVector)
     {
         // front
-        // If both this and Behind walls are present, the second one turns into a giant monstrocity
         let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness);
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
         newWall.strokeWeight = 0;
@@ -69,10 +70,12 @@ class Level
         newWall.layer = 2;
         this.walls.push(newWall);
 
-        // Corners
+        // Front Corners
+        // The stroke of back corners are still visible through them
+        // Except for exactly one where this is the visible corner instead of the back
         newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness);
-        newWall.strokeWeight = 0;
-        // newWall.stroke = 'yellow';
+        newWall.strokeWeight = 3;
+        newWall.stroke = wallColor;
         newWall.color = wallColor;
         newWall.collider = "static";
         newWall.layer = 2;
