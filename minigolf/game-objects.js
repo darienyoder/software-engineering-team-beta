@@ -16,7 +16,18 @@ class GameObject {
     update() {
         switch (this.type) {
             case "ball":
-
+                switch (level.getSurface(this.sprites[0].x, this.sprites[0].y))
+                {
+                    case SURFACE_SAND:
+                        this.sprites[0].vel.setMag(Math.max(0.0, this.sprites[0].vel.mag() - 5 / deltaTime))
+                        break;
+                    case SURFACE_WATER:
+                        this.sprites[0].vel.x = 0;
+                        this.sprites[0].vel.y = 0;
+                        this.sprites[0].x = lastHit.x;
+                        this.sprites[0].y = lastHit.y;
+                        break;
+                }
                 break;
 
             case "hole":

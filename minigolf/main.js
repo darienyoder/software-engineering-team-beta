@@ -86,11 +86,7 @@ async function setup()
     document.getElementById("defaultCanvas0").style.zIndex = 2;
     document.getElementsByTagName("main")[0].insertBefore(webglCanvas, document.getElementById("defaultCanvas0"));
 
-    // // Setup WebGL canvas for drawing
-    // webglContext = webglCanvas.getContext("webgl");
-    // webglContext.clearColor(0, 0, 0, 0);
-    // webglContext.clear(webglContext.COLOR_BUFFER_BIT);
-
+    // Pass WebGL canvas to level object for drawing
     level = new Level(webglCanvas);
 }
 
@@ -301,8 +297,8 @@ async function handleGamePlay() {
         pullStart = createVector(mouseX, mouseY);
     }
 
-    ball.velocity.x += level.getNormal(ball.x, ball.y).x;
-    ball.velocity.y += level.getNormal(ball.x, ball.y).y;
+    ball.velocity.x += level.getSlope(ball.x, ball.y).x;
+    ball.velocity.y += level.getSlope(ball.x, ball.y).y;
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 

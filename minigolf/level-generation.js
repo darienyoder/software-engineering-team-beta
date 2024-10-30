@@ -14,13 +14,17 @@ var wallColor = "#684917";
 
 // Any terrain at these heights will be treated as their respective obstacles.
 // Values are arbitrary.
-const SAND_HEIGHT = 01134;
-const WATER_HEIGHT = 843;
+const SAND_HEIGHT = 1134; // h3ll0
+const WATER_HEIGHT = 843; // BY3
+
+const SURFACE_FLOOR = 0;
+const SURFACE_SAND = 1;
+const SURFACE_WATER = 2;
 
 // "level.load(levelNumber)" loads a level.
-// "level.nextLevel()" loads a level.
+// "level.nextLevel()" increments the level.
 // "level.clear()" deletes the current level.
-// "bounds" returns the edges of the level. (bounds.top, bounds.bottom, bounds.left, bounds.right)
+// "level.bounds" returns the edges of the level. (bounds.top, bounds.bottom, bounds.left, bounds.right)
 
 class Level
 {
@@ -30,16 +34,18 @@ class Level
         this.levelMargin = 50; // Number of pixels between the level's edge and the edge of the window
         this.wallThickness = 7; // Width of the outer walls
 
-        // Clipper utilities
+        // Clipper Utilities
         this.clipper = new ClipperLib.Clipper();
         this.levelPolytree = new ClipperLib.PolyTree(); // Tree used for clipping polygons
         this.polynode = null;
 
+        // WebGL Canvas
         this.canvas = canvas;
         this.ctx = canvas.getContext("webgl");
         this.vertexShader = createGlShader(this.ctx, vertexShaderSource, this.ctx.VERTEX_SHADER);
         this.fragmentShader = createGlShader(this.ctx, fragmentShaderSource, this.ctx.FRAGMENT_SHADER);
 
+        // WebGL Shader
         this.shaderProgram = this.ctx.createProgram();
         this.ctx.attachShader(this.shaderProgram, this.vertexShader);
         this.ctx.attachShader(this.shaderProgram, this.fragmentShader);
@@ -47,7 +53,7 @@ class Level
         this.ctx.useProgram(this.shaderProgram);
 
         // Level Data
-        this.number = -1;
+        this.number = -1; // Current level index; -1 indicates no level
         this.walls = []; // Wall sprites
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
@@ -413,6 +419,17 @@ class Level
 
     getHeight(x, y)
     {
+        let height = this.getHeightRaw(x, y);
+
+        // Ignore sand and water zones, which are marked by high arbitrary height values
+        if (height > 200)
+            return 0;
+
+        return height;
+    }
+
+    getHeightRaw(x, y)
+    {
         let height = 0;
         for (var shape of this.heightModifiers)
         {
@@ -428,9 +445,37 @@ class Level
         return height;
     }
 
-    getNormal(x, y)
+    getSlope(pointX, pointY)
     {
-        return (   createVector(x + 0.5, y, this.getHeight(x + 0.5, y)).sub(createVector(x - 0.5, y, this.getHeight(x - 0.5, y))).normalize()   ).cross(   createVector(x, y + 0.5, this.getHeight(x, y + 0.5)).sub(createVector(x, y - 0.5, this.getHeight(x, y - 0.5))).normalize()   );
+        let slope = createVector(0, 0);
+
+        for (var x = -1; x < 2; x++)
+        for (var y = -1; y < 2; y++)
+        {
+            slope = slope.sub(createVector(x, y).mult(this.getHeight(pointX + x * 5, pointY + y * 5)));
+        }
+
+        return slope.normalize().mult(0.1);
+
+        // return (   createVector(x + 0.5, y, this.getHeight(x + 0.5, y)).sub(createVector(x - 0.5, y, this.getHeight(x - 0.5, y))).normalize()   ).cross(   createVector(x, y + 0.5, this.getHeight(x, y + 0.5)).sub(createVector(x, y - 0.5, this.getHeight(x, y - 0.5))).normalize()   );
+    }
+
+    getSurface(x, y)
+    {
+        switch (this.getHeightRaw(x, y)) {
+            case SAND_HEIGHT:
+                return SURFACE_SAND;
+                break;
+
+            case WATER_HEIGHT:
+                return SURFACE_WATER;
+                break;
+
+            default:
+                return SURFACE_FLOOR;
+                break;
+        }
+        return SURFACE_FLOOR;
     }
 
     createGameObject(objectData) {
