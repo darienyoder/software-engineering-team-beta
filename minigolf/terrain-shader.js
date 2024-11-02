@@ -77,15 +77,17 @@ float distanceToLineSegment(vec2 lineStart, vec2 lineEnd, vec2 point)
 
 float shapeHasPoint(int shapeType, vec4 shapeData, vec4 shapeData2, int grad, vec2 point)
 {
-    if (shapeType == 0)
+    if (shapeType == 0) // Oval
     {
+        if (point.x < shapeData.x - shapeData.z || point.x > shapeData.x + shapeData.z || point.y < shapeData.y - shapeData.w || point.y > shapeData.y + shapeData.w)
+            return 0.0;
         float weight = max(0.0, 1.0 - length(vec2((point.x - shapeData.x) / shapeData.z, (point.y - shapeData.y) / shapeData.w)));
         if (grad == 0)
             return ceil(weight);
         else
             return weight;
     }
-    if (shapeType == 1)
+    if (shapeType == 1) // Line
     {
         float weight = (distanceToLineSegment(shapeData.xy, shapeData.zw, point.xy) < shapeData2.x) ? 1.0 : 0.0;
         if (grad == 0)

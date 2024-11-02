@@ -17,6 +17,7 @@ var wallColor = "#684917";
 const SAND_HEIGHT = 1134; // h3ll0
 const WATER_HEIGHT = 843; // BY3
 
+// Terrain types
 const SURFACE_FLOOR = 0;
 const SURFACE_SAND = 1;
 const SURFACE_WATER = 2;
@@ -667,38 +668,94 @@ class Level
             this.load(this.number + 1);
     }
 
-    drawPolygon(path, pathColor)
-    {
+    drawPolygon(path, pathColor) {
         // Define polygon vertices
         let vertices = new Float32Array(path.length * 2);
-        for (var vert in path) {
-            let pointVector = levelToScreen(createVector(path[vert].X, path[vert].Y)).div(createVector(this.canvas.width / 4, this.canvas.height / 4)).div(2).sub(1, 1).mult(1, -1);
+        for (let vert = 0; vert < path.length; vert++) {
+            let pointVector = levelToScreen(createVector(path[vert].X, path[vert].Y))
+                .div(createVector(this.canvas.width / 4, this.canvas.height / 4))
+                .div(2)
+                .sub(1, 1)
+                .mult(1, -1);
             vertices[vert * 2] = pointVector.x;
             vertices[vert * 2 + 1] = pointVector.y;
         }
 
         let triangleIndices = earcut(vertices);
+        let triangles = new Float32Array(triangleIndices.length * 2);
 
-        for (var i = 0; i < triangleIndices.length / 3; i++) {
-
-            let tri = new Float32Array([
-                vertices[triangleIndices[i * 3] * 2], vertices[triangleIndices[i * 3] * 2 + 1],  // Vertex 1 (X, Y)
-                vertices[triangleIndices[i * 3 + 1] * 2], vertices[triangleIndices[i * 3 + 1] * 2 + 1],  // Vertex 1 (X, Y)
-                vertices[triangleIndices[i * 3 + 2] * 2], vertices[triangleIndices[i * 3 + 2] * 2 + 1],  // Vertex 2 (X, Y)
-            ]);
-
-            // Create a buffer and load vertices
-            const vertexBuffer = this.ctx.createBuffer();
-            this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, vertexBuffer);
-            this.ctx.bufferData(this.ctx.ARRAY_BUFFER, tri, this.ctx.STATIC_DRAW);
-
-            const coord = this.ctx.getAttribLocation(this.shaderProgram, "coordinates");
-            this.ctx.vertexAttribPointer(coord, 2, this.ctx.FLOAT, false, 0, 0);
-            this.ctx.enableVertexAttribArray(coord);
-
-            // Draw the polygon
-            this.ctx.drawArrays(this.ctx.TRIANGLES, 0, 3);
+        for (let i = 0; i < triangleIndices.length; i++) {
+            triangles[i * 2] = vertices[triangleIndices[i] * 2];
+            triangles[i * 2 + 1] = vertices[triangleIndices[i] * 2 + 1];
         }
+
+        // Create a buffer and load vertices once
+        const vertexBuffer = this.ctx.createBuffer();
+        this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, vertexBuffer);
+        this.ctx.bufferData(this.ctx.ARRAY_BUFFER, triangles, this.ctx.STATIC_DRAW);
+
+        const coord = this.ctx.getAttribLocation(this.shaderProgram, "coordinates");
+        this.ctx.vertexAttribPointer(coord, 2, this.ctx.FLOAT, false, 0, 0);
+        this.ctx.enableVertexAttribArray(coord);
+
+        // Draw all triangles in one call
+        this.ctx.drawArrays(this.ctx.TRIANGLES, 0, triangleIndices.length);
+    }
+
+    drawPolygons(paths, pathColor) {
+        // Prepare arrays to hold all vertices and indices
+        let allVertices = [];
+        let allIndices = [];
+        let indexOffset = 0; // To keep track of the current index offset for each polygon
+
+        // Loop through each path (polygon)
+        for (let path of paths) {
+            // Define polygon vertices
+            let vertices = new Float32Array(path.length * 2);
+            for (let vert = 0; vert < path.length; vert++) {
+                let pointVector = levelToScreen(createVector(path[vert].X, path[vert].Y))
+                    .div(createVector(this.canvas.width / 4, this.canvas.height / 4))
+                    .div(2)
+                    .sub(1, 1)
+                    .mult(1, -1);
+                vertices[vert * 2] = pointVector.x;
+                vertices[vert * 2 + 1] = pointVector.y;
+            }
+
+            // Use earcut to get triangle indices
+            let triangleIndices = earcut(vertices);
+
+            // Add vertices to the allVertices array
+            allVertices.push(...vertices);
+
+            // Add indices to the allIndices array, adjusting for the current index offset
+            for (let i = 0; i < triangleIndices.length; i++) {
+                allIndices.push(triangleIndices[i] + indexOffset);
+            }
+
+            // Update the index offset for the next polygon
+            indexOffset += path.length;
+        }
+
+        // Convert arrays to Float32Array and Uint16Array
+        const vertexBuffer = this.ctx.createBuffer();
+        this.ctx.bindBuffer(this.ctx.ARRAY_BUFFER, vertexBuffer);
+        this.ctx.bufferData(this.ctx.ARRAY_BUFFER, new Float32Array(allVertices), this.ctx.STATIC_DRAW);
+
+        const indexBuffer = this.ctx.createBuffer();
+        this.ctx.bindBuffer(this.ctx.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        this.ctx.bufferData(this.ctx.ELEMENT_ARRAY_BUFFER, new Uint16Array(allIndices), this.ctx.STATIC_DRAW);
+
+        const coord = this.ctx.getAttribLocation(this.shaderProgram, "coordinates");
+        this.ctx.vertexAttribPointer(coord, 2, this.ctx.FLOAT, false, 0, 0);
+        this.ctx.enableVertexAttribArray(coord);
+
+        // Set the color uniform (assuming you have a uniform for color)
+        const colorLocation = this.ctx.getUniformLocation(this.shaderProgram, "uColor");
+        this.ctx.uniform4f(colorLocation, pathColor.r, pathColor.g, pathColor.b, pathColor.a);
+
+        // Draw all polygons in one call
+        this.ctx.drawElements(this.ctx.TRIANGLES, allIndices.length, this.ctx.UNSIGNED_SHORT, 0);
     }
 
     drawHeight(modifier)
@@ -763,7 +820,7 @@ class Level
 
         for (var wall = 0; wall < this.positiveWalls.length; wall++)
         {
-            this.drawPolygon(this.positiveWalls[wall], floorColor);
+            this.drawPolygons(this.positiveWalls, floorColor);
         }
         for (var hM = 0; hM < this.heightModifiers.length; hM++)
         {
@@ -771,7 +828,7 @@ class Level
         }
         for (var wall = 0; wall < this.negativeWalls.length; wall++)
         {
-            this.drawPolygon(this.negativeWalls[wall], backgroundColor);
+            this.drawPolygons(this.negativeWalls, backgroundColor);
         }
     }
 }
