@@ -54,6 +54,7 @@ var levelData = [
             ADD Sandtrap 250 -50 50 50;
             ADD Tubes 465 215 25 225;
             ADD Windmill 450 50;
+            ADD Volcano 50 75;
         `,
         par: 5,
     },

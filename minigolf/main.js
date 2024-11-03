@@ -23,14 +23,14 @@ let prevVelX = 0;
 let prevVelY = 0;
 
 // Sound variables
-let hitSound, holeSound, waterSplash;
+// let hitSound, holeSound, waterSplash;
 
-// Loading sound files
-function preload(){
-    hitSound = loadSound('assets/golfPutt.wav');
-    holeSound = loadSound('assets/golfGoal.wav');
-    waterSplash = loadSound('assets/waterSplash.wav');
-}
+// // Loading sound files
+// function preload(){
+//     hitSound = loadSound('assets/golfPutt.wav');
+//     holeSound = loadSound('assets/golfGoal.wav');
+//     waterSplash = loadSound('assets/waterSplash.wav');
+// }
 
 // Runs once when the program starts
 async function setup()
@@ -85,19 +85,19 @@ async function setup()
 }
 
 //Hit sound function
-function playHitSound() {
-    hitSound.play();
-}
+// function playHitSound() {
+//     hitSound.play();
+// }
 
-//Hole sound function
-function playGoalSound() {
-    holeSound.play();
-}
+// //Hole sound function
+// function playGoalSound() {
+//     holeSound.play();
+// }
 
-//Hole sound function
-function playWaterSound() {
-    waterSplash.play();
-}
+// //Hole sound function
+// function playWaterSound() {
+//     waterSplash.play();
+// }
 
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
@@ -326,7 +326,7 @@ async function handleGamePlay() {
         putter.visible = false;
 
         if (pullDistance > 0) {
-            playHitSound(); //Playing the ball hit sound
+            // playHitSound(); //Playing the ball hit sound
             incrementShots();
             // Just clicking does not increment shots anymore
         }
@@ -388,7 +388,7 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        playGoalSound();
+        // playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);

@@ -191,8 +191,8 @@ addTest('Volcano Test', async () => {
     ball.x = ballStart.x;
     ball.y = ballStart.y;
   
-    ball.x = getObjectsByType("lava")[0].sprites[0].x; // Currently broken
-    ball.y = getObjectsByType("lava")[0].sprites[0].y; // It says volcano is undefined
+    ball.x = getObjectsByType("lava")[0].sprites[0].x; 
+    ball.y = getObjectsByType("lava")[0].sprites[0].y; 
     await sleep (600)
 
     // Check that it's at ballStart and isn't moving
