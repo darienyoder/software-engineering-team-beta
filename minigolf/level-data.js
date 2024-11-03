@@ -57,6 +57,19 @@ var levelData = [
         `,
         par: 5,
     },
+    {
+        ballPosition: [
+          26,
+          26
+        ],
+        holePosition: [
+          46,
+          286
+        ],
+        area: "ADD rect 21, 21, 50, 300;\n",
+        obstacles: "\nADD Windmill -16 146;",
+        par: 5
+      },
 ];
 
 const testLevel = {
