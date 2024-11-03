@@ -133,14 +133,6 @@ async function draw()
     clear();
     background(backgroundColor);
 
-if (parMsgVisible) {
-            // level.clear()
-            clear()
-            // await sleep(1000);
-            await drawPar()
-            await sleep(1000);
-
-        }
 
     if (gameState === 'menu') {
         drawMainMenu();
@@ -149,9 +141,13 @@ if (parMsgVisible) {
     }
     else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        
-        level.drawStage();
-        handleGamePlay();
+        if (parMsgVisible) {
+            clear()
+            await drawPar();
+        } else {
+            level.drawStage();
+            handleGamePlay();
+        }
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
         drawGameOver();
@@ -608,7 +604,6 @@ async function drawPar() {
     } catch {
         return;
     }
-    // sleep(2000)
     parMsgVisible = false;
 
 }
