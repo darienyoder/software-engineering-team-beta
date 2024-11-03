@@ -64,7 +64,7 @@ class GameObject {
 
                 break;
 
-            case "lava":
+            case "volcano":
 
                 if (this.sprites[0].overlaps(ball))
                 {
@@ -253,7 +253,7 @@ function Water(posX, posY, shape = "square") {
 }
 
 // Volcano sets ball to beginning
-// May be fun to have it generate "lava" objects
+// May be fun to have it generate "volcano" objects
 function Volcano(posX, posY) {
     let volcano = new Sprite([[posX, posY], [posX - 50, posY + 75], [posX + 50, posY + 75], [posX, posY]],'s');
     volcano.color = '#8B4513';
@@ -261,5 +261,5 @@ function Volcano(posX, posY) {
     volcano.layer = 0;
     volcano.collider = 'kinematic';
 
-    return new GameObject("lava", volcano);
+    return new GameObject("volcano", volcano);
 }
