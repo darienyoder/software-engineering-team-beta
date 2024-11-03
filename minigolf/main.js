@@ -303,28 +303,16 @@ async function handleGamePlay() {
         // Reset the pullStart
         pullStart = null;
 
-        // Swigning the putter
-        // To swing the putter around a point on the club
-        // I used the rotation around the ball, like the square putter had previously,
-        // but then once the mouse is released I need to change that pivot point to be on the club
-        // so the putter can swing like it should.
-        // The point it pivots around is the sprites 'location' so even though it has an offset
-        // and the putter appears behind the ball, its location is the same as the balls
-        // By using the rotationArc sprite im able to get the degree direction it is facing
-        // which is used to move the putters 'location' and its offset location (where it appears).
-        // so hopefully it looks like the putter never moved but the pivot point is now on the handle
-
         putter.visible = false; // hides the putter while it does its move but still looks goofy
 
         putter.offset.x = 0;    // This moves the pivot point onto the handle
         putter.offset.y = 30;
 
-        putter.move(20,rotationArc.rotation-180,500); // Moves the putter 
-        await sleep(0); // without this here the first move wont
-        // The moving of the putter has a split second where you see it go crazy
-        // im not sure how to fix that with this solution but im going to try a different approach
+        putter.move(20,rotationArc.rotation-180,500); 
+        await sleep(0);       
         
         putter.move(-60,rotationArc.rotation+90,500);
+        await sleep(0);
         putter.visible = true;
 
         // This is the swing
