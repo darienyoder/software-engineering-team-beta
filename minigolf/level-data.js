@@ -66,10 +66,60 @@ var levelData = [
           46,
           286
         ],
-        area: "ADD rect 21, 21, 50, 300;\n",
-        obstacles: "\nADD Windmill -16 146;",
+        area: "ADD rect 21, 21, 50, 300;",
+        obstacles: "ADD Windmill -16 146;",
         par: 5
-      },
+    },
+    {
+        ballPosition: [
+            100,
+            20
+        ],
+        holePosition: [
+            360, 28
+        ],
+        area: "ADD rect 0, 0, 390, 420;",
+        obstacles:`
+
+            ADD Windmill 380 80;
+
+            // Left column of water;
+            ADD Water 40 40;
+            ADD Water 40 110;
+            ADD Water 40 180;
+            ADD Water 40 250;
+            ADD Water 40 320;
+
+            // Middle columns of water;
+            ADD Water 160 40;
+            ADD Water 160 110;
+            ADD Water 160 180;
+            ADD Water 160 250;
+            ADD Water 160 270;
+
+            ADD Water 230 40;
+            ADD Water 230 110;
+            ADD Water 230 180;
+            ADD Water 230 250;
+            ADD Water 230 270;
+
+            // Right column of water;
+            ADD Water 350 90;
+            ADD Water 350 160;
+            ADD Water 350 230;
+            ADD Water 350 300;
+            ADD Water 350 370;
+            ADD Water 350 380;
+
+            // Bottom row of water;
+            ADD Water 40 380;
+            ADD Water 110 380;
+            ADD Water 180 380;
+            ADD Water 250 380;
+            ADD Water 300 380;
+            `,
+        par: 7
+    }
 ];
 
 const testLevel = {
