@@ -119,6 +119,35 @@ var levelData = [
             ADD Water 300 380;
             `,
         par: 7
+    },
+    {
+        ballPosition: [20, 25],
+        holePosition: [275, 425],
+        area: `
+
+            // Top section;
+            ADD rect 0, 0, 300, 50;
+            ADD rect 100, -25, 100, 30;
+
+            // Middle section;
+            ADD rect 0, 200, 300, 50;
+            ADD circle 150, 200, 70, 70;
+            ADD rect 113, 110, 75, 75;
+
+            // Bottom section;
+            ADD rect 0, 400, 300, 50; 
+
+        `,
+        obstacles: `
+        
+            ADD Tubes 275 25 25 225;
+            ADD Tubes 275 225 25 425;
+            ADD Sandtrap 150 3 100 50;
+            ADD Windmill 150 170;
+            ADD Water 150 150;
+
+        `,
+        par: 3
     }
 ];
 
