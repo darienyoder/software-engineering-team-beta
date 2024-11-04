@@ -206,6 +206,27 @@ addTest('Volcano Test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
+
+// Test the volcano's magma
+addTest('Magma Test', async () => {
+    ball.x = ballStart.x;
+    ball.y = ballStart.y;
+  
+    ball.x = getObjectsByType("volcano")[0].sprites[0].x; 
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y+20; 
+    await sleep (621)
+
+    // Check that it's at ballStart and isn't moving
+    if (ball.x != ballStart.x || ball.y != ballStart.y) {
+        throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
+    }
+    if (ball.vel.x != 0 || ball.vel.y != 0) {
+        throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+});
+
 // Sound loading test
 addTest('Sound Load Test', async () => {
     // Preload sounds

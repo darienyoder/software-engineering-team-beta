@@ -76,11 +76,12 @@ class GameObject {
 
                 this.sprites[1].x = 11111;
                 this.sprites[1].y = 11111;
+                let volcSpeed = 75;
                 // Make it erupt
-                if (frameCount % 200 == 0) {
+                if (frameCount % volcSpeed == 0) {
                     // do stuff
-                    magma = new Sprite(this.sprites[0].x, this.sprites[0].y-50, 10);
-                    magma.life = 50;
+                    magma = new Sprite(this.sprites[0].x, this.sprites[0].y-50, 20);
+                    magma.life = volcSpeed;
                     magma.stroke = '#8B0000';
 
                     // Make it orange, yellow, or red
@@ -92,19 +93,24 @@ class GameObject {
                     else
                         magma.color = 'orange'
 
-                    magma.vel.y = -2;
+                    // magma.vel.y = -2;
                     magma.vel.x = random(-1,1);
                     
                     // magma.bearing = -90;
                     // magma.applyForce(random(10,20));
                 }
-                if ((frameCount % 210 == 0) && (frameCount % 200 != 0)) {
-                    // magma.color = 'green';
-                    // magma.bearing = 90
-  	                // magma.applyForce(9.8);
-                    magma.attractTo(this.sprites[0],20);
+
+                // you could make this bear upwards for 10ish frames
+                // Then start bearing downwards
+                if (frameCount % volcSpeed <= 20) {
+                    // magma.bearing = -90;
+                    // magma.applyForce(2);
+                    magma.vel.y = -2;
                 }
-            
+                else {
+                    magma.bearing = 90;
+                    magma.applyForce(10);
+                }
 
                 if(ball.overlaps(magma)){
                     ball.vel.x = 0;
@@ -112,6 +118,13 @@ class GameObject {
                     ball.x = ballStart.x;
                     ball.y = ballStart.y;
                 }
+                magma.overlaps(windmillBody);
+                magma.overlaps(hole);
+                // These other overlaps make the console go nuts
+                // magma.overlaps(tubeA);
+                // magma.overlaps(tubeB);
+                // magma.overlaps(sandtrap);
+                // magma.overlaps(water);
 
                 break;
 
@@ -159,8 +172,8 @@ function Ball(x, y)
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    // newBall.image = 'assets/ball.png'
-    // newBall.image.scale = .025
+    newBall.image = 'assets/ball.png'
+    newBall.image.scale = .025
 
     return new GameObject("ball", newBall);
 }
