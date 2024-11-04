@@ -81,8 +81,6 @@ var levelData = [
         area: "ADD rect 0, 0, 390, 420;",
         obstacles:`
 
-            ADD Windmill 380 80;
-
             // Left column of water;
             ADD Water 40 40;
             ADD Water 40 110;
