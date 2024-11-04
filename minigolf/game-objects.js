@@ -74,6 +74,26 @@ class GameObject {
                     ball.y = ballStart.y;
                 }
 
+                this.sprites[1].x = 11111;
+                this.sprites[1].y = 11111;
+                // Make it erupt
+                if (frameCount % 50 == 0) {
+                    // do stuff
+
+                    magma = new Sprite(this.sprites[0].x, this.sprites[0].y-50, random(5,20));
+                    magma.life = 200;
+                    magma.stroke = '#8B0000';
+
+                    // Make it orange, yellow, or red
+                    let randColor = random(0, 3);
+                    if (randColor < 1)
+                        magma.color = 'red';
+                    else if (randColor < 2 && randColor >= 1)
+                        magma.color = 'yellow';
+                    else
+                        magma.color = 'orange'
+                }
+
                 break;
 
         }
@@ -261,5 +281,12 @@ function Volcano(posX, posY) {
     volcano.layer = 0;
     volcano.collider = 'kinematic';
 
-    return new GameObject("volcano", volcano);
+    magma = new Sprite(posX,posY,10);
+    magma.color = 'red';
+    magma.stroke = '#8B0000';
+    magma.layer = 0;
+    magma.diameter = 10;
+    magma.life = 10;
+
+    return new GameObject("volcano", [volcano, magma]);
 }
