@@ -540,6 +540,6 @@ function drawPutter(){
     // Draw the putter back in
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
-    rotationArc.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
+    //rotationArc.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
 }
