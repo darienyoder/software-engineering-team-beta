@@ -402,6 +402,8 @@ class Level
         hole = hole.sprites[0];
         // Create obstacles
         this.createObstacles(levelDict.obstacles);
+
+        par = levelDict.par;
     }
 
     createObstacles(obstaclesString) {

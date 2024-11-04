@@ -2,7 +2,7 @@ const strokeForce = 25; // The speed of the ball when it is hit
 const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
-var gameObjects = [], strokeCounts = []; strokeCount = 0;
+var gameObjects = [], strokeCounts = []; strokeCount = 0; par = 0;
 var level = new Level(); // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
@@ -10,6 +10,7 @@ var message = '', messageTime = 0;
 
 var gameState = 'menu';
 var fullGameMode = true;
+var parMsgVisible = false;
 
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
@@ -130,7 +131,8 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-    background("white");
+    background(backgroundColor);
+
 
     if (gameState === 'menu') {
         drawMainMenu();
@@ -139,8 +141,13 @@ async function draw()
     }
     else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        level.drawStage();
-        handleGamePlay();
+        if (parMsgVisible) {
+            clear()
+            await drawPar();
+        } else {
+            level.drawStage();
+            handleGamePlay();
+        }
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
         drawGameOver();
@@ -273,8 +280,9 @@ async function handleGamePlay() {
         camera.y = ball.y;
     }
 
-    // Draw the stroke counter
+    // Draw the stroke counter & Par
     drawStrokeCount();
+    drawParCount();
 
     // When mouse is pressed...
     if (mouse.presses() && canMove) {
@@ -393,7 +401,12 @@ async function handleGamePlay() {
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
         strokeCount = 0;
-        await sleep(3000);
+        await sleep(2000);
+
+        // clear();
+        level.clear();
+        parMsgVisible = true;
+        await sleep(2000);
 
         if (fullGameMode) {
             level.nextLevel();
@@ -457,6 +470,14 @@ function drawStrokeCount()
     textSize(20); // Set text size
     textAlign(RIGHT, TOP); // Align text to the top-right corner
     text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
+}
+
+function drawParCount()
+{
+    fill(0); // Set text color to black
+    textSize(20); // Set text size
+    textAlign(LEFT, TOP); // Align text to the top-right corner
+    text(`Par: ${par}`, 20, 20); // Draw the stroke count
 }
 
 function incrementShots()
@@ -529,4 +550,63 @@ function drawPutter(){
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
+}
+
+async function drawPar() {
+    // Clear the background if needed
+    // clear();
+    background(backgroundColor);
+    try {
+        let sCount = strokeCounts[strokeCounts.length - 1];
+        let lPar = par;
+        let parMsg = ""; // Use let for block scope
+
+        switch (sCount) {
+            case 1:
+                parMsg = "Ace / Hole in One";
+                break;
+            case lPar:
+                parMsg = "Par";
+                break;
+            case (lPar - 1):
+                parMsg = "Birdie";
+                break;
+            case (lPar - 2):
+                parMsg = "Eagle";
+                break;
+            case (lPar - 3):
+                parMsg = "Albatross";
+                break;
+            case (lPar + 1):
+                parMsg = "Bogey";
+                break;
+            case (lPar + 2):
+                parMsg = "Double Bogey";
+                break;
+            case (lPar + 3):
+                parMsg = "Triple Bogey";
+                break;
+            case (lPar + 4):
+                parMsg = "Quadruple Bogey";
+                break;
+            default:
+                parMsg = sCount + " Strokes";
+                break;
+        }
+        push();
+        print(parMsg);
+        // background("white");
+        fill(0); // Set text color
+        textSize(36);
+        textAlign(CENTER, TOP);
+        text(parMsg, width / 2, height / 3);
+        textSize(24);
+        text("Wait a moment...", width / 2, height / 1.5);
+        await sleep(2000)
+        pop();
+    } catch {
+        return;
+    }
+    parMsgVisible = false;
+
 }
