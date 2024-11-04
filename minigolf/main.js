@@ -288,9 +288,13 @@ async function handleGamePlay() {
     if (trueVel > 0) {
         if (trueVel <= frictionTrigger && trueVel != 0) {
             ball.drag = slowFriction;
+            //Ball spin relative to trueVel
+            ball.rotationSpeed = trueVel
         }
     } else {
         ball.drag = friction;
+        //Ball no spin
+        ball.rotationSpeed = 0
     }
 
 
