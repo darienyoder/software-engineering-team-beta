@@ -403,7 +403,10 @@ async function handleGamePlay() {
         strokeCount = 0;
         await sleep(2000);
 
+        // clear();
+        level.clear();
         parMsgVisible = true;
+        await sleep(1000);
 
         if (fullGameMode) {
             level.nextLevel();
