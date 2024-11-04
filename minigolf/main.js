@@ -375,8 +375,8 @@ async function handleGamePlay() {
             // There is a normal vector for each side of the wall, so calculate each vector's distance to the ball and use whichever is closest
             else
             {
-                let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
-                let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
+                let positiveNormalVector = p5.Vector.fromAngle(radians(wall.rotation + 90));
+                let negativeNormalVector = p5.Vector.fromAngle(radians(wall.rotation - 90));
 
                 if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
                 {
