@@ -114,9 +114,14 @@
     	<script src="tests/level-generation-tests.js"></script>
 
 		<!--Button Menu-->
-		<script>
+        <script>
             const menuButton = document.getElementById('menuButton');
             const settingsButtons = document.querySelectorAll('.settingsButton');
+
+            // Set the initial display to hidden so it only takes one click
+            settingsButtons.forEach(button => {
+                button.style.display = 'none'; // Ensure they are hidden initially
+            });
 
             menuButton.addEventListener('click', () => {
                 settingsButtons.forEach(button => {
@@ -124,6 +129,7 @@
                 });
             });
         </script>
+
     </body>
 </html>
 
