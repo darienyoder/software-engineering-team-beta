@@ -406,7 +406,7 @@ async function handleGamePlay() {
         // clear();
         level.clear();
         parMsgVisible = true;
-        await sleep(1000);
+        await sleep(2000);
 
         if (fullGameMode) {
             level.nextLevel();
@@ -602,7 +602,7 @@ async function drawPar() {
         text(parMsg, width / 2, height / 3);
         textSize(24);
         text("Wait a moment...", width / 2, height / 1.5);
-        await sleep(1000)
+        await sleep(2000)
         pop();
     } catch {
         return;
