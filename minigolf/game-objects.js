@@ -77,21 +77,40 @@ class GameObject {
                 this.sprites[1].x = 11111;
                 this.sprites[1].y = 11111;
                 // Make it erupt
-                if (frameCount % 50 == 0) {
+                if (frameCount % 200 == 0) {
                     // do stuff
-
-                    magma = new Sprite(this.sprites[0].x, this.sprites[0].y-50, random(5,20));
-                    magma.life = 200;
+                    magma = new Sprite(this.sprites[0].x, this.sprites[0].y-50, 10);
+                    magma.life = 50;
                     magma.stroke = '#8B0000';
 
                     // Make it orange, yellow, or red
-                    let randColor = random(0, 3);
+                    let randColor = random(-.01, 3.1);
                     if (randColor < 1)
                         magma.color = 'red';
-                    else if (randColor < 2 && randColor >= 1)
+                    else if ((randColor < 2) && (randColor >= 1))
                         magma.color = 'yellow';
                     else
                         magma.color = 'orange'
+
+                    magma.vel.y = -2;
+                    magma.vel.x = random(-1,1);
+                    
+                    // magma.bearing = -90;
+                    // magma.applyForce(random(10,20));
+                }
+                if ((frameCount % 210 == 0) && (frameCount % 200 != 0)) {
+                    // magma.color = 'green';
+                    // magma.bearing = 90
+  	                // magma.applyForce(9.8);
+                    magma.attractTo(this.sprites[0],20);
+                }
+            
+
+                if(ball.overlaps(magma)){
+                    ball.vel.x = 0;
+                    ball.vel.y = 0;
+                    ball.x = ballStart.x;
+                    ball.y = ballStart.y;
                 }
 
                 break;
