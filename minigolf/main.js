@@ -25,7 +25,7 @@ let prevVelY = 0;
 let hitSound, holeSound, waterSplash;
 
 // Loading sound files
-function preload(){
+async function loadSounds(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
     waterSplash = loadSound('assets/waterSplash.wav');
@@ -34,6 +34,8 @@ function preload(){
 // Runs once when the program starts
 async function setup()
 {
+    await loadSounds();
+    
     // Starts the game / goes into level select once buttons are pressed if in the menu
     document.getElementById('startButton').addEventListener('click', () => {
         if(gameState == 'menu') {
@@ -580,7 +582,6 @@ async function drawPar() {
                 break;
         }
         push();
-        print(parMsg);
         // background("white");
         fill(0); // Set text color
         textSize(36);

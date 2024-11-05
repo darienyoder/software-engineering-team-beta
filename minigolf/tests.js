@@ -208,24 +208,22 @@ addTest('Volcano Test', async () => {
 
 // Sound loading test
 addTest('Sound Load Test', async () => {
-    // Preload sounds
-    hitSound = loadSound('assets/golfPutt.wav');
-    holeSound = loadSound('assets/golfGoal.wav');
-    waterSplash = loadSound('assets/waterSplash.wav');
-
     // Create an array to hold sound objects for checking
     const sounds = [hitSound, holeSound, waterSplash];
 
     // Check if sounds are loaded correctly
     for (const sound of sounds) {
+        sound.play()
         if (sound === null) {
             throw new Error('Expected sound to be loaded but got null');
         }
-        if (!(sound instanceof Audio)) {
-            throw new Error('Expected sound to be an instance of Audio');
+        // Check if the sound is an instance of p5.SoundFile
+        if (!(sound instanceof p5.SoundFile)) {
+            throw new Error('Expected sound to be an instance of p5.SoundFile');
         }
     }
 });
+
 
 
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
