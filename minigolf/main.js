@@ -1,5 +1,5 @@
 const strokeForce = 25; // The speed of the ball when it is hit
-const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
+const friction = { reg: 0.5, slow: 2, trigger: 0.2 };
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
 var gameObjects = [], strokeCounts = []; strokeCount = 0; par = 0;
@@ -15,11 +15,7 @@ var parMsgVisible = false;
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
-const trajectory = {choice: 4, colors: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white']}
-
-let trajectoryColor = 'blue'; // Default trajectory color
-const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
-let currentColorIndex = 4;
+const trajectory = { choice: 4, colors: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white'] };
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
@@ -295,13 +291,13 @@ async function handleGamePlay() {
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
     if (trueVel > 0) {
-        if (trueVel <= frictionTrigger && trueVel != 0) {
-            ball.drag = slowFriction;
+        if (trueVel <= friction.trigger && trueVel != 0) {
+            ball.drag = friction.slow;
             //Ball spin relative to trueVel
             ball.rotationSpeed = trueVel
         }
     } else {
-        ball.drag = friction;
+        ball.drag = friction.reg;
         //Ball no spin
         ball.rotationSpeed = 0
     }

@@ -119,7 +119,7 @@ function Ball(x, y)
     newBall.diameter = 10;
     newBall.color = "#ffffff";
     newBall.layer = 2;
-    newBall.drag = friction;
+    newBall.drag = friction.reg;
     newBall.image = 'assets/ball.png'
     newBall.image.scale = .025
 

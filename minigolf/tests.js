@@ -93,20 +93,20 @@ addTest('Ball Angle Bounce Test', async () => {
 
 // Add this test to your existing tests array
 addTest('Ball Drag Test', async () => {
-    ball.vel = { x: (frictionTrigger * 2), y: 0 };
+    ball.vel = { x: (friction.trigger * 2), y: 0 };
 
     // Check the drag value
     // May also want to check that it's not in a sandtrap here
-    if (ball.drag !== friction) {
-        throw new Error(`Expected ball.drag to be ${friction} when moving, but got ${ball.drag}`);
+    if (ball.drag !== friction.reg) {
+        throw new Error(`Expected ball.drag to be ${friction.reg} when moving, but got ${ball.drag}`);
     }
 
-    ball.vel = { x: (frictionTrigger / 2), y: (frictionTrigger / 2)}
+    ball.vel = { x: (friction.trigger / 2), y: (friction.trigger / 2)}
     await sleep(50); //Might need to be proportional to slowFriction
 
     // Check the drag value
-    if (ball.drag !== slowFriction) {
-        throw new Error(`${ball.velocity} Expected ball.drag to be ${slowFriction} when velocity in trigger range, but got ${ball.drag}`);
+    if (ball.drag !== friction.slow) {
+        throw new Error(`${ball.velocity} Expected ball.drag to be ${friction.slow} when velocity in trigger range, but got ${ball.drag}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
