@@ -15,6 +15,8 @@ var parMsgVisible = false;
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
+const trajectory = {choice: 4, colors: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white']}
+
 let trajectoryColor = 'blue'; // Default trajectory color
 const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
 let currentColorIndex = 4;
@@ -80,8 +82,7 @@ async function setup()
 
     document.getElementById('colorButton').addEventListener('click', () => {
         // Change the trajectory color on click
-        currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
-        trajectoryColor = trajectoryColors[currentColorIndex];
+        trajectory.choice = (trajectory.choice + 1) % trajectory.colors.length;
     });
 }
 
@@ -171,9 +172,9 @@ function drawMainMenu() {
     rect(width / 4, height * 2 / 3, width / 2, 130); // Rectangle behind the text
 
     // Set text color to the current trajectory color
-    fill(trajectoryColor);
+    fill(trajectory.colors[trajectory.choice]);
     textSize(18);
-    text("Current Trajectory color: \n" + trajectoryColor, width / 2, (height * 2 / 3)+56);
+    text("Current Trajectory color: \n" + trajectory.colors[trajectory.choice], width / 2, (height * 2 / 3)+56);
 
     fill(0);
 }
@@ -513,7 +514,7 @@ function drawTrajectory() {
 
     // Draw trajectory line
     push(); // Start new style for the line
-    stroke(trajectoryColor); // Can be any color
+    stroke(trajectory.colors[trajectory.choice]); // Can be any color
     strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
     pop(); // Remove style
