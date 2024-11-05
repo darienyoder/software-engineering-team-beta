@@ -55,7 +55,7 @@ class GameObject {
 
                 if (this.sprites[0].overlaps(ball))
                 {
-                    // playSound(waterSplash);
+                    // waterSplash.play();
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = lastHit.x;

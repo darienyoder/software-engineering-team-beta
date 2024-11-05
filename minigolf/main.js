@@ -82,10 +82,6 @@ async function setup()
     });
 }
 
-function playSound(sound) {
-    sound.play();
-}
-
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
@@ -324,7 +320,7 @@ async function handleGamePlay() {
         putter.visible = false;
 
         if (pullDistance > 0) {
-            playSound(hitSound); //Playing the ball hit sound
+            hitSound.play(); //Playing the ball hit sound
             incrementShots();
             // Just clicking does not increment shots anymore
         }
@@ -386,7 +382,7 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        playSound(holeSound);
+        holeSound.play();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
