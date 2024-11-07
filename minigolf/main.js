@@ -15,7 +15,8 @@ var parMsgVisible = false;
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
-const trajectory = { choice: 4, colors: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'white'] };
+let trajectoryColor = '#4433FF'; // Default trajectory color
+let currentColorIndex = 4;
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
@@ -62,7 +63,6 @@ async function setup()
 
     document.getElementById('cameraButton').addEventListener('click', () => {
 
-        // Change the trajectory color on click
         cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
         document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
 
@@ -76,11 +76,6 @@ async function setup()
             }
 
     }
-    });
-
-    document.getElementById('colorButton').addEventListener('click', () => {
-        // Change the trajectory color on click
-        trajectory.choice = (trajectory.choice + 1) % trajectory.colors.length;
     });
 }
 
@@ -157,7 +152,7 @@ function drawMainMenu() {
     // Set text color to the current trajectory color
     fill(trajectory.colors[trajectory.choice]);
     textSize(18);
-    text("Current Trajectory color: \n" + trajectory.colors[trajectory.choice], width / 2, (height * 2 / 3)+56);
+    text("Current Trajectory color\n", width / 2, (height * 2 / 3)+56);
 
     fill(0);
 }
