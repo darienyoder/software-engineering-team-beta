@@ -10,7 +10,7 @@ import os
 # Define the port and path to your HTML file
 PORT = 8000
 HTML_FILE = "index.html"  # Update to your actual file name
-DIRECTORY = os.path.dirname(os.path.abspath('minigolf/' + HTML_FILE))  # Correct the path separator
+DIRECTORY = os.path.dirname(os.path.abspath('../minigolf/' + HTML_FILE))  # Correct the path separator
 
 # Function to start the local server
 def start_server(port):

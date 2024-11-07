@@ -1,5 +1,6 @@
 const tests = []; // How is this working if it's constant?
                   // Like I know it is, but How?
+                  // Do not think too hard about it, javascript is very weird
 
 function addTest(name, testFunction) {
     tests.push({ name, testFunction });
@@ -31,21 +32,7 @@ function setupTestEnvironment() {
     level.loadLevelFromDict(testLevel);
 };
 
-// Test that menu works
-// Test only runs if it starts on 'menu' screen
-// Needs keyPress simulation
-/*addTest('Test Menu', async () => {
-    // Test only works if we start from menu screen
-    if (gameState === 'menu'){
-        // Simulate pressing 'Enter'
 
-        await sleep(1000);
-        if (gameState !== 0) throw new Error(`Expected gameState to be playing but got ${gameState} instead.`);
-    }
-});*/
-
-
-// Example Tests
 addTest('Initial Stroke Count', async () => {
     strokeCount = 0;
     if (strokeCount !== 0) throw new Error('Expected strokeCount to be 0');
@@ -53,8 +40,8 @@ addTest('Initial Stroke Count', async () => {
 
 addTest('Ball Movement', async () => {
     const initialPosition = { x: ball.x, y: ball.y };
-    ball.applyForce(50, -50); // Simulating a force
-    await sleep(1000); // Wait for the ball to move
+    ball.applyForce(50, -50);
+    await sleep(1000);
     if (ball.x === initialPosition.x && ball.y === initialPosition.y) {
         throw new Error('Expected ball to move');
     }
@@ -69,18 +56,14 @@ addTest('Ball Angle Bounce Test', async () => {
 
     ball.vel = { x: 0, y: 0 };
     ball.x = ball.y = 10;
-    await sleep(50); //Let the ball settle
+    await sleep(50);
 
     ball.applyForce(50, -50);
-    await sleep(50); // Wait for the ball to move
+    await sleep(50);
     let initAngle = getBallAngle(ball);
 
-    await sleep(100); // Wait for the ball to bounce
+    await sleep(100);
     let finAngle = getBallAngle(ball);
-
-    // // Simple angle monitoring, uncomment if needed
-    // console.log("initAngle: " + initAngle);
-    // console.log("finAngle: " + finAngle);
 
     if ((finAngle * -1) !== initAngle) {
         throw new Error('Expected ball to move');
@@ -88,31 +71,22 @@ addTest('Ball Angle Bounce Test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
-
-
-
-// Add this test to your existing tests array
 addTest('Ball Drag Test', async () => {
     ball.vel = { x: (friction.trigger * 2), y: 0 };
 
-    // Check the drag value
-    // May also want to check that it's not in a sandtrap here
     if (ball.drag !== friction.reg) {
         throw new Error(`Expected ball.drag to be ${friction.reg} when moving, but got ${ball.drag}`);
     }
 
     ball.vel = { x: (friction.trigger / 2), y: (friction.trigger / 2)}
-    await sleep(50); //Might need to be proportional to slowFriction
+    await sleep(50);
 
-    // Check the drag value
     if (ball.drag !== friction.slow) {
         throw new Error(`${ball.velocity} Expected ball.drag to be ${friction.slow} when velocity in trigger range, but got ${ball.drag}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
-
-// Test the Sand
 addTest('Sand test', async () => {
     ball.vel = { x: 0, y: 0 };
     ball.x = getObjectsByType("sandtrap")[0].sprites[0].x - 40;
@@ -129,17 +103,13 @@ addTest('Sand test', async () => {
     await sleep (150);
     afterVel = ball.vel.y;
 
-    // Check the slowing of new velocity
     if ((afterVel >= initVel / 3) || (afterVel >= initVel / 3)) {
         throw new Error(`Expected afterVel to be less than ${initVel/3} when in sandtrap, but got ${afterVel}`);
     }
 
-    // Reset velocity so it doesn't mess up other tests
     ball.vel = { x: 0, y: 0 };
 });
 
-
-// Test that the windmill works
 addTest('Windmill Push Test', async () => {
     ball.vel = { x: 0, y: 0 };
     initialX = ball.velocity.x;
@@ -148,29 +118,24 @@ addTest('Windmill Push Test', async () => {
     ball.y = getObjectsByType("windmill")[0].sprites[0].y -50;
     await sleep (2500)
 
-    // Check the drag value
     if (ball.x == initialX && ball.y == initialY) {
         throw new Error(`Expected ball to not be at ${initialX.x}, ${initialY.y}, but it is at ${ball.x}, ${ball.y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
-
-// Test that the tubes work as expected
 // Be careful because on some maps, tubes put the ball in goal
 addTest('Tube Teleportation test', async () => {
     ball.vel = { x: 0, y: 0 };
     ball.x = getObjectsByType("tubes")[0].sprites[0].x;
     ball.y = getObjectsByType("tubes")[0].sprites[0].y;
-    await sleep(1000); // Wait for any animations
+    await sleep(300); // Wait for any animations
     if ((ball.x == getObjectsByType("tubes")[0].sprites[0].x) && (ball.y == getObjectsByType("tubes")[0].sprites[0].y)) {
         throw new Error(`Expected ball to not be at ${getObjectsByType("tubes")[0].sprites[0].x}, ${getObjectsByType("tubes")[0].sprites[0].y}, but it is at ${ball.x}, ${ball.y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
-
-// Test the water
 addTest('Water Test', async () => {
     ball.vel = { x: 0, y: 0 };
     ball.x = getObjectsByType("water")[0].sprites[0].x;
@@ -178,15 +143,12 @@ addTest('Water Test', async () => {
     initialX = ball.velocity.x
     await sleep (100)
 
-    // Check both that it's not at the water and is at lastHit
     if (ball.x == getObjectsByType("water")[0].sprites[0].x && ball.y == getObjectsByType("water")[0].sprites[0].y && ball.x != lastHit.x && ball.y != lastHit.y) {
         throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${getObjectsByType("water")[0].sprites[0].x}, ${getObjectsByType("water")[0].sprites[0].y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
-
-// Test the volcano
 addTest('Volcano Test', async () => {
     ball.x = ballStart.x;
     ball.y = ballStart.y;
@@ -195,7 +157,6 @@ addTest('Volcano Test', async () => {
     ball.y = getObjectsByType("lava")[0].sprites[0].y; // It says volcano is undefined
     await sleep (600)
 
-    // Check that it's at ballStart and isn't moving
     if (ball.x != ballStart.x || ball.y != ballStart.y) {
         throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
     }
@@ -206,31 +167,23 @@ addTest('Volcano Test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
-// Sound loading test
 addTest('Sound Load Test', async () => {
-    // Create an array to hold sound objects for checking
     const sounds = [hitSound, holeSound, waterSplash];
 
-    // Check if sounds are loaded correctly
     for (const sound of sounds) {
         sound.play()
         if (sound === null) {
             throw new Error('Expected sound to be loaded but got null');
         }
-        // Check if the sound is an instance of p5.SoundFile
         if (!(sound instanceof p5.SoundFile)) {
             throw new Error('Expected sound to be an instance of p5.SoundFile');
         }
     }
 });
 
-
-// Tests trajectory color changing
 addTest('Trajectory Color Changing Logic', async () => {
-    // Changes the color
     trajectoryColorSelector.value = "#ffffff";
 
-    // Notifies change event occurred
     const event = new Event('change');
     trajectoryColorSelector.dispatchEvent(event);
 
@@ -240,17 +193,6 @@ addTest('Trajectory Color Changing Logic', async () => {
     }
 })
 
-
-// All other tests should be placed before this one, as this one effectively ends the testing environemnt
-addTest('Ball in Goal Logic', async () => {
-    ball.vel = { x: 0, y: 0 };
-    //The following lines are a teleport
-    ball.x = hole.x;
-    ball.y = hole.y;
-    await sleep(100); // Wait for any animations
-    if (!ballInGoal) throw new Error('Expected ballInGoal to be true after moving into the hole');
-});
-
 addTest('Camera Moving', async () => {
     cameraMode = "Follow";
     draw();
@@ -259,20 +201,14 @@ addTest('Camera Moving', async () => {
     cameraMode = "Center";
 });
 
-// Test that menu works
-// Test only runs if it starts on 'menu' screen
-// Needs keyPress simulation
-// May want to make a second version that tests 'R' as well
-/*addTest('Test restart', async () => {
-    // Test only works if we start from gameOver screen
-    if (gameState === 'gameOver'){
-        // Simulate pressing 'r'
-
-        await sleep(1000);
-        if (gameState !== 0) throw new Error(`Expected gameState to be gameOver but got ${gameState} instead.`);
-    }
-});*/
-
+// All other tests should be placed before this one, as this one effectively ends the testing environemnt
+addTest('Ball in Goal Logic', async () => {
+    ball.vel = { x: 0, y: 0 };
+    ball.x = hole.x;
+    ball.y = hole.y;
+    await sleep(100);
+    if (!ballInGoal) throw new Error('Expected ballInGoal to be true after moving into the hole');
+});
 
 // Call this function to run all tests
 // runTests();
