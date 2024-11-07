@@ -16,7 +16,7 @@ import socketserver
 PORT = 8000
 HTML_FILE = "index.html"  # Update to your actual file name
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Absolute path of the script
-DIRECTORY = os.path.join(SCRIPT_DIR)  # Adjust if your HTML is in the 'minigolf' subdirectory
+DIRECTORY = os.path.join(os.path.dirname(SCRIPT_DIR))  # Adjust if your HTML is in the 'minigolf' subdirectory
   # Correct the path separator
 
 # Function to start the local HTTP server in a separate thread
