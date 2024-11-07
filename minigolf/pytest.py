@@ -2,6 +2,8 @@ import subprocess
 import time
 import requests
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -10,7 +12,7 @@ import os
 # Define the port and path to your HTML file
 PORT = 8000
 HTML_FILE = "index.html"  # Update to your actual file name
-DIRECTORY = os.path.dirname(os.path.abspath('../minigolf/'))  # Correct the path separator
+DIRECTORY = os.path.dirname(os.path.abspath('minigolf/'))  # Correct the path separator
 
 # Function to start the local server
 def start_server(port):
@@ -61,9 +63,11 @@ try:
     time.sleep(35) #increase wait time to allow page to completely load
 
     # Execute additional JavaScript functions if needed
-    driver.execute_script("startGame()")
+    startButton = driver.find_element(By.ID, "startButton")
     time.sleep(2)
-    driver.execute_script("runTests()")
+    ActionChains(driver)\
+        .send_keys("`")\
+        .perform()
     time.sleep(10)
 
     # Capture console logs
