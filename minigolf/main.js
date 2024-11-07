@@ -83,24 +83,17 @@ function setupLevel(levelNum) {
     level.load(levelNum);
   
     // Creating the putter head
-    putter = new Sprite([[50,50], [58,50], [58,70], [50,70], [48,68], [46,64], /*[95, 112], [95,108], */ [46,56], [48,52], [50,50]]);
-    // Adding the club/ handle
-    putter.addCollider( 3, -35, 3, 50 );
+    putter = new Sprite(10,10,5,10,'n');
+    putter.image = 'assets/putter.png';
+    putter.image.scale = .25;
+    putter.image.offset.x = -50;
+    putter.image.offset.y = -100;
     putter.visible = false;
-    putter.overlaps(allSprites);
     putter.layer = 1;
     putter.color = 130,130,130;
     putter.stroke = 'black';
     putter.debug = false;
     putter.offset.x = -10;
-
-    // Using this Sprite to help with the putter
-    rotationArc = new Sprite (10,10,5);
-    rotationArc.visible = false;
-    rotationArc.debug = false;
-    rotationArc.offset.x = 25;
-    rotationArc.overlaps(allSprites);
-    rotationArc.addCollider(0,0,100);
 
 }
 
@@ -277,7 +270,6 @@ async function handleGamePlay() {
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
         putter.moveTo(ball.x, ball.y,100);
-        rotationArc.moveTo(ball.x, ball.y,100);
     }
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
@@ -305,13 +297,17 @@ async function handleGamePlay() {
 
         putter.visible = false; // hides the putter while it does its move but still looks goofy
 
-        putter.offset.x = 0;    // This moves the pivot point onto the handle
-        putter.offset.y = 30;
+        //putter.offset.x = 0;    // This moves the pivot point onto the handle
+        //putter.offset.y = 30;
+        putter.image.offset.x = 0;
+        putter.image.offset.y = 130;
 
-        putter.move(20,rotationArc.rotation-180,500); 
+        putterRotation = putter.rotation;
+
+        putter.move(20,putterRotation-180,500); 
         await sleep(0);       
-        
-        putter.move(-60,rotationArc.rotation+90,500);
+
+        putter.move(-60,putterRotation+90,500);
         await sleep(0);
         putter.visible = true;
 
@@ -333,9 +329,8 @@ async function handleGamePlay() {
 
         // Hide the putter
         putter.visible = false;
-        // Resets to rotate around the ball again
-        putter.offset.x = -10;
-        putter.offset.y = 0;
+        putter.image.offset.x = -50;
+        putter.image.offset.y = -100;
 
 
         if (pullDistance > 0) {
@@ -540,6 +535,5 @@ function drawPutter(){
     // Draw the putter back in
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
-    rotationArc.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
 }
