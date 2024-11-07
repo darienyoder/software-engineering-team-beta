@@ -2,7 +2,7 @@ const strokeForce = 25; // The speed of the ball when it is hit
 const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
-var gameObjects = [], strokeCounts = []; strokeCount = 0;
+var gameObjects = [], strokeCounts = []; strokeCount = 0; par = 0;
 var level = new Level(); // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
@@ -10,12 +10,12 @@ var message = '', messageTime = 0;
 
 var gameState = 'menu';
 var fullGameMode = true;
+var parMsgVisible = false;
 
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
-let trajectoryColor = 'blue'; // Default trajectory color
-const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
+let trajectoryColor = '#4433FF'; // Default trajectory color
 let currentColorIndex = 4;
 
 //variables for ball velocity from previous frame; used in wall physics calculations
@@ -61,7 +61,6 @@ async function setup()
 
     document.getElementById('cameraButton').addEventListener('click', () => {
 
-        // Change the trajectory color on click
         cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
         document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
 
@@ -75,12 +74,6 @@ async function setup()
             }
 
     }
-    });
-
-    document.getElementById('colorButton').addEventListener('click', () => {
-        // Change the trajectory color on click
-        currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
-        trajectoryColor = trajectoryColors[currentColorIndex];
     });
 }
 
@@ -104,20 +97,24 @@ function setupLevel(levelNum) {
     level.load(levelNum);
   
     // Creating the putter head
-    putter = new Sprite(-1000, -1000, 10, 30, 'n');
+    putter = new Sprite(10,10,5,10,'n');
+    putter.image = 'assets/putter.png';
+    putter.image.scale = .25;
+    putter.image.offset.x = -50;
+    putter.image.offset.y = -100;
+    putter.visible = false;
     putter.layer = 1;
     putter.color = 130,130,130;
     putter.stroke = 'black';
-    //putter.debug = true;
-    putter.offset.x = -20;
-    // gameObjects.push(ball);
+    putter.debug = false;
+    putter.offset.x = -10;
 
 }
 
 function startGame() {
     fullGameMode = true;
     strokeCount = 0;
-    strokeCounts=[];
+    strokeCounts = [];
     ballInGoal = false;
     canMove = true;
     setupLevel(0);
@@ -130,7 +127,8 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-    background("white");
+    background(backgroundColor);
+
 
     if (gameState === 'menu') {
         drawMainMenu();
@@ -139,8 +137,13 @@ async function draw()
     }
     else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        level.drawStage();
-        handleGamePlay();
+        if (parMsgVisible) {
+            clear()
+            await drawPar();
+        } else {
+            level.drawStage();
+            handleGamePlay();
+        }
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
         drawGameOver();
@@ -166,7 +169,7 @@ function drawMainMenu() {
     // Set text color to the current trajectory color
     fill(trajectoryColor);
     textSize(18);
-    text("Current Trajectory color: \n" + trajectoryColor, width / 2, (height * 2 / 3)+56);
+    text("Current Trajectory color\n", width / 2, (height * 2 / 3)+56);
 
     fill(0);
 }
@@ -193,7 +196,7 @@ function playLevel(levelNum) {
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
-    
+        
     //camera options need this to work properly
     if (cameraModeOptions.length<=1){
         cameraModeOptions.push("Follow");
@@ -205,7 +208,6 @@ function playLevel(levelNum) {
 }
 
 function handleLevelSelect() {
-
     var squaresPerRow = 10;
     //based on width of screen, picks square size so they will be evenly spaced
     var squareSize = width / ((squaresPerRow * 3 + 1) / 2);
@@ -229,8 +231,8 @@ function handleLevelSelect() {
 //     for (var obj of gameObjects)
 //         obj.remove();
 //
-//      for (var wall of walls)
-//          wall.remove();
+//     // for (var wall of walls)
+//     //     wall.remove();
 //
 //     // background(backgroundColor);
 // }
@@ -274,14 +276,16 @@ async function handleGamePlay() {
         camera.y = ball.y;
     }
 
-    // Draw the stroke counter
+    // Draw the stroke counter & Par
     drawStrokeCount();
+    drawParCount();
 
     // When mouse is pressed...
     if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
+        putter.moveTo(ball.x, ball.y,100);
     }
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
@@ -289,9 +293,13 @@ async function handleGamePlay() {
     if (trueVel > 0) {
         if (trueVel <= frictionTrigger && trueVel != 0) {
             ball.drag = slowFriction;
+            //Ball spin relative to trueVel
+            ball.rotationSpeed = trueVel
         }
     } else {
         ball.drag = friction;
+        //Ball no spin
+        ball.rotationSpeed = 0
     }
 
 
@@ -307,12 +315,28 @@ async function handleGamePlay() {
         // Reset the pullStart
         pullStart = null;
 
-        // Swinging the putter
-        putter.moveTo(ball.x - (5*(forceMagnitude/6))*forceDirection.x , ball.y - (5*(forceMagnitude/6))*forceDirection.y, .04*forceMagnitude);
-        // ^^ why is the modifier 5/6 ?
-        await sleep(2 * forceMagnitude); //Sorry, the slow putt speed was bothering me
-        putter.moveTo(ball.x, ball.y, .04*forceMagnitude);
-        await sleep(2*forceMagnitude);
+        putter.visible = false; // hides the putter while it does its move but still looks goofy
+
+        //putter.offset.x = 0;    // This moves the pivot point onto the handle
+        //putter.offset.y = 30;
+        putter.image.offset.x = 0;
+        putter.image.offset.y = 130;
+
+        putterRotation = putter.rotation;
+
+        putter.move(20,putterRotation-180,500); 
+        await sleep(0);       
+
+        putter.move(-60,putterRotation+90,500);
+        await sleep(0);
+        putter.visible = true;
+
+        // This is the swing
+        putter.rotate(90,forceMagnitude/50);
+        await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
+        putter.rotate(-90,forceMagnitude/50);
+        playHitSound(); //Playing the ball hit sound
+        await sleep(forceMagnitude * 5);
 
         // Apply the calculated force to the ball if its in sand
         // if (ball.overlaps(sandtrap)){
@@ -325,6 +349,9 @@ async function handleGamePlay() {
 
         // Hide the putter
         putter.visible = false;
+        putter.image.offset.x = -50;
+        putter.image.offset.y = -100;
+
 
         if (pullDistance > 0) {
             playHitSound(); //Playing the ball hit sound
@@ -389,12 +416,17 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        // playGoalSound();
+        playGoalSound();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
         strokeCount = 0;
-        await sleep(3000);
+        await sleep(2000);
+
+        // clear();
+        level.clear();
+        parMsgVisible = true;
+        await sleep(2000);
 
         if (fullGameMode) {
             level.nextLevel();
@@ -405,6 +437,7 @@ async function handleGamePlay() {
 
             //clear everything
             level.clear();
+
             gameState = 'menu'; //return to menu
             document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
             document.getElementById('levelSelectButton').style.display = 'block';
@@ -457,6 +490,14 @@ function drawStrokeCount()
     textSize(20); // Set text size
     textAlign(RIGHT, TOP); // Align text to the top-right corner
     text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
+}
+
+function drawParCount()
+{
+    fill(0); // Set text color to black
+    textSize(20); // Set text size
+    textAlign(LEFT, TOP); // Align text to the top-right corner
+    text(`Par: ${par}`, 20, 20); // Draw the stroke count
 }
 
 function incrementShots()
@@ -525,8 +566,66 @@ function drawMessage() {
 
 function drawPutter(){
     // Draw the putter back in
-    putter.moveTo(ball.x, ball.y,100);
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
+}
+
+async function drawPar() {
+    // Clear the background if needed
+    // clear();
+    background(backgroundColor);
+    try {
+        let sCount = strokeCounts[strokeCounts.length - 1];
+        let lPar = par;
+        let parMsg = ""; // Use let for block scope
+
+        switch (sCount) {
+            case 1:
+                parMsg = "Ace / Hole in One";
+                break;
+            case lPar:
+                parMsg = "Par";
+                break;
+            case (lPar - 1):
+                parMsg = "Birdie";
+                break;
+            case (lPar - 2):
+                parMsg = "Eagle";
+                break;
+            case (lPar - 3):
+                parMsg = "Albatross";
+                break;
+            case (lPar + 1):
+                parMsg = "Bogey";
+                break;
+            case (lPar + 2):
+                parMsg = "Double Bogey";
+                break;
+            case (lPar + 3):
+                parMsg = "Triple Bogey";
+                break;
+            case (lPar + 4):
+                parMsg = "Quadruple Bogey";
+                break;
+            default:
+                parMsg = sCount + " Strokes";
+                break;
+        }
+        push();
+        print(parMsg);
+        // background("white");
+        fill(0); // Set text color
+        textSize(36);
+        textAlign(CENTER, TOP);
+        text(parMsg, width / 2, height / 3);
+        textSize(24);
+        text("Wait a moment...", width / 2, height / 1.5);
+        await sleep(2000)
+        pop();
+    } catch {
+        return;
+    }
+    parMsgVisible = false;
+
 }

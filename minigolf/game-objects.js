@@ -174,6 +174,7 @@ function Windmill(posX, posY)
     windmillBody.stroke = 'white';
     windmillBody.layer = 0;
 
+    // Original windmill blades code
     // windmillBlades = new Sprite(
     //     [[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]  // Bottom
     //     ,[posX+75, posY+12.5], [posX+75, posY-12.5], [posX, posY]  // Right

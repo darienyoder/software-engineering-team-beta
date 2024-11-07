@@ -7,6 +7,7 @@ var ballStart, lastHit;
 var floorColor = "#408040";
 var backgroundColor = "#f2ece3";
 var wallColor = "#684917";
+var wallStroke = 'black';
 
 // "level.load(levelNumber)" loads a level.
 // "level.nextLevel()" loads a level.
@@ -29,24 +30,53 @@ class Level
         // Level Data
         this.number = -1;
         this.walls = []; // Wall sprites
+        this.wallOutlines = []; // Wall outline sprites
+        this.backWalls = []; // Wall outlines
         this.positiveWalls = []; // Polygons that add to the level area
         this.negativeWalls = []; // Holes in the level area
 
     }
 
+    createBackWallSegment(fromVector, toVector){
+        // Behind
+        let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness + 1);
+        newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
+        newWall.strokeWeight = 2;
+        newWall.color = wallColor;
+        newWall.stroke = wallStroke;
+        newWall.collider = "static";
+        newWall.layer = 1;
+        this.wallOutlines.push(newWall);
+
+        // Back Corners
+        newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness + 3);
+        newWall.strokeWeight = 0;
+        newWall.color = "black";
+        newWall.stroke = "#00000000";;
+        newWall.collider = "static";
+        newWall.layer = 1;
+        this.wallOutlines.push(newWall);
+    }
+
     createWallSegment(fromVector, toVector)
     {
+        // front
         let newWall = new Sprite((fromVector.x + toVector.x) / 2.0, (fromVector.y + toVector.y) / 2.0, fromVector.dist(toVector), this.wallThickness);
         newWall.rotation = createVector(1, 0).angleBetween( toVector.sub(fromVector) );
-        newWall.strokeWeight = 0.0;
+        newWall.strokeWeight = 0;
         newWall.color = wallColor;
+        // newWall.stroke = "#00000000";
         newWall.collider = "static";
+        newWall.layer = 2;
         this.walls.push(newWall);
 
+        // Front Corners
         newWall = new Sprite(fromVector.x, fromVector.y, this.wallThickness);
-        newWall.strokeWeight = 0.0;
+        newWall.strokeWeight = 3;
+        newWall.stroke = "#00000000";
         newWall.color = wallColor;
         newWall.collider = "static";
+        newWall.layer = 2;
         this.walls.push(newWall);
     }
 
@@ -240,7 +270,7 @@ class Level
                     case "circle":
                     case "circ":
                     case "oval":
-                        const pointCount = 32
+                        const pointCount = 64;
                         let circleScale = createVector(Number(statement[4]), statement.length < 6 ? Number(statement[4]) : Number(statement[5]));
                         let arcLength = statement.length < 7 ? 359 : statement[6];
                         let circlePoint = createVector(0, 1);
@@ -276,6 +306,10 @@ class Level
         this.positiveWalls = [];
         this.negativeWalls = [];
         for (var wall of this.walls)
+        {
+            wall.remove();
+        }
+        for (var wall of this.wallOutlines)
         {
             wall.remove();
         }
@@ -323,6 +357,7 @@ class Level
         {
             for (var point = 0; point < polygon.length; point++)
             {
+                this.createBackWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
                 this.createWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
             }
         }
@@ -330,6 +365,7 @@ class Level
         {
             for (var point = 0; point < polygon.length; point++)
             {
+                this.createBackWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
                 this.createWallSegment(createVector(polygon[point].X, polygon[point].Y), createVector(polygon[(point + 1) % polygon.length].X, polygon[(point + 1) % polygon.length].Y));
             }
         }
@@ -368,6 +404,8 @@ class Level
         hole = hole.sprites[0];
         // Create obstacles
         this.createObstacles(levelDict.obstacles);
+
+        par = levelDict.par;
     }
 
     createObstacles(obstaclesString) {

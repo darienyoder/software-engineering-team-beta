@@ -15,39 +15,6 @@
             overscroll-behavior: none;
         }
 
-        .homeButton {
-            padding: 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            min-width: 180px;
-            /* arbitrary length, adjust if necessary */
-        }
-
-        .homeButton:hover {
-            background-color: #0056b3;
-        }
-
-        .homeButton:active {
-            background-color: #003874;
-        }
-
-        #levelSelectButton {
-            position: absolute;
-            left: 50%;
-            top: 60%;
-            transform: translate(-50%, -60%);
-        }
-
-        #startButton {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
         .settingsButton {
             padding: 10px;
             background-color: #007bff;
@@ -92,10 +59,13 @@
             right: 20px;
         }
 
-        #levelBuilder {
+        #colorSelector {
             position: fixed;
-            bottom: 60px;
-            left: 20px;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            bottom: 140px;
+            right: 20px;
         }
     </style>
 </head>
@@ -105,15 +75,110 @@
 
     <button id="startButton" class="homeButton">Start Game</button>
     <button id="levelSelectButton" class="homeButton">Level Select</button>
-    <button class="settingsButton" id="levelBuilder">Level Builder</button>
 
     <button id="menuButton">⚙️</button>
     <div id="settingsMenu">
         <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
         <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
+        <input id="colorSelector" type="color">
     </div>
     <!-- P5play -->
     <script src="https://q5js.org/q5.js"></script>
+    <script src="https://p5play.org/v3/planck.min.js"></script>
+    <script src="https://p5play.org/v3/p5play.js"></script>
+
+    .homeButton:active {
+    background-color: #003874;
+    }
+
+    #levelSelectButton {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -60%);
+    }
+
+    #startButton {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    }
+
+    .settingsButton {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 180px;
+    /* arbitrary length, adjust if necessary */
+    display: none;
+    }
+
+    <!--Button Menu-->
+    <script>
+        const menuButton = document.getElementById('menuButton');
+        const settingsButtons = document.querySelectorAll('.settingsButton');
+        const trajectoryColorSelector = document.getElementById('colorSelector');
+        const trajectoryButton = document.getElementById('colorButton')
+
+        // Set the initial display to hidden so it only takes one click
+        settingsButtons.forEach(button => {
+            button.style.display = 'none'; // Ensure they are hidden initially
+        });
+
+        #menuButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px;
+            background - color: #626563;
+            color: white;
+            border: none;
+            border - radius: 5px;
+            cursor: pointer;
+        }
+
+        #menuButton:hover {
+            background - color: #3e433f;
+        }
+
+        #colorButton {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+        }
+
+        #cameraButton {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+        }
+
+        #levelBuilder {
+            position: fixed;
+            bottom: 60px;
+            left: 20px;
+        }
+    </style >
+</head >
+
+            <body>
+                <main></main>
+
+                <button id="startButton" class="homeButton">Start Game</button>
+                <button id="levelSelectButton" class="homeButton">Level Select</button>
+                <button class="settingsButton" id="levelBuilder">Level Builder</button>
+
+                <button id="menuButton">⚙️</button>
+                <div id="settingsMenu">
+                    <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
+                    <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
+                </div>
+    <!-- P5play -->
+                <script src="https://q5js.org/q5.js"></script>
     <script src="https://p5play.org/v3/planck.min.js"></script>
     <script src="https://p5play.org/v3/p5play.js"></script>
 
@@ -135,10 +200,10 @@
 
     <!--Button Menu-->
     <script>
-        const menuButton = document.getElementById('menuButton');
-        const settingsButtons = document.querySelectorAll('.settingsButton');
+            const menuButton = document.getElementById('menuButton');
+            const settingsButtons = document.querySelectorAll('.settingsButton');
 
-        const levelBuilderButton = document.getElementById('levelBuilder');
+            const levelBuilderButton = document.getElementById('levelBuilder');
         levelBuilderButton.addEventListener('click', () => {
             const currentPath = window.location.pathname;
             const newPath = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/builder.html';
@@ -146,11 +211,24 @@
         });
 
         menuButton.addEventListener('click', () => {
-            settingsButtons.forEach(button => {
-                button.style.display = button.style.display === 'none' ? 'block' : 'none';
+                settingsButtons.forEach(button => {
+                    button.style.display = button.style.display === 'none' ? 'block' : 'none';
+                });
+            
+            trajectoryButton.addEventListener('click', () => {
+                trajectoryColorSelector.value = trajectoryColor;
+            trajectoryColorSelector.click();
             });
-        });
+
+            trajectoryColorSelector.addEventListener("change", () => {
+                trajectoryColor = trajectoryColorSelector.value;
+            })
+
     </script>
+
 </body>
+
+</html>
+
 
 </html>

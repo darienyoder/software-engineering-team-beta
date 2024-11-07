@@ -68,14 +68,14 @@ addTest('Ball Angle Bounce Test', async () => {
     }
 
     ball.vel = { x: 0, y: 0 };
-    ball.x = ball.y = 50;
+    ball.x = ball.y = 10;
     await sleep(50); //Let the ball settle
 
     ball.applyForce(50, -50);
-    await sleep(100); // Wait for the ball to move
+    await sleep(50); // Wait for the ball to move
     let initAngle = getBallAngle(ball);
 
-    await sleep(600); // Wait for the ball to bounce
+    await sleep(100); // Wait for the ball to bounce
     let finAngle = getBallAngle(ball);
 
     // // Simple angle monitoring, uncomment if needed
@@ -147,7 +147,6 @@ addTest('Windmill Push Test', async () => {
     ball.x = getObjectsByType("windmill")[0].sprites[0].x -50;
     ball.y = getObjectsByType("windmill")[0].sprites[0].y -50;
     await sleep (2500)
-    // ball.velocity.x = 0.2; // velocity that triggers high drag
 
     // Check the drag value
     if (ball.x == initialX && ball.y == initialY) {
@@ -191,10 +190,12 @@ addTest('Water Test', async () => {
 addTest('Volcano Test', async () => {
     ball.x = ballStart.x;
     ball.y = ballStart.y;
-    ball.vel.y = -5; // Fling it upwards so it bounces into the volcano
+  
+    ball.x = getObjectsByType("lava")[0].sprites[0].x; // Currently broken
+    ball.y = getObjectsByType("lava")[0].sprites[0].y; // It says volcano is undefined
     await sleep (600)
 
-    // Check both that it's not at the water and is at lastHit
+    // Check that it's at ballStart and isn't moving
     if (ball.x != ballStart.x || ball.y != ballStart.y) {
         throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
     }
@@ -225,6 +226,22 @@ addTest('Sound Load Test', async () => {
         }
     }
 });
+
+
+// Tests trajectory color changing
+addTest('Trajectory Color Changing Logic', async () => {
+    // Changes the color
+    trajectoryColorSelector.value = "#ffffff";
+
+    // Notifies change event occurred
+    const event = new Event('change');
+    trajectoryColorSelector.dispatchEvent(event);
+
+    if(trajectoryColor != "#ffffff")
+    {
+        throw new Error("Trajectory color not changing")
+    }
+})
 
 
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
