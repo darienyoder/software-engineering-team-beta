@@ -16,7 +16,6 @@ cameraModeOptions = ["Center"] // Options that camera mode can take-- should be 
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
 let trajectoryColor = '#4433FF'; // Default trajectory color
-let currentColorIndex = 4;
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
@@ -150,7 +149,7 @@ function drawMainMenu() {
     rect(width / 4, height * 2 / 3, width / 2, 130); // Rectangle behind the text
 
     // Set text color to the current trajectory color
-    fill(trajectory.colors[trajectory.choice]);
+    fill(trajectoryColor);
     textSize(18);
     text("Current Trajectory color\n", width / 2, (height * 2 / 3)+56);
 
