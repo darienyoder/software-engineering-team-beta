@@ -228,6 +228,22 @@ addTest('Sound Load Test', async () => {
 });
 
 
+// Tests trajectory color changing
+addTest('Trajectory Color Changing Logic', async () => {
+    // Changes the color
+    trajectoryColorSelector.value = "#ffffff";
+
+    // Notifies change event occurred
+    const event = new Event('change');
+    trajectoryColorSelector.dispatchEvent(event);
+
+    if(trajectoryColor != "#ffffff")
+    {
+        throw new Error("Trajectory color not changing")
+    }
+})
+
+
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
 addTest('Ball in Goal Logic', async () => {
     ball.vel = { x: 0, y: 0 };

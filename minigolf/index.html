@@ -79,6 +79,15 @@
             	bottom: 100px;
             	right: 20px;
 			}
+
+            #colorSelector {
+                position: fixed;
+                width: 0;
+                height: 0;
+                opacity: 0;
+                bottom: 140px;
+                right: 20px;
+            }
     	</style>
     </head>
     <body>
@@ -91,6 +100,7 @@
         <div id="settingsMenu">
             <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
             <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
+            <input id="colorSelector" type="color">
         </div>
 		<!-- P5play -->
     	<script src="https://q5js.org/q5.js"></script>
@@ -117,6 +127,8 @@
         <script>
             const menuButton = document.getElementById('menuButton');
             const settingsButtons = document.querySelectorAll('.settingsButton');
+            const trajectoryColorSelector = document.getElementById('colorSelector');
+            const trajectoryButton = document.getElementById('colorButton')
 
             // Set the initial display to hidden so it only takes one click
             settingsButtons.forEach(button => {
@@ -128,6 +140,16 @@
                     button.style.display = button.style.display === 'none' ? 'block' : 'none';
                 });
             });
+            
+            trajectoryButton.addEventListener('click', () => {
+                trajectoryColorSelector.value = trajectoryColor;
+                trajectoryColorSelector.click();
+            });
+
+            trajectoryColorSelector.addEventListener("change", () => {
+                trajectoryColor = trajectoryColorSelector.value;
+            })
+            
         </script>
 
     </body>
