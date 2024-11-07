@@ -7,6 +7,8 @@ from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import os
 
 # Define the port and path to your HTML file
@@ -24,11 +26,11 @@ def start_server(port):
     )
 
 # Function to check if the server is running
-def wait_for_server(port, timeout=45):
+def wait_for_server(timeout=45):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
-            response = requests.get(f'http://localhost:{port}')
+            response = requests.get(f'http://localhost:{PORT}/{HTML_FILE}')
             if response.status_code == 200:
                 return True
         except requests.ConnectionError:
@@ -39,7 +41,7 @@ def wait_for_server(port, timeout=45):
 server_process = start_server(PORT)
 
 # Wait for the server to start
-if not wait_for_server(PORT):
+if not wait_for_server():
     print("Server did not start in time.")
     server_process.terminate()
     exit(1)
@@ -56,11 +58,24 @@ service = Service(ChromeDriverManager().install())
 # Initialize the WebDriver
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-try:
-    # Open your HTML file via the local server
-    driver.get(f'http://localhost:{PORT}/{HTML_FILE}')
+def wait_for_page(timeout=45):
+    try:
+        driver.get(f'http://localhost:{PORT}/{HTML_FILE}')
+        # Wait for a specific element to ensure page has loaded
+        WebDriverWait(driver, timeout).until(
+            EC.presence_of_element_located((By.ID, "startButton"))
+        )
+        return True
+    except Exception as e:
+        print(f"Error while waiting for page: {e}")
+        return False
 
-    time.sleep(35) #increase wait time to allow page to completely load
+try:
+    if not wait_for_page():
+        print("Page did not load in time.")
+        driver.quit()
+        exit(1)
+    # time.sleep(35) #increase wait time to allow page to completely load
 
     # Execute additional JavaScript functions if needed
     startButton = driver.find_element(By.ID, "startButton")
