@@ -127,9 +127,6 @@
         // Ensure par input is positive
         parInput.addEventListener('input', () => {
             const value = parseInt(parInput.value, 10);
-            if (value < 1) {
-                parInput.value = Math.abs(value);
-            }
         });
 
         drawAreaBtn.addEventListener('click', () => {
@@ -198,30 +195,15 @@
             newObject.style.position = 'absolute';
 
             // Snap to grid
-            let x = Math.floor(e.offsetX / 20) * 20;
-            let y = Math.floor(e.offsetY / 20) * 20;
+            let x = Math.floor(e.offsetX);
+            let y = Math.floor(e.offsetY);
 
             newObject.style.left = `${x}px`;
             newObject.style.top = `${y}px`;
 
             // Change the background image for the dropped object
-            switch (objectId) {
-                case 'ball':
-                    newObject.style.backgroundImage = "url('assets/ball.png')";
-                    break;
-                case 'hole':
-                    newObject.style.backgroundImage = "url('assets/hole.png')";
-                    break;
-                case 'sandtrap':
-                    newObject.style.backgroundImage = "url('assets/sandtrap.png')";
-                    break;
-                case 'tubes':
-                    newObject.style.backgroundImage = "url('assets/tubes.png')";
-                    break;
-                case 'windmill':
-                    newObject.style.backgroundImage = "url('assets/windmill.png')";
-                    break;
-            }
+            newObject.style.backgroundImage = `url('assets/${objectId}.png')`;
+
 
             canvas.appendChild(newObject);
             makeDraggable(newObject);
