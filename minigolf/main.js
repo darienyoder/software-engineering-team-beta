@@ -97,13 +97,17 @@ function setupLevel(levelNum) {
     level.load(levelNum);
   
     // Creating the putter head
-    putter = new Sprite(-1000, -1000, 10, 30, 'n');
+    putter = new Sprite(10,10,5,10,'n');
+    putter.image = 'assets/putter.png';
+    putter.image.scale = .25;
+    putter.image.offset.x = -50;
+    putter.image.offset.y = -100;
+    putter.visible = false;
     putter.layer = 1;
     putter.color = 130,130,130;
     putter.stroke = 'black';
-    //putter.debug = true;
-    putter.offset.x = -20;
-    // gameObjects.push(ball);
+    putter.debug = false;
+    putter.offset.x = -10;
 
 }
 
@@ -281,6 +285,7 @@ async function handleGamePlay() {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
+        putter.moveTo(ball.x, ball.y,100);
     }
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
@@ -310,12 +315,28 @@ async function handleGamePlay() {
         // Reset the pullStart
         pullStart = null;
 
-        // Swinging the putter
-        putter.moveTo(ball.x - (5*(forceMagnitude/6))*forceDirection.x , ball.y - (5*(forceMagnitude/6))*forceDirection.y, .04*forceMagnitude);
-        // ^^ why is the modifier 5/6 ?
-        await sleep(2 * forceMagnitude); //Sorry, the slow putt speed was bothering me
-        putter.moveTo(ball.x, ball.y, .04*forceMagnitude);
-        await sleep(2*forceMagnitude);
+        putter.visible = false; // hides the putter while it does its move but still looks goofy
+
+        //putter.offset.x = 0;    // This moves the pivot point onto the handle
+        //putter.offset.y = 30;
+        putter.image.offset.x = 0;
+        putter.image.offset.y = 130;
+
+        putterRotation = putter.rotation;
+
+        putter.move(20,putterRotation-180,500); 
+        await sleep(0);       
+
+        putter.move(-60,putterRotation+90,500);
+        await sleep(0);
+        putter.visible = true;
+
+        // This is the swing
+        putter.rotate(90,forceMagnitude/50);
+        await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
+        putter.rotate(-90,forceMagnitude/50);
+        playHitSound(); //Playing the ball hit sound
+        await sleep(forceMagnitude * 5);
 
         // Apply the calculated force to the ball if its in sand
         // if (ball.overlaps(sandtrap)){
@@ -328,6 +349,9 @@ async function handleGamePlay() {
 
         // Hide the putter
         putter.visible = false;
+        putter.image.offset.x = -50;
+        putter.image.offset.y = -100;
+
 
         if (pullDistance > 0) {
             playHitSound(); //Playing the ball hit sound
@@ -542,7 +566,6 @@ function drawMessage() {
 
 function drawPutter(){
     // Draw the putter back in
-    putter.moveTo(ball.x, ball.y,100);
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
