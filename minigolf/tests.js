@@ -173,6 +173,7 @@ addTest('Tube Teleportation test', async () => {
 // Test the water
 addTest('Water Test', async () => {
     ball.vel = { x: 0, y: 0 };
+    ball.lastHit = {x: ballStart, y: ballStart};
     ball.x = getObjectsByType("water")[0].sprites[0].x;
     ball.y = getObjectsByType("water")[0].sprites[0].y;
     initialX = ball.velocity.x
@@ -188,33 +189,47 @@ addTest('Water Test', async () => {
 
 // Test the volcano
 addTest('Volcano Test', async () => {
+    ballStart.y = ballStart+15;
     ball.x = ballStart.x;
     ball.y = ballStart.y;
+    ball.vel = { x: 0, y: 0 };
   
-    ball.x = getObjectsByType("volcano")[0].sprites[0].x; 
+    ball.x = getObjectsByType("volcano")[0].sprites[0].x+50; 
     ball.y = getObjectsByType("volcano")[0].sprites[0].y; 
-    await sleep (600)
+    stopLava = new Sprite([[getObjectsByType("volcano")[0].sprites[0].x-100,
+        getObjectsByType("volcano")[0].sprites[0].y-15],
+        [getObjectsByType("volcano")[0].sprites[0].x+100,
+        getObjectsByType("volcano")[0].sprites[0].y-15]],'s');
+    
+    // Wait for lava to despawn
+    await sleep (2500);
+    ball.vel.x = -3;
+    await sleep(500);
+    
 
     // Check that it's at ballStart and isn't moving
-    if (ball.x != ballStart.x || ball.y != ballStart.y) {
-        throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
+    if (ball.x <= getObjectsByType("volcano")[0].sprites[0].x) {
+        throw new Error(`Expected ball.x to be greater than ${getObjectsByType("volcano")[0].sprites[0].y-15}, but instead got ${ball.x}`);
     }
-    if (ball.vel.x != 0 || ball.vel.y != 0) {
-        throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
-    }
+    // if (ball.vel.x != 0 || ball.vel.y != 0) {
+    //     throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
+    // }
 
+    stopLava.remove();
     ball.vel = { x: 0, y: 0 };
 });
 
 
-// Test the volcano's magma
-addTest('Magma Test', async () => {
+// Test the volcano's lava
+addTest('lava Test', async () => {
+    ball.vel = { x: 0, y: 0 };
     ball.x = ballStart.x;
     ball.y = ballStart.y;
+    ball.vel = { x: 0, y: 0 };
   
     ball.x = getObjectsByType("volcano")[0].sprites[0].x; 
-    ball.y = getObjectsByType("volcano")[0].sprites[0].y+20; 
-    await sleep (621)
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y-65; 
+    await sleep (2500)
 
     // Check that it's at ballStart and isn't moving
     if (ball.x != ballStart.x || ball.y != ballStart.y) {

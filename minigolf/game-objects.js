@@ -66,65 +66,57 @@ class GameObject {
 
             case "volcano":
 
-                if (this.sprites[0].overlaps(ball))
-                {
-                    ball.vel.x = 0;
-                    ball.vel.y = 0;
-                    ball.x = ballStart.x;
-                    ball.y = ballStart.y;
-                }
-
                 this.sprites[1].x = 11111;
                 this.sprites[1].y = 11111;
                 let volcSpeed = 75;
                 // Make it erupt
                 if (frameCount % volcSpeed == 0) {
                     // do stuff
-                    magma = new Sprite(this.sprites[0].x, this.sprites[0].y-50, 20);
-                    magma.life = volcSpeed;
-                    magma.stroke = '#8B0000';
+                    lava = new Sprite(this.sprites[0].x, this.sprites[0].y-50, 20);
+                    lava.life = volcSpeed;
+                    lava.stroke = '#8B0000';
 
                     // Make it orange, yellow, or red
                     let randColor = random(-.01, 3.1);
                     if (randColor < 1)
-                        magma.color = 'red';
+                        lava.color = 'red';
                     else if ((randColor < 2) && (randColor >= 1))
-                        magma.color = 'yellow';
+                        lava.color = 'yellow';
                     else
-                        magma.color = 'orange'
+                        lava.color = 'orange'
 
-                    // magma.vel.y = -2;
-                    magma.vel.x = random(-1,1);
+                    // lava.vel.y = -2;
+                    lava.vel.x = random(-1,1);
                     
-                    // magma.bearing = -90;
-                    // magma.applyForce(random(10,20));
+                    // lava.bearing = -90;
+                    // lava.applyForce(random(10,20));
                 }
 
                 // you could make this bear upwards for 10ish frames
                 // Then start bearing downwards
                 if (frameCount % volcSpeed <= 20) {
-                    // magma.bearing = -90;
-                    // magma.applyForce(2);
-                    magma.vel.y = -2;
+                    // lava.bearing = -90;
+                    // lava.applyForce(2);
+                    lava.vel.y = -2;
                 }
                 else {
-                    magma.bearing = 90;
-                    magma.applyForce(10);
+                    lava.bearing = 90;
+                    lava.applyForce(10);
                 }
 
-                if(ball.overlaps(magma)){
+                if(ball.overlaps(lava)){
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = ballStart.x;
                     ball.y = ballStart.y;
                 }
-                magma.overlaps(windmillBody);
-                magma.overlaps(hole);
+                lava.overlaps(windmillBody);
+                lava.overlaps(hole);
                 // These other overlaps make the console go nuts
-                // magma.overlaps(tubeA);
-                // magma.overlaps(tubeB);
-                // magma.overlaps(sandtrap);
-                // magma.overlaps(water);
+                // lava.overlaps(tubeA);
+                // lava.overlaps(tubeB);
+                // lava.overlaps(sandtrap);
+                // lava.overlaps(water);
 
                 break;
 
@@ -308,17 +300,17 @@ function Water(posX, posY, shape = "square") {
 // May be fun to have it generate "volcano" objects
 function Volcano(posX, posY) {
     let volcano = new Sprite([[posX, posY], [posX - 50, posY + 75], [posX + 50, posY + 75], [posX, posY]],'s');
-    volcano.color = '#8B4513';
-    volcano.stroke = '#8B0000';
+    volcano.color = '#622a0f';
+    volcano.stroke = 'black';
     volcano.layer = 0;
     volcano.collider = 'kinematic';
 
-    magma = new Sprite(posX,posY,10);
-    magma.color = 'red';
-    magma.stroke = '#8B0000';
-    magma.layer = 0;
-    magma.diameter = 10;
-    magma.life = 10;
+    lava = new Sprite(posX,posY,10);
+    lava.color = 'red';
+    lava.stroke = '#8B0000';
+    lava.layer = 0;
+    lava.diameter = 10;
+    lava.life = 10;
 
-    return new GameObject("volcano", [volcano, magma]);
+    return new GameObject("volcano", [volcano, lava]);
 }
