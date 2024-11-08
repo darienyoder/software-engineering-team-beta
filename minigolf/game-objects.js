@@ -172,8 +172,8 @@ function Ball(x, y)
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    newBall.image = 'assets/ball.png'
-    newBall.image.scale = .025
+    // newBall.image = 'assets/ball.png'
+    // newBall.image.scale = .025
 
     return new GameObject("ball", newBall);
 }
