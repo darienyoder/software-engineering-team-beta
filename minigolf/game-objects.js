@@ -68,13 +68,10 @@ class GameObject {
 
             case "volcano":
                 let volcSpeed = 75;
-
-                // lavaObjects.push(this.sprites[0]);
-                // lavaObjects[0].pop().delete()
-
-
+                
+                // Generate Lava
                 if (frameCount % volcSpeed == 0) {
-                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, 20);
+                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(5,20));
                     aLava.life = volcSpeed;
                     let randColor = random(0, 3);
                     if (randColor < 1)
@@ -85,10 +82,10 @@ class GameObject {
                         aLava.color = 'orange'
                     lavaObjects.push(aLava);
                 }
-
+                
                 // Object Movement
                 if(frameCount % volcSpeed <= 20){
-                    for (let i = 0; i < lavaObjects.length; i++){
+                    for (var i = 0; i < lavaObjects.length; i++){
                         lavaObjects[i].vel.x = random(-1,1);
                         lavaObjects[i].vel.y = -2;
                     }
@@ -96,79 +93,29 @@ class GameObject {
                 if(frameCount % volcSpeed > 20){
                     for (let i = 0; i < lavaObjects.length; i++){
                         lavaObjects[i].bearing = 90;
-                        lavaObjects[i].applyForce(10);
+                        lavaObjects[i].applyForce(5);
                     }
                 }
 
-                if((frameCount%volcSpeed) == (volcSpeed-1) 
-                    && (lavaObjects.length()!=0)){
-                    lavaObjects.shift().delete();
+                // Deletion from list after life ends
+                if(((frameCount%volcSpeed) == (volcSpeed-1)) 
+                    && ((lavaObjects.length)>0)){
+                    lavaObjects.pop();
                 }
-                    
 
-                /*for (let i = 0; i < lavaObjects.length; i++){
-                    if (frameCount % volcSpeed <= 20) {
-                        lavaObjects[i].vel.y = -2;
+                // Handle collisions
+                for (let i = 0; i < lavaObjects.length; i++){
+                    if(ball.overlaps(lavaObjects[i])){
+                        ball.vel.x = 0;
+                        ball.vel.y = 0;
+                        ball.x = ballStart.x;
+                        ball.y = ballStart.y;
                     }
-                    else {
-                        lavaObjects[i].color = 'green';
-                        lavaObjects[i].bearing = 90;
-                        lavaObjects[i].applyForce(10);
-                    }
-                }*/
-
-                /*
-                // obj deletion code
-                while (lavaObjects.length != 0)
-                {
-                    lavaObjects.pop().delete();
                 }
-                */
-
-                /*this.sprites[1].x = 11111;
-                this.sprites[1].y = 11111;
                 
-                // Make it erupt
-                if (frameCount % volcSpeed == 0) {
-                    // do stuff
-                    lava = new Sprite(this.sprites[0].x, this.sprites[0].y-50, 20);
-                    lava.life = volcSpeed;
-                    lava.stroke = '#8B0000';
-
-                    // Make it orange, yellow, or red
-                    let randColor = random(-.01, 3.1);
-                    if (randColor < 1)
-                        lava.color = 'red';
-                    else if ((randColor < 2) && (randColor >= 1))
-                        lava.color = 'yellow';
-                    else
-                        lava.color = 'orange'
-
-                    // lava.vel.y = -2;
-                    lava.vel.x = random(-1,1);
-                    
-                    // lava.bearing = -90;
-                    // lava.applyForce(random(10,20));
-                }
-
-                // Lava motion
-                if (frameCount % volcSpeed <= 20) {
-                    lava.vel.y = -2;
-                }
-                else {
-                    lava.bearing = 90;
-                    lava.applyForce(10);
-                }
-
-                if(ball.overlaps(lava)){
-                    ball.vel.x = 0;
-                    ball.vel.y = 0;
-                    ball.x = ballStart.x;
-                    ball.y = ballStart.y;
-                }
-                lava.overlaps(windmillBody);
-                lava.overlaps(hole);
-                */
+                
+                // lava.overlaps(windmillBody);
+                // lava.overlaps(hole);
 
                 break;
 

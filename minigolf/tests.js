@@ -190,30 +190,24 @@ addTest('Water Test', async () => {
 // Test the volcano
 addTest('Volcano Test', async () => {
     ballStart.y = ballStart+15;
-    ball.x = ballStart.x;
-    ball.y = ballStart.y;
     ball.vel = { x: 0, y: 0 };
-  
-    ball.x = getObjectsByType("volcano")[0].sprites[0].x+50; 
-    ball.y = getObjectsByType("volcano")[0].sprites[0].y; 
+
     stopLava = new Sprite([[getObjectsByType("volcano")[0].sprites[0].x-100,
         getObjectsByType("volcano")[0].sprites[0].y-15],
         [getObjectsByType("volcano")[0].sprites[0].x+100,
         getObjectsByType("volcano")[0].sprites[0].y-15]],'s');
     
-    // Wait for lava to despawn
+    // Wait for lava to despawn then move ball
     await sleep (2500);
+    ball.x = getObjectsByType("volcano")[0].sprites[0].x+50; 
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y; 
     ball.vel.x = -3;
     await sleep(500);
     
-
-    // Check that it's at ballStart and isn't moving
+    // Check that it didn't get past the volcano
     if (ball.x <= getObjectsByType("volcano")[0].sprites[0].x) {
         throw new Error(`Expected ball.x to be greater than ${getObjectsByType("volcano")[0].sprites[0].y-15}, but instead got ${ball.x}`);
     }
-    // if (ball.vel.x != 0 || ball.vel.y != 0) {
-    //     throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
-    // }
 
     stopLava.remove();
     ball.vel = { x: 0, y: 0 };
