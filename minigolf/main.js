@@ -291,7 +291,7 @@ async function handleGamePlay() {
     drawStrokeCount();
 
     // When mouse is pressed...
-    if (mouse.presses() && (canMove || true)) {
+    if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
