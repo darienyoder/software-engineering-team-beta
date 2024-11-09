@@ -55,7 +55,7 @@ class GameObject {
 
                 if (this.sprites[0].overlaps(ball))
                 {
-                    // playWaterSound();
+                    // waterSplash.play();
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = lastHit.x;
@@ -119,7 +119,7 @@ function Ball(x, y)
     newBall.diameter = 10;
     newBall.color = "#ffffff";
     newBall.layer = 2;
-    newBall.drag = friction;
+    newBall.drag = friction.reg;
     newBall.image = 'assets/ball.png'
     newBall.image.scale = .025
 

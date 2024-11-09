@@ -1,5 +1,5 @@
 const strokeForce = 25; // The speed of the ball when it is hit
-const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
+const friction = { reg: 0.5, slow: 2, trigger: 0.2 };
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
 var gameObjects = [], strokeCounts = []; strokeCount = 0; par = 0;
@@ -16,7 +16,6 @@ cameraModeOptions = ["Center"] // Options that camera mode can take-- should be 
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
 let trajectoryColor = '#4433FF'; // Default trajectory color
-let currentColorIndex = 4;
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
@@ -26,7 +25,7 @@ let prevVelY = 0;
 let hitSound, holeSound, waterSplash;
 
 // Loading sound files
-function preload(){
+async function loadSounds(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
     waterSplash = loadSound('assets/waterSplash.wav');
@@ -35,6 +34,8 @@ function preload(){
 // Runs once when the program starts
 async function setup()
 {
+    await loadSounds();
+    
     // Starts the game / goes into level select once buttons are pressed if in the menu
     document.getElementById('startButton').addEventListener('click', () => {
         if(gameState == 'menu') {
@@ -75,21 +76,6 @@ async function setup()
 
     }
     });
-}
-
-//Hit sound function
-function playHitSound() {
-    hitSound.play();
-}
-
-//Hole sound function
-function playGoalSound() {
-    holeSound.play();
-}
-
-//Hole sound function
-function playWaterSound() {
-    waterSplash.play();
 }
 
 function setupLevel(levelNum) {
@@ -291,13 +277,13 @@ async function handleGamePlay() {
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
     if (trueVel > 0) {
-        if (trueVel <= frictionTrigger && trueVel != 0) {
-            ball.drag = slowFriction;
+        if (trueVel <= friction.trigger && trueVel != 0) {
+            ball.drag = friction.slow;
             //Ball spin relative to trueVel
             ball.rotationSpeed = trueVel
         }
     } else {
-        ball.drag = friction;
+        ball.drag = friction.reg;
         //Ball no spin
         ball.rotationSpeed = 0
     }
@@ -354,7 +340,7 @@ async function handleGamePlay() {
 
 
         if (pullDistance > 0) {
-            playHitSound(); //Playing the ball hit sound
+            hitSound.play(); //Playing the ball hit sound
             incrementShots();
             // Just clicking does not increment shots anymore
         }
@@ -416,7 +402,7 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        playGoalSound();
+        holeSound.play();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
@@ -529,7 +515,7 @@ function drawTrajectory() {
 
     // Draw trajectory line
     push(); // Start new style for the line
-    stroke(trajectoryColor); // Can be any color
+    stroke(trajectory.colors[trajectory.choice]); // Can be any color
     strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
     pop(); // Remove style
@@ -613,7 +599,6 @@ async function drawPar() {
                 break;
         }
         push();
-        print(parMsg);
         // background("white");
         fill(0); // Set text color
         textSize(36);
