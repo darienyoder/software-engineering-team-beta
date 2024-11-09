@@ -44,7 +44,7 @@ class Level
         newWall.strokeWeight = 2;
         newWall.color = wallColor;
         newWall.stroke = wallStroke;
-        newWall.collider = "static";
+        newWall.collider = "n";
         newWall.layer = 1;
         this.wallOutlines.push(newWall);
 
@@ -53,7 +53,7 @@ class Level
         newWall.strokeWeight = 0;
         newWall.color = "black";
         newWall.stroke = "#00000000";;
-        newWall.collider = "static";
+        newWall.collider = "n";
         newWall.layer = 1;
         this.wallOutlines.push(newWall);
     }
