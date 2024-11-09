@@ -111,6 +111,10 @@ class GameObject {
                         ball.x = ballStart.x;
                         ball.y = ballStart.y;
                     }
+                    lavaObjects[i].overlaps(windmillBody);
+                    lavaObjects[i].overlaps(getObjectsByType("tubes")[0].sprites[0]);
+                    lavaObjects[i].overlaps(getObjectsByType("hole")[0].sprites[0]);
+                    lavaObjects[i].overlaps(getObjectsByType("sandtrap")[0].sprites[0]);
                 }
                 
                 
