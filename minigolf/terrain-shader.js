@@ -95,6 +95,15 @@ float shapeHasPoint(int shapeType, vec4 shapeData, vec4 shapeData2, int grad, ve
         else
             return weight;
     }
+    if (shapeType == 2) // Rect
+    {
+        return (
+            point.x > shapeData.x
+            && point.x < shapeData.x + shapeData.z
+            && point.y > shapeData.y
+            && point.y < shapeData.y + shapeData.w
+        ) ? 1.0 : 0.0;
+    }
     return 0.0;
 }
 
@@ -129,11 +138,34 @@ void main( void )
     vec2 coords = screenToLevel( gl_FragCoord.xy );
 
     float pointHeight = getHeight(coords);
-	vec3 color = mix( minHeightColor, maxHeightColor, (pointHeight - minHeight) / (maxHeight - minHeight) );
-    if (pointHeight == SAND_HEIGHT)
+	vec3 color;
+    // if ( pointHeight == SAND_HEIGHT )
+    //     pointHeight = getHeight(coords + mod(vec2(coords.y * coords.x) + floor(10.0 * coords.x / coords.y) , 5.0) * 0.5);
+
+    if ( pointHeight == SAND_HEIGHT )
+    {
         color = vec3(0.824,0.706,0.549);
+
+        color *= 1.0 + 0.2 * mod(pow(mod(coords.x, 40.0), 2.0) * pow(mod(coords.y, 40.0), 2.0), 1.0);
+    }
     else if (pointHeight == WATER_HEIGHT)
-        color = vec3(0, 0, 1);
+    {
+        color = vec3(0.194, 0.492, 0.776);
+        float foam = 0.0;
+        for (int x = -3; x < 3; x++)
+        for (int y = -3; y < 3; y++)
+        {
+            if (getHeight(coords + vec2(x, y) * 3.0) != WATER_HEIGHT)
+                foam += 0.05 * (sin(float(time) * 0.0004) * 0.3 + 0.7);
+        }
+        color = mix(color, vec3(1.0), foam);
+    }
+    else
+    {
+        color = mix( minHeightColor, maxHeightColor, (pointHeight - minHeight) / (maxHeight - minHeight) );
+        if (mod(floor(coords.x / 20.0) + floor(coords.y / 20.0), 2.0) == 0.0)
+            color /= 1.1; //+= vec3(0.05);
+    }
 
     if (isTopographyLine(pointHeight))
         color = vec3(0.2 + 0.8 * (pointHeight - minHeight) / (maxHeight - minHeight));

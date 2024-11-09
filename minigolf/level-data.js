@@ -4,6 +4,12 @@ var levelData = [
         holePosition: [250, 75],
         area: `
             ADD rect 0, 0, 300, 150;
+            HEIGHT + -3: hill 150, 150, 100, 100;
+            HEIGHT + -4: hill 300, 150, 200, 100;
+            HEIGHT + 3: hill 250, 0, 100, 100;
+            HEIGHT = 1134: rect 0, 0, 100, 50;
+            // HEIGHT = 843: rect 100, 0, 100, 50;
+            HEIGHT = 843: oval 0, 150, 100, 75;
         `,
         obstacles: `
         `,

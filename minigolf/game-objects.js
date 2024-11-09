@@ -10,24 +10,34 @@ class GameObject {
             this.sprites = _sprites;
         else
             this.sprites = [_sprites];
+        if (this.sprites.length > 0)
+            this.sprite = this.sprites[0];
     }
 
     // Runs every frame
     update() {
         switch (this.type) {
             case "ball":
-                switch (level.getSurface(this.sprites[0].x, this.sprites[0].y))
+                switch (level.getSurface(this.sprite.x, this.sprite.y))
                 {
                     case SURFACE_SAND:
-                        this.sprites[0].vel.setMag(Math.max(0.0, this.sprites[0].vel.mag() - 5 / deltaTime))
+                        this.sprite.vel.setMag(Math.max(0.0, this.sprite.vel.mag() - 5 / deltaTime))
                         break;
                     case SURFACE_WATER:
-                        this.sprites[0].vel.x = 0;
-                        this.sprites[0].vel.y = 0;
-                        this.sprites[0].x = lastHit.x;
-                        this.sprites[0].y = lastHit.y;
+                        this.sprite.vel.x = 0;
+                        this.sprite.vel.y = 0;
+                        this.sprite.x = lastHit.x;
+                        this.sprite.y = lastHit.y;
                         break;
                 }
+                if ( Math.sqrt(Math.pow(this.sprite.lastPos.x - this.sprite.pos.x, 2.0) + Math.pow(this.sprite.lastPos.y - this.sprite.pos.y, 2.0)) < 0.5)
+                    {
+                        this.sprite.stillTime += 1;
+                    }
+                else
+                    this.sprite.stillTime = 0;
+
+                    this.sprite.lastPos = createVector(this.sprite.x, this.sprite.y);
                 break;
 
             case "hole":
@@ -131,8 +141,10 @@ function Ball(x, y)
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    newBall.image = 'assets/ball.png'
-    newBall.image.scale = .025
+    newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
+    newBall.stillTime = 300;
+    // newBall.image = 'assets/ball.png'
+    // newBall.image.scale = .025
 
     return new GameObject("ball", newBall);
 }

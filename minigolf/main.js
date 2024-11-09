@@ -222,20 +222,6 @@ function handleLevelSelect() {
 
 }
 
-
-
-// function clearGameObjects() {
-//     clear();
-//
-//     for (var obj of gameObjects)
-//         obj.remove();
-//
-//     // for (var wall of walls)
-//     //     wall.remove();
-//
-//     // background(backgroundColor);
-// }
-
 function drawGameOver() {
     background("white");
     fill(0);
@@ -389,7 +375,7 @@ async function handleGamePlay() {
             }
 
             //Calculate new ball velocity manually
-            const wallFriction = 1.0;
+            const wallFriction = 0.8;
             let velocityVector = createVector(prevVelX, prevVelY);
             velocityVector.reflect(normalVector).mult(wallFriction);
             ball.vel.x = velocityVector.x;
@@ -434,16 +420,17 @@ async function handleGamePlay() {
     }
 
     //Ball has to be stopped in order to move
-    if(!ballInGoal){
-        if (ballLastPosition.sub(ball.position).mag() < 0.01) {//(ball.vel.x==0 && ball.vel.y==0){
-            canMove=true //Player can take the next shot
-            if(!message) {
-            message = "Take Your Shot"; //Set the message
-            messageTime = millis(); //Record when message was displayed
+    if(!ballInGoal) {
+        if (ball.stillTime > 360) { //(ball.vel.x==0 && ball.vel.y==0){
+            canMove = true //Player can take the next shot
+            ball.vel.setMag(0.0);
+            if (!message) {
+                message = "Take Your Shot"; //Set the message
+                messageTime = millis(); //Record when message was displayed
             }
         }
-        else{
-            canMove=false
+        else {
+            canMove = false
         }
 
         if(message){

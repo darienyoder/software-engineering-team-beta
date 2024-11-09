@@ -189,6 +189,16 @@ class Level
                 };
                 grad = "flat";
                 break;
+            case "rect":
+                shapeName = "rect";
+                shapeData = {
+                    x: shapeArgs[0],
+                    y: shapeArgs[1],
+                    w: shapeArgs[2],
+                    h: shapeArgs[3],
+                };
+                grad = "flat";
+                break;
         }
 
         return {
@@ -398,10 +408,10 @@ class Level
         switch (shape.shape) {
             case "rect":
                 return (
-                    pointX > point.data.x
-                    && pointX < point.data.x + point.data.w
-                    && pointY > point.data.y
-                    && pointY < point.data.y + point.data.h
+                    pointX > shape.data.x
+                    && pointX < shape.data.x + shape.data.w
+                    && pointY > shape.data.y
+                    && pointY < shape.data.y + shape.data.h
                 ) ? 1 : 0;
                 break;
 
@@ -553,8 +563,8 @@ class Level
         this.createObstacles(levelDict.obstacles);
 
 
-        this.maxHeight = 3;
-        this.minHeight = -3;
+        this.maxHeight = 1;
+        this.minHeight = -1;
 
         // Draw shader
         const maxModifiers = 10;
@@ -581,8 +591,8 @@ class Level
                     let pointHeight = this.getHeight(modifier.data.x, modifier.data.y);
                     if (pointHeight != SAND_HEIGHT && pointHeight != WATER_HEIGHT)
                     {
-                        // this.maxHeight = Math.max(this.maxHeight, pointHeight);
-                        // this.minHeight = Math.min(this.minHeight, pointHeight);
+                        this.maxHeight = Math.max(this.maxHeight, pointHeight);
+                        this.minHeight = Math.min(this.minHeight, pointHeight);
                         // alert(pointHeight)
                     }
                     break;
@@ -594,6 +604,14 @@ class Level
                     datas[i * 4 + 3] = modifier.data.y2;
 
                     datas2[i * 4 + 0] = modifier.data.w;
+                    break;
+                case "rect":
+                    shapes[i] = 2;
+                    datas[i * 4 + 0] = modifier.data.x;
+                    datas[i * 4 + 1] = modifier.data.y;
+                    datas[i * 4 + 2] = modifier.data.w;
+                    datas[i * 4 + 3] = modifier.data.h;
+
                     break;
             }
         }
@@ -758,35 +776,6 @@ class Level
         this.ctx.drawElements(this.ctx.TRIANGLES, allIndices.length, this.ctx.UNSIGNED_SHORT, 0);
     }
 
-    drawHeight(modifier)
-    {
-        return;
-        let drawColor;
-        if (modifier.height > 0)
-            drawColor = maxFloorColor;
-        else
-            drawColor = minFloorColor;
-
-        switch (modifier.shape)
-        {
-            case "oval":
-                const ringCount = 24;
-                let opacity = Math.floor(255 / ringCount).toString(16);
-                if (opacity.length == 1)
-                    opacity = "0" + opacity;
-                fill(drawColor + opacity);
-                stroke("#00000000");
-                for (var i = 0; i < ringCount; i++)
-                {
-                    let center = levelToScreen(createVector(modifier.data.x, modifier.data.y));
-                    ellipse(center.x, center.y, modifier.data.w / ringCount * i * camera.zoom * 2, modifier.data.h / ringCount * i * camera.zoom * 2);
-                }
-                break;
-            default:
-
-        }
-    }
-
     lerpColor(a, b, amount)
     {
         var ah = parseInt(a.replace(/#/g, ''), 16),
@@ -808,7 +797,7 @@ class Level
         this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "bounds"), this.bounds.left, this.bounds.top, this.bounds.right - this.bounds.left, this.bounds.bottom - this.bounds.top);
-        this.ctx.uniform2f(this.ctx.getUniformLocation(this.shaderProgram, "screenSize"), this.canvas.width, this.canvas.height);
+        this.ctx.uniform2f(this.ctx.getUniformLocation(this.shaderProgram, "screenSize"), window.innerWidth, window.innerHeight);
 
         let date = new Date();
         this.ctx.uniform1i(this.ctx.getUniformLocation(this.shaderProgram, "time"), date.getTime() * 5.0);
@@ -821,10 +810,6 @@ class Level
         for (var wall = 0; wall < this.positiveWalls.length; wall++)
         {
             this.drawPolygons(this.positiveWalls, floorColor);
-        }
-        for (var hM = 0; hM < this.heightModifiers.length; hM++)
-        {
-            this.drawHeight(this.heightModifiers[hM]);
         }
         for (var wall = 0; wall < this.negativeWalls.length; wall++)
         {
