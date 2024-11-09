@@ -321,7 +321,7 @@ async function handleGamePlay() {
         putter.rotate(90,forceMagnitude/50);
         await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
         putter.rotate(-90,forceMagnitude/50);
-        playHitSound(); //Playing the ball hit sound
+        hitSound.play(); //Playing the ball hit sound
         await sleep(forceMagnitude * 5);
 
         // Apply the calculated force to the ball if its in sand
@@ -515,7 +515,7 @@ function drawTrajectory() {
 
     // Draw trajectory line
     push(); // Start new style for the line
-    stroke(trajectory.colors[trajectory.choice]); // Can be any color
+    stroke(trajectoryColor); // Can be any color
     strokeWeight(5);
     line(screenStart.x, screenStart.y, screenStart.x + pullVector.x, screenStart.y + pullVector.y);
     pop(); // Remove style
