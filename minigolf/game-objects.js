@@ -1,4 +1,6 @@
 var gameObjects = [];
+var lavaObjects = [];
+
 
 class GameObject {
 
@@ -65,10 +67,67 @@ class GameObject {
                 break;
 
             case "volcano":
-
-                this.sprites[1].x = 11111;
-                this.sprites[1].y = 11111;
                 let volcSpeed = 75;
+
+                // lavaObjects.push(this.sprites[0]);
+                // lavaObjects[0].pop().delete()
+
+
+                if (frameCount % volcSpeed == 0) {
+                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, 20);
+                    aLava.life = volcSpeed;
+                    let randColor = random(0, 3);
+                    if (randColor < 1)
+                        aLava.color = 'red';
+                    else if ((randColor < 2) && (randColor >= 1))
+                        aLava.color = 'yellow';
+                    else
+                        aLava.color = 'orange'
+                    lavaObjects.push(aLava);
+                }
+
+                // Object Movement
+                if(frameCount % volcSpeed <= 20){
+                    for (let i = 0; i < lavaObjects.length; i++){
+                        lavaObjects[i].vel.x = random(-1,1);
+                        lavaObjects[i].vel.y = -2;
+                    }
+                }
+                if(frameCount % volcSpeed > 20){
+                    for (let i = 0; i < lavaObjects.length; i++){
+                        lavaObjects[i].bearing = 90;
+                        lavaObjects[i].applyForce(10);
+                    }
+                }
+
+                if((frameCount%volcSpeed) == (volcSpeed-1) 
+                    && (lavaObjects.length()!=0)){
+                    lavaObjects.shift().delete();
+                }
+                    
+
+                /*for (let i = 0; i < lavaObjects.length; i++){
+                    if (frameCount % volcSpeed <= 20) {
+                        lavaObjects[i].vel.y = -2;
+                    }
+                    else {
+                        lavaObjects[i].color = 'green';
+                        lavaObjects[i].bearing = 90;
+                        lavaObjects[i].applyForce(10);
+                    }
+                }*/
+
+                /*
+                // obj deletion code
+                while (lavaObjects.length != 0)
+                {
+                    lavaObjects.pop().delete();
+                }
+                */
+
+                /*this.sprites[1].x = 11111;
+                this.sprites[1].y = 11111;
+                
                 // Make it erupt
                 if (frameCount % volcSpeed == 0) {
                     // do stuff
@@ -92,11 +151,8 @@ class GameObject {
                     // lava.applyForce(random(10,20));
                 }
 
-                // you could make this bear upwards for 10ish frames
-                // Then start bearing downwards
+                // Lava motion
                 if (frameCount % volcSpeed <= 20) {
-                    // lava.bearing = -90;
-                    // lava.applyForce(2);
                     lava.vel.y = -2;
                 }
                 else {
@@ -112,11 +168,7 @@ class GameObject {
                 }
                 lava.overlaps(windmillBody);
                 lava.overlaps(hole);
-                // These other overlaps make the console go nuts
-                // lava.overlaps(tubeA);
-                // lava.overlaps(tubeB);
-                // lava.overlaps(sandtrap);
-                // lava.overlaps(water);
+                */
 
                 break;
 
@@ -305,12 +357,12 @@ function Volcano(posX, posY) {
     volcano.layer = 0;
     volcano.collider = 'kinematic';
 
-    lava = new Sprite(posX,posY,10);
-    lava.color = 'red';
-    lava.stroke = '#8B0000';
-    lava.layer = 0;
-    lava.diameter = 10;
-    lava.life = 10;
+    // lava = new Sprite(posX,posY,10);
+    // lava.color = 'red';
+    // lava.stroke = '#8B0000';
+    // lava.layer = 0;
+    // lava.diameter = 10;
+    // lava.life = 10;
 
-    return new GameObject("volcano", [volcano, lava]);
+    return new GameObject("volcano", volcano);
 }

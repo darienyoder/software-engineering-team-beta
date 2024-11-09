@@ -45,7 +45,7 @@ class Level
         newWall.stroke = wallStroke;
         newWall.collider = "static";
         newWall.layer = 1;
-        newWall.collider = 'n';
+        // newWall.collider = 'n';
         this.walls.push(newWall);
 
         // // Back Corners

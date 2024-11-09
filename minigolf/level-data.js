@@ -55,6 +55,7 @@ var levelData = [
             ADD Tubes 465 215 25 225;
             ADD Windmill 450 50;
             ADD Volcano 50 75;
+            ADD Volcano 400 100;
         `,
         par: 5,
     },
