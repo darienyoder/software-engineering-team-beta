@@ -100,10 +100,10 @@ class GameObject {
                 // Deletion from list after life ends
                 if(((frameCount%volcSpeed) == (volcSpeed-1)) 
                     && ((lavaObjects.length)>0)){
-                    lavaObjects.pop();
+                    lavaObjects.shift();
                 }
 
-                // Handle collisions
+                // Handle collisions with objects
                 for (let i = 0; i < lavaObjects.length; i++){
                     if(ball.overlaps(lavaObjects[i])){
                         ball.vel.x = 0;
@@ -111,15 +111,30 @@ class GameObject {
                         ball.x = ballStart.x;
                         ball.y = ballStart.y;
                     }
-                    lavaObjects[i].overlaps(windmillBody);
-                    lavaObjects[i].overlaps(getObjectsByType("tubes")[0].sprites[0]);
-                    lavaObjects[i].overlaps(getObjectsByType("hole")[0].sprites[0]);
-                    lavaObjects[i].overlaps(getObjectsByType("sandtrap")[0].sprites[0]);
+
+                    for (var sands of getObjectsByType("sandtrap")){
+                        lavaObjects[i].overlaps(getObjectsByType("sandtrap")[0].sprites[0]);
+                    }
+                    for (var waters of getObjectsByType("water")){
+                        if(lavaObjects[i].overlaps(getObjectsByType("water")[0].sprites[0])){
+                                lavaObjects[i].life = 1;
+                            }
+                    }
+                    for (var windmills of getObjectsByType("windmill")){
+                        (getObjectsByType("windmill")[0].sprites[0]).overlaps(lavaObjects[i])
+                    }
+                    for (var tubes of getObjectsByType("tubes")){
+                        lavaObjects[i].overlaps(getObjectsByType("tubes")[0].sprites[1]);
+                        if ((getObjectsByType("tubes")[0].sprites[0]).overlaps(lavaObjects[i])){
+                            lavaObjects[i].x = getObjectsByType("tubes")[0].sprites[1].x;
+                            lavaObjects[i].y = getObjectsByType("tubes")[0].sprites[1].y;
+                        }
+                    }
+                    for (var holes of getObjectsByType("hole")){
+                        lavaObjects[i].overlaps(getObjectsByType("hole")[0].sprites[0]);
+                    }
+                
                 }
-                
-                
-                // lava.overlaps(windmillBody);
-                // lava.overlaps(hole);
 
                 break;
 

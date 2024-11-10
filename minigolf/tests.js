@@ -189,7 +189,6 @@ addTest('Water Test', async () => {
 
 // Test the volcano
 addTest('Volcano Test', async () => {
-    ballStart.y = ballStart+15;
     ball.vel = { x: 0, y: 0 };
 
     stopLava = new Sprite([[getObjectsByType("volcano")[0].sprites[0].x-100,
@@ -201,7 +200,7 @@ addTest('Volcano Test', async () => {
     await sleep (2500);
     ball.x = getObjectsByType("volcano")[0].sprites[0].x+50; 
     ball.y = getObjectsByType("volcano")[0].sprites[0].y; 
-    ball.vel.x = -3;
+    ball.vel.x = -5;
     await sleep(500);
     
     // Check that it didn't get past the volcano
@@ -217,13 +216,9 @@ addTest('Volcano Test', async () => {
 // Test the volcano's lava
 addTest('lava Test', async () => {
     ball.vel = { x: 0, y: 0 };
-    ball.x = ballStart.x;
-    ball.y = ballStart.y;
-    ball.vel = { x: 0, y: 0 };
-  
     ball.x = getObjectsByType("volcano")[0].sprites[0].x; 
-    ball.y = getObjectsByType("volcano")[0].sprites[0].y-65; 
-    await sleep (2500)
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y-75; 
+    await sleep (2500);
 
     // Check that it's at ballStart and isn't moving
     if (ball.x != ballStart.x || ball.y != ballStart.y) {
