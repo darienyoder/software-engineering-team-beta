@@ -146,6 +146,34 @@ var levelData = [
 
         `,
         par: 3
+    },
+    {
+        ballPosition: [-130,50],
+        holePosition: [150,50],
+        area: `
+            
+                // Outside ring;
+                ADD circ 150, 50, 300;
+                SUB circ 150, 50, 250;
+                // path from outside ring to inside ring;
+                ADD rect -100, 0, 100, 100;
+                // inside ring;
+                ADD circ 150, 50, 200;
+                SUB circ 150, 50, 150;
+                // path to hole circle form inide ring;
+                ADD rect 225, 0, 100, 100;
+                // hole circle;
+                ADD circ 150, 50, 100;
+             
+        `,
+        obstacles: `
+            ADD Sandtrap 80 50 10 50;
+            // sandtrap is underneath tubeB, used to slow ball down so it enters hole;
+            ADD Tubes 425 50 75 50; 
+            ADD Windmill 150 -180;
+            ADD Windmill 150 280;
+        `,
+        par: 3
     }
 ];
 
