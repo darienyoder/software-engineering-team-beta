@@ -36,6 +36,9 @@ async function setup()
 {
     await loadSounds();
     
+    document.getElementById('mainMenuButton').style.display = 'none';
+    document.getElementById('retryButton').style.display = 'none';
+    
     // Starts the game / goes into level select once buttons are pressed if in the menu
     document.getElementById('startButton').addEventListener('click', () => {
         if(gameState == 'menu') {
@@ -56,6 +59,19 @@ async function setup()
             document.getElementById('levelSelectButton').style.display = 'none';
         }
     })
+    document.getElementById('mainMenuButton').addEventListener('click', () => {
+        gameState = 'menu';
+        document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
+        document.getElementById('levelSelectButton').style.display = 'block';
+        document.getElementById('mainMenuButton').style.display = 'none';
+        document.getElementById('retryButton').style.display = 'none';
+    })
+    document.getElementById('retryButton').addEventListener('click', () => {
+        document.getElementById('mainMenuButton').style.display = 'none';
+        document.getElementById('retryButton').style.display = 'none';
+        startGame();
+    })
+
 
     // Initialize canvas
     createCanvas();
@@ -162,6 +178,7 @@ function drawMainMenu() {
 
 function levelSelect() {
     gameState = 'levelSelect';
+    document.getElementById('mainMenuButton').style.display = 'block';
 }
 
 function levelSquare(x, y, size, levelNum) {
@@ -173,6 +190,7 @@ function levelSquare(x, y, size, levelNum) {
 
     //if square is clicked
     if (mouse.pressed() && mouseX > x && mouseX < (x+size) && mouseY > y && mouseY < (y+size)) {
+        document.getElementById('mainMenuButton').style.display = 'none';
         playLevel(levelNum - 1);
     }
     return lvlSqr;
@@ -234,17 +252,16 @@ function drawGameOver() {
     for (var strokes of strokeCounts)
         totalStrokes += strokes;
     text(`Strokes: ${totalStrokes}`, width / 2, height / 2);
-    text("Press 'R' to Restart", width / 2, height / 1.5);
+    document.getElementById('mainMenuButton').style.display = 'block';
+    document.getElementById('retryButton').style.display = 'block';
+
 }
 
 function keyPressed() {
     if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
-    } else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
-        startGame();
-    }
-
+    }        
 }
 
 async function handleGamePlay() {
