@@ -67,7 +67,7 @@ class GameObject {
                 break;
 
             case "volcano":
-                let volcSpeed = 75;
+                let volcSpeed = 75; // CANNOT be less than 21!!
                 
                 // Generate Lava
                 if (frameCount % volcSpeed == 0) {
@@ -98,13 +98,20 @@ class GameObject {
                 }
 
                 // Deletion from list after life ends
-                if(((frameCount%volcSpeed) == (volcSpeed-1)) 
-                    && ((lavaObjects.length)>0)){
-                    lavaObjects.shift();
+                let loLength = lavaObjects.length;
+                for (let i = 0; i < loLength; i++){
+                    if(((frameCount%volcSpeed) == (volcSpeed-1)) 
+                        && (loLength>0))
+                    {
+                        lavaObjects.pop();
+                    }
                 }
+                
 
                 // Handle collisions with objects
+                // These only work for the first instance of each object :(
                 for (let i = 0; i < lavaObjects.length; i++){
+                    lavaObjects[i].text = frameCount%75;
                     if(ball.overlaps(lavaObjects[i])){
                         ball.vel.x = 0;
                         ball.vel.y = 0;

@@ -57,8 +57,9 @@ var levelData = [
             ADD Water 115 175;
             ADD Volcano 50 75;
             ADD Volcano 375 125;
-            ADD Volcano 275 -25;
+            ADD Volcano 250 -25;
             ADD Volcano 250 100;
+            ADD Volcano 465 230;
         `,
         par: 5,
     },
@@ -102,8 +103,8 @@ const testLevel = {
         ADD circle 250, 75, 50;
         ADD rect 225, 75, 50, 75;
 
-    `,
-    obstacles: `
+        `,
+        obstacles: `
         ADD Sandtrap 250 -50 50 50;
         ADD Tubes 465 215 25 225;
         ADD Windmill 450 50;
@@ -112,3 +113,4 @@ const testLevel = {
     `,
     par: 5,
 }
+

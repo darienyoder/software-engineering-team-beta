@@ -47,9 +47,14 @@ function setupTestEnvironment() {
 
 // Example Tests
 addTest('Initial Stroke Count', async () => {
+    await sleep(1000); // Wait for lava to disperse
     strokeCount = 0;
     if (strokeCount !== 0) throw new Error('Expected strokeCount to be 0');
 });
+
+// addTest('Setup Volcanoes', async () => {
+//     level.loadLevelFromDict(testVolcanoes);
+// });
 
 addTest('Ball Movement', async () => {
     const initialPosition = { x: ball.x, y: ball.y };
@@ -213,8 +218,8 @@ addTest('Volcano Test', async () => {
 });
 
 
-// Test the volcano's lava
-addTest('lava Test', async () => {
+// Test the volcano's lava with the ball
+addTest('Lava Test', async () => {
     ball.vel = { x: 0, y: 0 };
     ball.x = getObjectsByType("volcano")[0].sprites[0].x; 
     ball.y = getObjectsByType("volcano")[0].sprites[0].y-75; 
@@ -230,6 +235,59 @@ addTest('lava Test', async () => {
 
     ball.vel = { x: 0, y: 0 };
 });
+
+// Test the volcano's lava with the sandtrap
+addTest('Lava Sandtrap', async () => {
+    // Wait until new lava exists
+    // We don't want to break anything on accident
+    // 75 is the local var volcSpeed in game-objects.js
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+    lavaObjects[0].x = getObjectsByType("sandtrap")[0].sprites[0].x;
+    lavaObjects[0].y = getObjectsByType("sandtrap")[0].sprites[0].y;
+
+    await sleep (100);
+
+    // Check that it's inside the sandtrap and not outside of it
+    if (lavaObjects[0].x > getObjectsByType("sandtrap")[0].sprites[0].x+50 
+        || lavaObjects[0].x < getObjectsByType("sandtrap")[0].sprites[0].x-50
+        || lavaObjects[0].y > getObjectsByType("sandtrap")[0].sprites[0].y+50
+        || lavaObjects[0].y < getObjectsByType("sandtrap")[0].sprites[0].y-50) {
+        throw new Error(`Expected lava to be near ${getObjectsByType
+            ("sandtrap")[0].sprites[0].x}, ${getObjectsByType
+            ("sandtrap")[0].sprites[0].y}, but it is at ${lavaObjects[0].x}, ${lavaObjects[0].y}`);
+    }
+
+    lavaObjects[0].life = 1;
+});
+
+// Test the volcano's lava with the tubes
+addTest('Lava Tubes', async () => {
+    // Wait until new lava exists
+    // We don't want to break anything on accident
+    // 75 is the local var volcSpeed in game-objects.js
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+    
+    lavaObjects[0].x = getObjectsByType("tubes")[0].sprites[0].x;
+    lavaObjects[0].y = getObjectsByType("tubes")[0].sprites[0].y;
+    await sleep (100);
+
+    // Check that it's inside the sandtrap and not outside of it
+    if (lavaObjects[0].x > getObjectsByType("tubes")[0].sprites[1].x+50 
+        || lavaObjects[0].x < getObjectsByType("tubes")[0].sprites[1].x-50
+        || lavaObjects[0].y > getObjectsByType("tubes")[0].sprites[1].y+50
+        || lavaObjects[0].y < getObjectsByType("tubes")[0].sprites[1].y-50) {
+        throw new Error(`Expected lava to be near ${getObjectsByType
+            ("tubes")[0].sprites[1].x}, ${getObjectsByType
+            ("tubes")[0].sprites[1].y}, but it is at ${lavaObjects[0].x}, ${lavaObjects[0].y}`);
+    }
+
+    lavaObjects[0].life = 1;
+});
+
 
 // Sound loading test
 addTest('Sound Load Test', async () => {
@@ -270,6 +328,7 @@ addTest('Camera Moving', async () => {
         throw new Error('Camera position did not match ball position');
     cameraMode = "Center";
 });
+
 
 // Test that menu works
 // Test only runs if it starts on 'menu' screen
