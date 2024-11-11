@@ -76,6 +76,37 @@ class GameObject {
 
                 break;
 
+            case "ghost":
+                //When active float towards ball
+                if (this.sprites[0].active){
+                    this.sprites[0].moveTowards(ball.x, ball.y, .005);
+                    playBooSound();
+                }
+                if (this.sprites[0].overlaps(ball))
+                {
+                    ball.vel.x = 0;
+                    ball.vel.y = 0;
+                    ball.x = ballStart.x;
+                    ball.y = ballStart.y;
+                }
+
+                break;
+
+            case "button":
+                if (this.sprites[0].overlaps(ball)&& !this.active){
+                    this.active=true;
+                    this.sprites[0].image = 'assets/Button-on.png';
+                    this.sprites[0].image.scale=.25;
+                    playClickSound();
+                    //This is where we need to modify the ghost object's .active and .visible
+                    let ghosts = getObjectsByType("ghost");
+                    if (ghosts.length > 0) {
+                        let ghost = ghosts[0]; // Assuming only one ghost
+                        ghost.sprites[0].active = true;
+                        ghost.sprites[0].visible = true;
+                }
+            }
+                break;
         }
     }
 
@@ -262,4 +293,33 @@ function Volcano(posX, posY) {
     volcano.collider = 'kinematic';
 
     return new GameObject("lava", volcano);
+}
+
+function Ghost(posX, posY){
+    let ghost = new Sprite(posX, posY);
+    ghost.width=10;
+    ghost.height=10;
+    ghost.image = 'assets/ghost.png';
+    ghost.image.scale=.25;
+    ghost.layer=0;
+    ghost.active=false;
+    ghost.visible=false;
+    return new GameObject("ghost", ghost);
+}
+function Button(posX, posY){
+    let button = new Sprite(posX,posY);
+    button.width=10;
+    button.height=10;
+    button.collider = 'none';
+    button.image = '/assets/Button-off.png';
+    button.image.scale=.25;
+    button.active=false;
+    return new GameObject("button", button)
+}
+function Rock(posX,posY){
+    let rock = new Sprite(posX,posY, 20, 20);
+    rock.color='gray';
+    rock.collider='static';
+    rock.rotation = random(-90,90);
+    return new GameObject("rock",rock);
 }
