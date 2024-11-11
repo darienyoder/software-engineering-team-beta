@@ -37,6 +37,8 @@ async function loadSounds(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
     waterSplash = loadSound('assets/waterSplash.wav');
+    click = loadSound('assets/buttonpress.mp3');
+    boo = loadSound('assets/boo.mp3');
 }
 
 // Runs once when the program starts
@@ -143,7 +145,14 @@ function playGoalSound() {
 function playWaterSound() {
     waterSplash.play();
 }
-
+function playClickSound(){
+    click.play();
+}
+function playBooSound(){
+    if (Math.random() > 0.999) {
+        boo.play();
+    }
+}
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);

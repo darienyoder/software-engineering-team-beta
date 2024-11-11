@@ -173,7 +173,8 @@ var levelData = [
         `,
         par: 3
     },
-    {ballPosition: [
+    {
+      ballPosition: [
         38,
         375
     ],
@@ -205,7 +206,31 @@ var levelData = [
           ADD Tubes 35 45 310 50; 
         `,
         par: 3,
-    }
+    },
+    {
+        //Ghost level;
+        ballPosition: [150, 25],
+        holePosition: [150, 600],
+        area: `
+
+            // Top section;
+            ADD rect 0, 0, 300, 700;
+            ADD rect 100, -50, 100, 50;
+            SUB rect 0, 350, 125, 50;
+            SUB rect 175, 350, 125, 50;
+
+        `,
+        obstacles: `
+            ADD Ghost 150 0;
+            ADD Button 150 375;
+            ADD Rock 250 450;
+            ADD Rock 50 450;
+            ADD Rock 150 500;
+            ADD Rock 250 550;
+            ADD Rock 50 550;
+        `,
+        par: 3
+    },
 ];
 
 const testLevel = {

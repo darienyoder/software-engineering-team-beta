@@ -539,6 +539,12 @@ class Level
                 return Volcano(objectData.position[0],objectData.position[1]);
             case 'Water':
                 return Water(objectData.position[0], objectData.position[1]);
+            case 'Ghost':
+                return Ghost(objectData.position[0], objectData.position[1]);
+            case 'Button':
+                return Button(objectData.position[0], objectData.position[1]);
+            case 'Rock':
+                return Rock(objectData.position[0], objectData.position[1]);
             default:
                 console.warn(`Unknown object type: ${objectData.type}`);
                 return null;
@@ -694,6 +700,16 @@ class Level
                     case 'Volcano':
                         objectData.position = [Number(parts[2]), Number(parts[3])];
                         break;
+                    case 'Ghost':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        objectData.moving = Boolean(parts[4]);
+                        objectData.visible = Boolean(parts[5]);
+                        break;
+                    case 'Button':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        break;
+                    case 'Rock':
+                        objectData.position =[Number(parts[2]), Number(parts[3])];
                     // Add more cases for other object types as needed
                 }
 
