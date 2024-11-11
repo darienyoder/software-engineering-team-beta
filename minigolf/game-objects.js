@@ -111,7 +111,6 @@ class GameObject {
                 // Handle collisions with objects
                 // These only work for the first instance of each object :(
                 for (let i = 0; i < lavaObjects.length; i++){
-                    lavaObjects[i].text = frameCount%75;
                     if(ball.overlaps(lavaObjects[i])){
                         ball.vel.x = 0;
                         ball.vel.y = 0;
@@ -189,8 +188,8 @@ function Ball(x, y)
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction;
-    // newBall.image = 'assets/ball.png'
-    // newBall.image.scale = .025
+    newBall.image = 'assets/ball.png'
+    newBall.image.scale = .025
 
     return new GameObject("ball", newBall);
 }
