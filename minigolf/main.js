@@ -66,6 +66,7 @@ async function setup()
             levelSelect()
             document.getElementById('startButton').style.display = 'none';
             document.getElementById('levelSelectButton').style.display = 'none';
+            document.getElementById('blitzModeButton').style.display = 'none';
         }
     })
     document.getElementById('mainMenuButton').addEventListener('click', () => {
@@ -74,6 +75,7 @@ async function setup()
         document.getElementById('levelSelectButton').style.display = 'block';
         document.getElementById('mainMenuButton').style.display = 'none';
         document.getElementById('retryButton').style.display = 'none';
+        document.getElementById('blitzModeButton').style.display = 'block';
     })
     document.getElementById('retryButton').addEventListener('click', () => {
         document.getElementById('mainMenuButton').style.display = 'none';
