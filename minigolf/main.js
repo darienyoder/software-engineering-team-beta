@@ -26,11 +26,6 @@ var ballLastPosition = 0;
 var webglCanvas;
 var webglContext;
 
-async function preload()
-{
-    // heightShader = createShader(vertSrc, fragSrc);
-}
-
 // Sound variables
 let hitSound, holeSound, waterSplash;
 
@@ -355,9 +350,6 @@ async function handleGamePlay() {
 
     // When mouse is released...
     if (mouse.releases() && (canMove || true) && pullStart) {
-      
-        playHitSound(); //Playing the ball hit sound
-        
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -395,6 +387,8 @@ async function handleGamePlay() {
         putter.visible = false;
         putter.image.offset.x = -50;
         putter.image.offset.y = -100;
+
+        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
 
 
         if (pullDistance > 0) {
