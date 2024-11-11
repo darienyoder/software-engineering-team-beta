@@ -76,7 +76,8 @@ class GameObject {
 
                 if (this.sprites[0].overlaps(ball))
                 {
-                    playWaterSound();
+                    waterSplash.play();
+                    
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = lastHit.x;
@@ -137,14 +138,14 @@ function getObjectsByType(objectType)
 function Ball(x, y)
 {
     let newBall = new Sprite(x, y);
-    newBall.diameter = 20;
+    newBall.diameter = 10;
     newBall.color = "#ffffff";
     newBall.layer = 2;
-    newBall.drag = friction;
+    newBall.drag = friction.reg;
     newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
     newBall.stillTime = 300;
-    // newBall.image = 'assets/ball.png'
-    // newBall.image.scale = .025
+    newBall.image = 'assets/ball.png'
+    newBall.image.scale = .025
 
     return new GameObject("ball", newBall);
 }
@@ -197,6 +198,7 @@ function Windmill(posX, posY)
     windmillBody.stroke = 'white';
     windmillBody.layer = 0;
 
+    // Original windmill blades code
     // windmillBlades = new Sprite(
     //     [[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]  // Bottom
     //     ,[posX+75, posY+12.5], [posX+75, posY-12.5], [posX, posY]  // Right

@@ -50,4 +50,5 @@ jobs:
 
     - name: Run pytest
       run: |
-        python minigolf/pytest.py
+        cd minigolf/tests
+        python pytest.py

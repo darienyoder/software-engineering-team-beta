@@ -202,3 +202,7 @@ addTest('LevelGen Brackets', async () => {
             throw new Error("Brackets did not group statements correctly.");
         }
 });
+
+// addTest('Wall Outlines') {
+
+// }
