@@ -37,15 +37,22 @@
         #levelSelectButton {
             position: absolute;
             left: 50%;
-            top: 60%;
-            transform: translate(-50%, -60%);
+            top: 55%;
+            transform: translate(-50%, -55%);
         }
 
         #startButton {
             position: absolute;
             left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+            top: 45%;
+            transform: translate(-50%, -45%);
+        }
+
+        #blitzModeButton {
+            position: absolute;
+            left: 50%;
+            top: 62%;
+            transform: translate(-50%, -62%);
         }
 
         .settingsButton {
@@ -108,6 +115,7 @@
 
     <button id="startButton" class="homeButton">Start Game</button>
     <button id="levelSelectButton" class="homeButton">Level Select</button>
+    <button id="blitzModeButton" class="homeButton">Blitz Mode: Off</button>
 
     <button id="menuButton">⚙️</button>
     <div id="settingsMenu">
@@ -115,6 +123,7 @@
         <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
         <input id="colorSelector" type="color">
     </div>
+    
     <!-- P5play -->
     <script src="https://q5js.org/q5.js"></script>
     <script src="https://p5play.org/v3/planck.min.js"></script>
@@ -142,6 +151,7 @@
         const settingsButtons = document.querySelectorAll('.settingsButton');
         const trajectoryColorSelector = document.getElementById('colorSelector');
         const trajectoryButton = document.getElementById('colorButton')
+        const blitzModeButton = document.getElementById('blitzModeButton');
 
         // Set the initial display to hidden so it only takes one click
         settingsButtons.forEach(button => {
@@ -163,7 +173,13 @@
             trajectoryColor = trajectoryColorSelector.value;
         })
 
+        // Blitz Mode toggle button event listener
+        blitzModeButton.addEventListener("click", () => {
+            toggleBlitzMode();
+        });
+
     </script>
+    
 
 </body>
 

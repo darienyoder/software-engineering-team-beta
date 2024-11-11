@@ -24,6 +24,9 @@ let prevVelY = 0;
 // Sound variables
 let hitSound, holeSound, waterSplash;
 
+// Blitz Mode variable
+let blitzMode = false;
+
 // Loading sound files
 async function loadSounds(){
     hitSound = loadSound('assets/golfPutt.wav');
@@ -42,6 +45,7 @@ async function setup()
             startGame();
             document.getElementById('startButton').style.display = 'none';
             document.getElementById('levelSelectButton').style.display = 'none';
+            document.getElementById('blitzModeButton').style.display = 'none';
         }    
 
         //Need this for camera to work
@@ -56,6 +60,13 @@ async function setup()
             document.getElementById('levelSelectButton').style.display = 'none';
         }
     })
+
+     // Blitz Mode toggle button setup
+     document.getElementById('blitzModeButton').addEventListener('click', () => {  // <---- ADDED
+        blitzMode = !blitzMode;
+        const blitzButton = document.getElementById('blitzModeButton');
+        blitzButton.textContent = "Blitz Mode: " + (blitzMode ? "On" : "Off");
+    });
 
     // Initialize canvas
     createCanvas();
@@ -263,8 +274,11 @@ async function handleGamePlay() {
     }
 
     // Draw the stroke counter & Par
-    drawStrokeCount();
-    drawParCount();
+    
+    if (!blitzMode) {
+        drawStrokeCount();
+        drawParCount();
+    }
 
     // When mouse is pressed...
     if (mouse.presses() && canMove) {
@@ -427,22 +441,29 @@ async function handleGamePlay() {
             gameState = 'menu'; //return to menu
             document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
             document.getElementById('levelSelectButton').style.display = 'block';
-            
+
         }
     }
 
     //Ball has to be stopped in order to move
     if(!ballInGoal){
-        if (ball.vel.x==0 && ball.vel.y==0){
-            canMove=true //Player can take the next shot
-            if(!message) {
-            message = "Take Your Shot"; //Set the message
-            messageTime = millis(); //Record when message was displayed
+        if (blitzMode) { // Only allow instant hit if blitz mode is active
+            canMove = true;
+            if (!message) {
+                message = "Blitz Mode Active";
+                messageTime = millis();
             }
-        }
-        else{
-            canMove=false
-        }
+        } else
+            if (ball.vel.x==0 && ball.vel.y==0){
+                canMove=true //Player can take the next shot
+                if(!message) {
+                message = "Take Your Shot"; //Set the message
+                messageTime = millis(); //Record when message was displayed
+                }
+            }
+            else{
+                canMove=false
+            }
 
         if(message){
             drawMessage(); //Display message
