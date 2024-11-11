@@ -1,15 +1,11 @@
 var levelData = [
     {
-        ballPosition: [75, 75],
-        holePosition: [225, 75],
+        ballPosition: [50, 75],
+        holePosition: [250, 75],
         area: `
-
             ADD rect 0, 0, 300, 150;
-
         `,
         obstacles: `
-            ADD Ghost 150 75;
-            ADD Button 100 75;
         `,
         par: 2,
     },
@@ -150,6 +146,68 @@ var levelData = [
         par: 3
     },
     {
+        ballPosition: [-130,50],
+        holePosition: [150,50],
+        area: `
+            
+                // Outside ring;
+                ADD circ 150, 50, 300;
+                SUB circ 150, 50, 250;
+                // path from outside ring to inside ring;
+                ADD rect -100, 0, 100, 100;
+                // inside ring;
+                ADD circ 150, 50, 200;
+                SUB circ 150, 50, 150;
+                // path to hole circle form inide ring;
+                ADD rect 225, 0, 100, 100;
+                // hole circle;
+                ADD circ 150, 50, 100;
+             
+        `,
+        obstacles: `
+            ADD Sandtrap 80 50 10 50;
+            // sandtrap is underneath tubeB, used to slow ball down so it enters hole;
+            ADD Tubes 425 50 75 50; 
+            ADD Windmill 150 -180;
+            ADD Windmill 150 280;
+        `,
+        par: 3
+    },
+    {
+      ballPosition: [
+        38,
+        375
+    ],
+    holePosition: [
+        358, 48
+    ],
+    area: "ADD rect 0, 0, 420, 420;",
+    obstacles:`
+          //borders;
+          ADD Sandtrap 15 210 20 410;
+
+          ADD Sandtrap 405 210 20 410;
+
+          ADD Sandtrap 210 15 410 20;
+
+          ADD Sandtrap 210 405 410 20;
+
+          //inner part of maze;
+          //first colums to the right;
+          ADD Sandtrap 90 360 80 70;
+          ADD Sandtrap 115 275 130 70;
+          // coloums on the right that lead up to the hole;
+          ADD Sandtrap 262 360 265 70;
+          ADD Sandtrap 278 190 200 240;
+          ADD Sandtrap 256 60 156 70;
+          // colum right above the ball by the circle portal;
+          ADD Sandtrap 85 145 152 160;
+          //the portals;
+          ADD Tubes 35 45 310 50; 
+        `,
+        par: 3,
+    },
+    {
         //Ghost level;
         ballPosition: [150, 25],
         holePosition: [150, 600],
@@ -222,4 +280,4 @@ const testLevel = {
         ADD Volcano 50 75;
     `,
     par: 5,
-}
+};
