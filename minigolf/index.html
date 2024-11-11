@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,6 +12,11 @@
             margin: 0;
             padding: 0;
             overscroll-behavior: none;
+        }
+      
+        .p5-fullscreen {
+            position: relative;
+            z-index: 0;
         }
 
         .homeButton {
@@ -141,19 +145,23 @@
         <input id="colorSelector" type="color">
     </div>
     
+    <!-- P5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
+
     <!-- P5play -->
-    <script src="https://q5js.org/q5.js"></script>
     <script src="https://p5play.org/v3/planck.min.js"></script>
     <script src="https://p5play.org/v3/p5play.js"></script>
-
-    <!-- P5 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
 
     <!-- Clipper.js -->
     <script src="libraries/clipper.js"></script>
 
+    <!-- Earcut.js -->
+    <script src="libraries/earcut.js"></script>
+
     <!-- Project Scripts -->
     <script src="game-objects.js"></script>
+    <script src="terrain-shader.js"></script>
     <script src="level-data.js"></script>
     <script src="level-generation.js"></script>
     <script src="main.js"></script>

@@ -1,11 +1,9 @@
 var levelData = [
     {
-        ballPosition: [75, 75],
-        holePosition: [225, 75],
+        ballPosition: [50, 75],
+        holePosition: [250, 75],
         area: `
-
             ADD rect 0, 0, 300, 150;
-
         `,
         obstacles: `
         `,
@@ -257,4 +255,4 @@ const testLevel = {
         ADD Volcano 50 75;
     `,
     par: 5,
-}
+};

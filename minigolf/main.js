@@ -2,8 +2,8 @@ const strokeForce = 25; // The speed of the ball when it is hit
 const friction = { reg: 0.5, slow: 2, trigger: 0.2 };
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
-var gameObjects = [], strokeCounts = []; strokeCount = 0; par = 0;
-var level = new Level(); // The level object; builds the stage
+var gameObjects = [], strokeCounts = []; strokeCount = 0, par = 0;
+var level; // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
@@ -20,6 +20,11 @@ let trajectoryColor = '#4433FF'; // Default trajectory color
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
 let prevVelY = 0;
+var ballLastPosition = 0;
+
+// The canvas for drawing terrain. Goes under the main canvas.
+var webglCanvas;
+var webglContext;
 
 // Sound variables
 let hitSound, holeSound, waterSplash;
@@ -103,12 +108,44 @@ async function setup()
 
     }
     });
+
+    // Create WebGL Canvas
+    webglCanvas = document.createElement("canvas");
+    webglCanvas.id = "webglCanvas";
+    webglCanvas.setAttribute('width', window.innerWidth);
+    webglCanvas.setAttribute('height', window.innerHeight);
+    webglCanvas.style.width = "100%";
+    webglCanvas.style.height = "auto";
+    webglCanvas.style.position = "fixed";
+    webglCanvas.style.x = 0;
+    webglCanvas.style.y = 0;
+    webglCanvas.style.zIndex = 1;
+    document.getElementById("defaultCanvas0").style.zIndex = 2;
+    document.getElementsByTagName("main")[0].insertBefore(webglCanvas, document.getElementById("defaultCanvas0"));
+
+    // Pass WebGL canvas to level object for drawing
+    level = new Level(webglCanvas);
+}
+
+//Hit sound function
+function playHitSound() {
+    hitSound.play();
+}
+
+//Hole sound function
+function playGoalSound() {
+    holeSound.play();
+}
+
+//Hole sound function
+function playWaterSound() {
+    waterSplash.play();
 }
 
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
-  
+
     // Creating the putter head
     putter = new Sprite(10,10,5,10,'n');
     putter.image = 'assets/putter.png';
@@ -132,6 +169,7 @@ function startGame() {
     canMove = true;
     setupLevel(0);
     gameState = 'playing';
+    ballLastPosition = createVector(0, 0);
 }
 
 // Runs 60 times per second
@@ -140,9 +178,7 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-    background(backgroundColor);
-
-
+  
     if (gameState === 'menu') {
         drawMainMenu();
     } else if (gameState === 'levelSelect') {
@@ -238,20 +274,6 @@ function handleLevelSelect() {
 
 }
 
-
-
-// function clearGameObjects() {
-//     clear();
-//
-//     for (var obj of gameObjects)
-//         obj.remove();
-//
-//     // for (var wall of walls)
-//     //     wall.remove();
-//
-//     // background(backgroundColor);
-// }
-
 function drawGameOver() {
     background("white");
     fill(0);
@@ -272,7 +294,10 @@ function keyPressed() {
     if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
-    }        
+    } else if (key === '0') {
+        // Press zero for elevation debugging
+        showTopography = 1 - showTopography;
+    }
 }
 
 async function handleGamePlay() {
@@ -305,6 +330,9 @@ async function handleGamePlay() {
         putter.moveTo(ball.x, ball.y,100);
     }
 
+    ball.velocity.x += level.getSlope(ball.x, ball.y).x;
+    ball.velocity.y += level.getSlope(ball.x, ball.y).y;
+
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
     if (trueVel > 0) {
@@ -321,7 +349,7 @@ async function handleGamePlay() {
 
 
     // When mouse is released...
-    if (mouse.releases() && canMove && pullStart) {
+    if (mouse.releases() && (canMove || true) && pullStart) {
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -355,19 +383,12 @@ async function handleGamePlay() {
         hitSound.play(); //Playing the ball hit sound
         await sleep(forceMagnitude * 5);
 
-        // Apply the calculated force to the ball if its in sand
-        // if (ball.overlaps(sandtrap)){
-        //     ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
-        // }
-        // else{
-            //Apply calculated for normally
-            ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
-        // }
-
         // Hide the putter
         putter.visible = false;
         putter.image.offset.x = -50;
         putter.image.offset.y = -100;
+
+        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
 
 
         if (pullDistance > 0) {
@@ -401,8 +422,8 @@ async function handleGamePlay() {
             // There is a normal vector for each side of the wall, so calculate each vector's distance to the ball and use whichever is closest
             else
             {
-                let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
-                let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
+                let positiveNormalVector = p5.Vector.fromAngle(radians(wall.rotation + 90));
+                let negativeNormalVector = p5.Vector.fromAngle(radians(wall.rotation - 90));
 
                 if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
                 {
@@ -415,8 +436,9 @@ async function handleGamePlay() {
             }
 
             //Calculate new ball velocity manually
+            const wallFriction = 0.8;
             let velocityVector = createVector(prevVelX, prevVelY);
-            velocityVector.reflect(normalVector);
+            velocityVector.reflect(normalVector).mult(wallFriction);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
 
@@ -462,25 +484,29 @@ async function handleGamePlay() {
         }
     }
 
-    //Ball has to be stopped in order to move
-    if(!ballInGoal){
-        if (blitzMode) { // Only allow instant hit if blitz mode is active
+    // Ball has to be stopped in order to move
+    if(!ballInGoal) {
+        if (blitzMode)
+        { // Only allow instant hit if blitz mode is active
             canMove = true;
             if (!message) {
                 message = "Blitz Mode Active";
                 messageTime = millis();
             }
-        } else
-            if (ball.vel.x==0 && ball.vel.y==0){
-                canMove=true //Player can take the next shot
-                if(!message) {
+        }
+        else if (ball.stillTime > 360) //(ball.vel.x==0 && ball.vel.y==0)
+        {
+            canMove = true //Player can take the next shot
+            ball.vel.setMag(0.0);
+            if (!message) {
                 message = "Take Your Shot"; //Set the message
                 messageTime = millis(); //Record when message was displayed
-                }
             }
-            else{
-                canMove=false
-            }
+        }
+        else
+        {
+            canMove = false
+        }
 
         if(message){
             drawMessage(); //Display message
@@ -490,7 +516,6 @@ async function handleGamePlay() {
             message = ''; //Reset the message
         }
     }
-    //ball.debug = mouse.pressing()
 }
 
 // Converts level coordinates to screen coordinates
@@ -595,6 +620,18 @@ function drawPutter(){
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
 }
 
+function distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py) {
+   var ldx = lx2 - lx1,
+       ldy = ly2 - ly1,
+       lineLengthSquared = ldx*ldx + ldy*ldy;
+   return distanceSquaredToLineSegment2(lx1, ly1, ldx, ldy, lineLengthSquared, px, py);
+}
+
+function distanceToLineSegment(lx1, ly1, lx2, ly2, px, py)
+{
+   return Math.sqrt(distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py));
+}
+
 async function drawPar() {
     // Clear the background if needed
     // clear();
@@ -650,5 +687,4 @@ async function drawPar() {
         return;
     }
     parMsgVisible = false;
-
 }

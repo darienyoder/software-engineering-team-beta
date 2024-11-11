@@ -10,13 +10,34 @@ class GameObject {
             this.sprites = _sprites;
         else
             this.sprites = [_sprites];
+        if (this.sprites.length > 0)
+            this.sprite = this.sprites[0];
     }
 
     // Runs every frame
     update() {
         switch (this.type) {
             case "ball":
+                switch (level.getSurface(this.sprite.x, this.sprite.y))
+                {
+                    case SURFACE_SAND:
+                        this.sprite.vel.setMag(Math.max(0.0, this.sprite.vel.mag() - 5 / deltaTime))
+                        break;
+                    case SURFACE_WATER:
+                        this.sprite.vel.x = 0;
+                        this.sprite.vel.y = 0;
+                        this.sprite.x = lastHit.x;
+                        this.sprite.y = lastHit.y;
+                        break;
+                }
+                if ( Math.sqrt(Math.pow(this.sprite.lastPos.x - this.sprite.pos.x, 2.0) + Math.pow(this.sprite.lastPos.y - this.sprite.pos.y, 2.0)) < 0.5)
+                    {
+                        this.sprite.stillTime += 1;
+                    }
+                else
+                    this.sprite.stillTime = 0;
 
+                    this.sprite.lastPos = createVector(this.sprite.x, this.sprite.y);
                 break;
 
             case "hole":
@@ -55,7 +76,8 @@ class GameObject {
 
                 if (this.sprites[0].overlaps(ball))
                 {
-                    // waterSplash.play();
+                    waterSplash.play();
+                    
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = lastHit.x;
@@ -120,8 +142,10 @@ function Ball(x, y)
     newBall.color = "#ffffff";
     newBall.layer = 2;
     newBall.drag = friction.reg;
+    newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
+    newBall.stillTime = 300;
     newBall.image = 'assets/ball.png'
-    newBall.image.scale = .025
+    newBall.image.scale = .012
 
     return new GameObject("ball", newBall);
 }
