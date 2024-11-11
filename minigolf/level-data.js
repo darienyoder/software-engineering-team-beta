@@ -174,6 +174,39 @@ var levelData = [
             ADD Windmill 150 280;
         `,
         par: 3
+    },
+    {ballPosition: [
+        38,
+        375
+    ],
+    holePosition: [
+        358, 48
+    ],
+    area: "ADD rect 0, 0, 420, 420;",
+    obstacles:`
+          //borders;
+          ADD Sandtrap 15 210 20 410;
+
+          ADD Sandtrap 405 210 20 410;
+
+          ADD Sandtrap 210 15 410 20;
+
+          ADD Sandtrap 210 405 410 20;
+
+          //inner part of maze;
+          //first colums to the right;
+          ADD Sandtrap 90 360 80 70;
+          ADD Sandtrap 115 275 130 70;
+          // coloums on the right that lead up to the hole;
+          ADD Sandtrap 262 360 265 70;
+          ADD Sandtrap 278 190 200 240;
+          ADD Sandtrap 256 60 156 70;
+          // colum right above the ball by the circle portal;
+          ADD Sandtrap 85 145 152 160;
+          //the portals;
+          ADD Tubes 35 45 310 50; 
+        `,
+        par: 3,
     }
 ];
 
