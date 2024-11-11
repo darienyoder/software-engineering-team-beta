@@ -202,7 +202,11 @@ addTest('Volcano Test', async () => {
         getObjectsByType("volcano")[0].sprites[0].y-15]],'s');
     
     // Wait for lava to despawn then move ball
-    await sleep (2500);
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+
+    
     ball.x = getObjectsByType("volcano")[0].sprites[0].x+50; 
     ball.y = getObjectsByType("volcano")[0].sprites[0].y; 
     ball.vel.x = -5;
@@ -237,7 +241,7 @@ addTest('Lava Test', async () => {
 });
 
 // Test the volcano's lava with the sandtrap
-addTest('Lava Sandtrap', async () => {
+addTest('Lava Sandtrap Test', async () => {
     // Wait until new lava exists
     // We don't want to break anything on accident
     // 75 is the local var volcSpeed in game-objects.js
@@ -263,7 +267,7 @@ addTest('Lava Sandtrap', async () => {
 });
 
 // Test the volcano's lava with the tubes
-addTest('Lava Tubes', async () => {
+addTest('Lava Tubes Test', async () => {
     // Wait until new lava exists
     // We don't want to break anything on accident
     // 75 is the local var volcSpeed in game-objects.js
@@ -285,6 +289,37 @@ addTest('Lava Tubes', async () => {
             ("tubes")[0].sprites[1].y}, but it is at ${lavaObjects[0].x}, ${lavaObjects[0].y}`);
     }
 
+    lavaObjects[0].life = 1;
+});
+
+// Test the volcano's lava with the windmill
+addTest('Lava Windmill Test', async () => {
+    // Wait until new lava exists
+    // We don't want to break anything on accident
+    // 75 is the local var volcSpeed in game-objects.js
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+    lavaObjects[0].diameter = 20;
+    
+    lavaObjects[0].x = getObjectsByType("windmill")[0].sprites[0].x-25;
+    lavaObjects[0].y = getObjectsByType("windmill")[0].sprites[0].y;
+    stopLava = new Sprite([[getObjectsByType("volcano")[0].sprites[0].x-100,
+        getObjectsByType("windmill")[0].sprites[0].y+75],
+        [getObjectsByType("windmill")[0].sprites[0].x+100,
+        getObjectsByType("windmill")[0].sprites[0].y+75]],'s');
+    await sleep (1100); // Lava risks despawning before checks
+
+    // Check that it's inside the sandtrap and not outside of it
+    if (lavaObjects[0].x < getObjectsByType("windmill")[0].sprites[1].x-75
+        || lavaObjects[0].y > getObjectsByType("windmill")[0].sprites[1].y+100
+        || lavaObjects[0].y < getObjectsByType("windmill")[0].sprites[1].y) {
+        throw new Error(`Expected lava to be near ${getObjectsByType
+            ("windmill")[0].sprites[0].x}, ${getObjectsByType
+            ("windmill")[0].sprites[0].y}, but it is at ${lavaObjects[0].x}, ${lavaObjects[0].y}`);
+    }
+
+    stopLava.remove();
     lavaObjects[0].life = 1;
 });
 
