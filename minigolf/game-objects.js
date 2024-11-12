@@ -168,7 +168,7 @@ class GameObject {
             case "ghost":
                 //When active float towards ball
                 if (this.sprites[0].active){
-                    this.sprites[0].moveTowards(ball.x, ball.y, .005);
+                    this.sprites[0].moveTowards(ball.x, ball.y, .004);
                     playBooSound();
                 }
                 if (this.sprites[0].overlaps(ball))
@@ -398,7 +398,7 @@ function Ghost(posX, posY){
     ghost.width=10;
     ghost.height=10;
     ghost.image = 'assets/ghost.png';
-    ghost.image.scale=.25;
+    ghost.image.scale=.3;
     ghost.layer=0;
     ghost.active=false;
     ghost.visible=false;
