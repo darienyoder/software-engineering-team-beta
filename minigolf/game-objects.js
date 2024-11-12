@@ -68,7 +68,7 @@ class GameObject {
 
             case "volcano":
                 let volcSpeed = 75; // CANNOT be less than 21!!
-                
+
                 // Generate Lava
                 if (frameCount % volcSpeed == 0) {
                     let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(5,20));
@@ -82,7 +82,7 @@ class GameObject {
                         aLava.color = 'orange'
                     lavaObjects.push(aLava);
                 }
-                
+
                 // Object Movement
                 if(frameCount % volcSpeed <= 20){
                     for (var i = 0; i < lavaObjects.length; i++){
@@ -100,46 +100,47 @@ class GameObject {
                 // Deletion from list after life ends
                 let loLength = lavaObjects.length;
                 for (let i = 0; i < loLength; i++){
-                    if(((frameCount%volcSpeed) == (volcSpeed-1)) 
+                    if(((frameCount%volcSpeed) == (volcSpeed-1))
                         && (loLength>0))
                     {
                         lavaObjects.pop();
                     }
                 }
-                
+
 
                 // Handle collisions with objects
                 // These only work for the first instance of each object :(
-                for (let i = 0; i < lavaObjects.length; i++){
-                    if(ball.overlaps(lavaObjects[i])){
+                for (let i = 0; i < lavaObjects.length; i++) {
+                    if (ball.overlaps(lavaObjects[i])) {
                         ball.vel.x = 0;
                         ball.vel.y = 0;
                         ball.x = ballStart.x;
                         ball.y = ballStart.y;
                     }
 
-                    for (var sands of getObjectsByType("sandtrap")){
-                        lavaObjects[i].overlaps(getObjectsByType("sandtrap")[0].sprites[0]);
+                    for (var sand of getObjectsByType("sandtrap")) {
+                        lavaObjects[i].overlaps(sand.sprites[0]);
                     }
-                    for (var waters of getObjectsByType("water")){
-                        if(lavaObjects[i].overlaps(getObjectsByType("water")[0].sprites[0])){
+                    for (var water of getObjectsByType("water")) {
+                        if (lavaObjects[i].overlaps(water.sprites[0])) {
                                 lavaObjects[i].life = 1;
                             }
                     }
-                    for (var windmills of getObjectsByType("windmill")){
-                        (getObjectsByType("windmill")[0].sprites[0]).overlaps(lavaObjects[i])
-                    }
-                    for (var tubes of getObjectsByType("tubes")){
-                        lavaObjects[i].overlaps(getObjectsByType("tubes")[0].sprites[1]);
-                        if ((getObjectsByType("tubes")[0].sprites[0]).overlaps(lavaObjects[i])){
-                            lavaObjects[i].x = getObjectsByType("tubes")[0].sprites[1].x;
-                            lavaObjects[i].y = getObjectsByType("tubes")[0].sprites[1].y;
+                    for (var windmill of getObjectsByType("windmill")) {
+                        for (var blade of windmill.sprites[1]) {
+                            blade.overlaps(lavaObjects[i])
                         }
                     }
-                    for (var holes of getObjectsByType("hole")){
-                        lavaObjects[i].overlaps(getObjectsByType("hole")[0].sprites[0]);
+                    for (var tubes of getObjectsByType("tubes")) {
+                        lavaObjects[i].overlaps(tubes.sprites[1]);
+                        if (tubes.sprites[0].overlaps(lavaObjects[i])) {
+                            lavaObjects[i].x = tubes.sprites[1].x;
+                            lavaObjects[i].y = tubes.sprites[1].y;
+                        }
                     }
-                
+                    for (var hole of getObjectsByType("hole")) {
+                        lavaObjects[i].overlaps(hole.sprites[0]);
+                    }
                 }
 
                 break;
