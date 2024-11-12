@@ -435,6 +435,11 @@ class Level
             gameObjects.pop().delete();
         }
         this.heightModifiers = [];
+
+        // Erase terrain shader
+        this.ctx.clearColor(1.0, 1.0, 1.0, 1.0);
+        this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
+        this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
     shapeHasPoint(shape, pointX, pointY)
