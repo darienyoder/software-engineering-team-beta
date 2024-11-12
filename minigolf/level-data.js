@@ -271,12 +271,12 @@ const testLevel = {
         ADD circle 250, 75, 50;
         ADD rect 225, 75, 50, 75;
 
-    `,
-    obstacles: `
+        `,
+        obstacles: `
         ADD Sandtrap 250 -50 50 50;
         ADD Tubes 465 215 25 225;
-        ADD Windmill 450 50;
-        ADD Water 460 40;
+        ADD Windmill 425 45;
+        ADD Water 460 30;
         ADD Volcano 50 75;
     `,
     par: 5,

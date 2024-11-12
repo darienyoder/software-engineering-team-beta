@@ -1,4 +1,6 @@
 var gameObjects = [];
+var lavaObjects = [];
+
 
 class GameObject {
 
@@ -86,14 +88,79 @@ class GameObject {
 
                 break;
 
-            case "lava":
+            case "volcano":
+                let volcSpeed = 75; // CANNOT be less than 21!!
 
-                if (this.sprites[0].overlaps(ball))
-                {
-                    ball.vel.x = 0;
-                    ball.vel.y = 0;
-                    ball.x = ballStart.x;
-                    ball.y = ballStart.y;
+                // Generate Lava
+                if (frameCount % volcSpeed == 0) {
+                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(5,20));
+                    aLava.life = volcSpeed;
+                    let randColor = random(0, 3);
+                    if (randColor < 1)
+                        aLava.color = 'red';
+                    else if ((randColor < 2) && (randColor >= 1))
+                        aLava.color = 'yellow';
+                    else
+                        aLava.color = 'orange'
+                    lavaObjects.push(aLava);
+                }
+
+                // Object Movement
+                if(frameCount % volcSpeed <= 20){
+                    for (var i = 0; i < lavaObjects.length; i++){
+                        lavaObjects[i].vel.x = random(-1,1);
+                        lavaObjects[i].vel.y = -2;
+                    }
+                }
+                if(frameCount % volcSpeed > 20){
+                    for (let i = 0; i < lavaObjects.length; i++){
+                        lavaObjects[i].bearing = 90;
+                        lavaObjects[i].applyForce(5);
+                    }
+                }
+
+                // Deletion from list after life ends
+                let loLength = lavaObjects.length;
+                for (let i = 0; i < loLength; i++){
+                    if(((frameCount%volcSpeed) == (volcSpeed-1))
+                        && (loLength>0))
+                    {
+                        lavaObjects.pop();
+                    }
+                }
+
+
+                // Handle collisions with objects
+                // These only work for the first instance of each object :(
+                for (let i = 0; i < lavaObjects.length; i++) {
+                    if (ball.overlaps(lavaObjects[i])) {
+                        ball.vel.x = 0;
+                        ball.vel.y = 0;
+                        ball.x = ballStart.x;
+                        ball.y = ballStart.y;
+                    }
+
+                    for (var sand of getObjectsByType("sandtrap")) {
+                        lavaObjects[i].overlaps(sand.sprites[0]);
+                    }
+                    for (var water of getObjectsByType("water")) {
+                        if (lavaObjects[i].overlaps(water.sprites[0])) {
+                                lavaObjects[i].life = 1;
+                            }
+                    }
+                    for (var windmill of getObjectsByType("windmill")) {
+                        lavaObjects[i].overlaps(windmill.sprites[0]);
+                    }
+                    for (var tubes of getObjectsByType("tubes")) {
+                        lavaObjects[i].overlaps(tubes.sprites[1]);
+                        if (tubes.sprites[0].overlaps(lavaObjects[i])) {
+                            lavaObjects[i].x = tubes.sprites[1].x;
+                            lavaObjects[i].y = tubes.sprites[1].y;
+                        }
+                    }
+                    for (var hole of getObjectsByType("hole")) {
+                        lavaObjects[i].overlaps(hole.sprites[0]);
+                    }
                 }
 
                 break;
@@ -308,15 +375,22 @@ function Water(posX, posY, shape = "square") {
 }
 
 // Volcano sets ball to beginning
-// May be fun to have it generate "lava" objects
+// May be fun to have it generate "volcano" objects
 function Volcano(posX, posY) {
     let volcano = new Sprite([[posX, posY], [posX - 50, posY + 75], [posX + 50, posY + 75], [posX, posY]],'s');
-    volcano.color = '#8B4513';
-    volcano.stroke = '#8B0000';
+    volcano.color = '#622a0f';
+    volcano.stroke = 'black';
     volcano.layer = 0;
     volcano.collider = 'kinematic';
 
-    return new GameObject("lava", volcano);
+    // lava = new Sprite(posX,posY,10);
+    // lava.color = 'red';
+    // lava.stroke = '#8B0000';
+    // lava.layer = 0;
+    // lava.diameter = 10;
+    // lava.life = 10;
+
+    return new GameObject("volcano", volcano);
 }
 
 function Ghost(posX, posY){

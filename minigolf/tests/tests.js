@@ -1,6 +1,4 @@
-const tests = []; // How is this working if it's constant?
-                  // Like I know it is, but How?
-                  // Do not think too hard about it, javascript is very weird
+const tests = [];
 
 function addTest(name, testFunction) {
     tests.push({ name, testFunction });
@@ -32,16 +30,35 @@ function setupTestEnvironment() {
     level.loadLevelFromDict(testLevel);
 };
 
+// Test that menu works
+// Test only runs if it starts on 'menu' screen
+// Needs keyPress simulation
+/*addTest('Test Menu', async () => {
+    // Test only works if we start from menu screen
+    if (gameState === 'menu'){
+        // Simulate pressing 'Enter'
 
+        await sleep(1000);
+        if (gameState !== 0) throw new Error(`Expected gameState to be playing but got ${gameState} instead.`);
+    }
+});*/
+
+
+// Example Tests
 addTest('Initial Stroke Count', async () => {
+    await sleep(1000); // Wait for lava to disperse
     strokeCount = 0;
     if (strokeCount !== 0) throw new Error('Expected strokeCount to be 0');
 });
 
+// addTest('Setup Volcanoes', async () => {
+//     level.loadLevelFromDict(testVolcanoes);
+// });
+
 addTest('Ball Movement', async () => {
     const initialPosition = { x: ball.x, y: ball.y };
-    ball.applyForce(50, -50);
-    await sleep(1000);
+    ball.applyForce(50, -50); // Simulating a force
+    await sleep(1000); // Wait for the ball to move
     if (ball.x === initialPosition.x && ball.y === initialPosition.y) {
         throw new Error('Expected ball to move');
     }
@@ -56,37 +73,47 @@ addTest('Ball Angle Bounce Test', async () => {
 
     ball.vel = { x: 0, y: 0 };
     ball.x = ball.y = 10;
-    await sleep(50);
+  
+    await sleep(50); //Let the ball settle
 
     ball.applyForce(50, -50);
-    await sleep(50);
+    await sleep(50); // Wait for the ball to move
     let initAngle = getBallAngle(ball);
 
-    await sleep(100);
+    await sleep(100); // Wait for the ball to bounce
     let finAngle = getBallAngle(ball);
 
+    // // Simple angle monitoring, uncomment if needed
+    // console.log("initAngle: " + initAngle);
+    // console.log("finAngle: " + finAngle);
+  
     if ((finAngle * -1) !== initAngle) {
         throw new Error('Expected ball to move');
     }
     ball.vel = { x: 0, y: 0 };
 });
 
+// Add this test to your existing tests array
 addTest('Ball Drag Test', async () => {
-    ball.vel = { x: (friction.trigger * 2), y: 0 };
+    ball.vel = { x: (frictionTrigger * 2), y: 0 };
 
-    if (ball.drag !== friction.reg) {
-        throw new Error(`Expected ball.drag to be ${friction.reg} when moving, but got ${ball.drag}`);
+    // Check the drag value
+    // May also want to check that it's not in a sandtrap here
+    if (ball.drag !== friction) {
+        throw new Error(`Expected ball.drag to be ${friction} when moving, but got ${ball.drag}`);
     }
 
-    ball.vel = { x: (friction.trigger / 2), y: (friction.trigger / 2)}
-    await sleep(50);
+    ball.vel = { x: (frictionTrigger / 2), y: (frictionTrigger / 2)}
+    await sleep(50); //Might need to be proportional to slowFriction
 
-    if (ball.drag !== friction.slow) {
-        throw new Error(`${ball.velocity} Expected ball.drag to be ${friction.slow} when velocity in trigger range, but got ${ball.drag}`);
+    // Check the drag value
+    if (ball.drag !== slowFriction) {
+        throw new Error(`${ball.velocity} Expected ball.drag to be ${slowFriction} when velocity in trigger range, but got ${ball.drag}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
+// Test the Sand
 addTest('Sand test', async () => {
     ball.vel = { x: 0, y: 0 };
     ball.x = getObjectsByType("sandtrap")[0].sprites[0].x - 40;
@@ -103,13 +130,17 @@ addTest('Sand test', async () => {
     await sleep (150);
     afterVel = ball.vel.y;
 
+    // Check the slowing of new velocity
     if ((afterVel >= initVel / 3) || (afterVel >= initVel / 3)) {
         throw new Error(`Expected afterVel to be less than ${initVel/3} when in sandtrap, but got ${afterVel}`);
     }
 
+    // Reset velocity so it doesn't mess up other tests
     ball.vel = { x: 0, y: 0 };
 });
 
+
+// Test that the windmill works
 addTest('Windmill Push Test', async () => {
     ball.vel = { x: 0, y: 0 };
     initialX = ball.velocity.x;
@@ -118,45 +149,80 @@ addTest('Windmill Push Test', async () => {
     ball.y = getObjectsByType("windmill")[0].sprites[0].y -50;
     await sleep (2500)
 
+    // Check the drag value
     if (ball.x == initialX && ball.y == initialY) {
         throw new Error(`Expected ball to not be at ${initialX.x}, ${initialY.y}, but it is at ${ball.x}, ${ball.y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
+// Test that the tubes work as expected
 // Be careful because on some maps, tubes put the ball in goal
 addTest('Tube Teleportation test', async () => {
     ball.vel = { x: 0, y: 0 };
     ball.x = getObjectsByType("tubes")[0].sprites[0].x;
     ball.y = getObjectsByType("tubes")[0].sprites[0].y;
-    await sleep(300); // Wait for any animations
+    await sleep(1000); // Wait for any animations
     if ((ball.x == getObjectsByType("tubes")[0].sprites[0].x) && (ball.y == getObjectsByType("tubes")[0].sprites[0].y)) {
         throw new Error(`Expected ball to not be at ${getObjectsByType("tubes")[0].sprites[0].x}, ${getObjectsByType("tubes")[0].sprites[0].y}, but it is at ${ball.x}, ${ball.y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
+// Test the water
 addTest('Water Test', async () => {
     ball.vel = { x: 0, y: 0 };
+    ball.lastHit = {x: ballStart, y: ballStart};
     ball.x = getObjectsByType("water")[0].sprites[0].x;
     ball.y = getObjectsByType("water")[0].sprites[0].y;
     initialX = ball.velocity.x
     await sleep (100)
-
+  
+    // Check both that it's not at the water and is at lastHit
     if (ball.x == getObjectsByType("water")[0].sprites[0].x && ball.y == getObjectsByType("water")[0].sprites[0].y && ball.x != lastHit.x && ball.y != lastHit.y) {
         throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${getObjectsByType("water")[0].sprites[0].x}, ${getObjectsByType("water")[0].sprites[0].y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
 
+// Test the volcano
 addTest('Volcano Test', async () => {
-    ball.x = ballStart.x;
-    ball.y = ballStart.y;
-  
-    ball.x = getObjectsByType("lava")[0].sprites[0].x; // Currently broken
-    ball.y = getObjectsByType("lava")[0].sprites[0].y; // It says volcano is undefined
-    await sleep (600)
+    ball.vel = { x: 0, y: 0 };
 
+    stopLava = new Sprite([[getObjectsByType("volcano")[0].sprites[0].x-100,
+        getObjectsByType("volcano")[0].sprites[0].y-15],
+        [getObjectsByType("volcano")[0].sprites[0].x+100,
+        getObjectsByType("volcano")[0].sprites[0].y-15]],'s');
+    
+    // Wait for lava to despawn then move ball
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+
+    
+    ball.x = getObjectsByType("volcano")[0].sprites[0].x+50; 
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y; 
+    ball.vel.x = -5;
+    await sleep(500);
+    
+    // Check that it didn't get past the volcano
+    if (ball.x <= getObjectsByType("volcano")[0].sprites[0].x) {
+        throw new Error(`Expected ball.x to be greater than ${getObjectsByType("volcano")[0].sprites[0].y-15}, but instead got ${ball.x}`);
+    }
+
+    stopLava.remove();
+    ball.vel = { x: 0, y: 0 };
+});
+
+
+// Test the volcano's lava with the ball
+addTest('Lava Test', async () => {
+    ball.vel = { x: 0, y: 0 };
+    ball.x = getObjectsByType("volcano")[0].sprites[0].x; 
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y-75; 
+    await sleep (2500);
+
+    // Check that it's at ballStart and isn't moving
     if (ball.x != ballStart.x || ball.y != ballStart.y) {
         throw new Error(`Expected ball to be at ${ballStart.x}, ${ballStart.y}, but it is at ${ball.x}, ${ball.y}`);
     }
@@ -165,6 +231,89 @@ addTest('Volcano Test', async () => {
     }
 
     ball.vel = { x: 0, y: 0 };
+});
+
+// Test the volcano's lava with the sandtrap
+addTest('Lava Sandtrap Test', async () => {
+    // Wait until new lava exists
+    // We don't want to break anything on accident
+    // 75 is the local var volcSpeed in game-objects.js
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+    lavaObjects[0].x = getObjectsByType("sandtrap")[0].sprites[0].x;
+    lavaObjects[0].y = getObjectsByType("sandtrap")[0].sprites[0].y;
+
+    await sleep (100);
+
+    // Check that it's inside the sandtrap and not outside of it
+    if (lavaObjects[0].x > getObjectsByType("sandtrap")[0].sprites[0].x+50 
+        || lavaObjects[0].x < getObjectsByType("sandtrap")[0].sprites[0].x-50
+        || lavaObjects[0].y > getObjectsByType("sandtrap")[0].sprites[0].y+50
+        || lavaObjects[0].y < getObjectsByType("sandtrap")[0].sprites[0].y-50) {
+        throw new Error(`Expected lava to be near ${getObjectsByType
+            ("sandtrap")[0].sprites[0].x}, ${getObjectsByType
+            ("sandtrap")[0].sprites[0].y}, but it is at ${lavaObjects[0].x}, ${lavaObjects[0].y}`);
+    }
+
+    lavaObjects[0].life = 1;
+});
+
+// Test the volcano's lava with the tubes
+addTest('Lava Tubes Test', async () => {
+    // Wait until new lava exists
+    // We don't want to break anything on accident
+    // 75 is the local var volcSpeed in game-objects.js
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+    
+    lavaObjects[0].x = getObjectsByType("tubes")[0].sprites[0].x;
+    lavaObjects[0].y = getObjectsByType("tubes")[0].sprites[0].y;
+    await sleep (100);
+
+    // Check that it's inside the sandtrap and not outside of it
+    if (lavaObjects[0].x > getObjectsByType("tubes")[0].sprites[1].x+50 
+        || lavaObjects[0].x < getObjectsByType("tubes")[0].sprites[1].x-50
+        || lavaObjects[0].y > getObjectsByType("tubes")[0].sprites[1].y+50
+        || lavaObjects[0].y < getObjectsByType("tubes")[0].sprites[1].y-50) {
+        throw new Error(`Expected lava to be near ${getObjectsByType
+            ("tubes")[0].sprites[1].x}, ${getObjectsByType
+            ("tubes")[0].sprites[1].y}, but it is at ${lavaObjects[0].x}, ${lavaObjects[0].y}`);
+    }
+
+    lavaObjects[0].life = 1;
+});
+
+// Test the volcano's lava with the windmill
+addTest('Lava Windmill Test', async () => {
+    // Wait until new lava exists
+    // We don't want to break anything on accident
+    // 75 is the local var volcSpeed in game-objects.js
+    while(frameCount % 75 > 1){
+        await sleep(1);
+    }
+    lavaObjects[0].diameter = 20;
+    
+    lavaObjects[0].x = getObjectsByType("windmill")[0].sprites[0].x-25;
+    lavaObjects[0].y = getObjectsByType("windmill")[0].sprites[0].y;
+    stopLava = new Sprite([[getObjectsByType("volcano")[0].sprites[0].x-100,
+        getObjectsByType("windmill")[0].sprites[0].y+75],
+        [getObjectsByType("windmill")[0].sprites[0].x+100,
+        getObjectsByType("windmill")[0].sprites[0].y+75]],'s');
+    await sleep (1100); // Lava risks despawning before checks
+
+    // Check that it's inside the sandtrap and not outside of it
+    if (lavaObjects[0].x < getObjectsByType("windmill")[0].sprites[1].x-75
+        || lavaObjects[0].y > getObjectsByType("windmill")[0].sprites[1].y+100
+        || lavaObjects[0].y < getObjectsByType("windmill")[0].sprites[1].y) {
+        throw new Error(`Expected lava to be near ${getObjectsByType
+            ("windmill")[0].sprites[0].x}, ${getObjectsByType
+            ("windmill")[0].sprites[0].y}, but it is at ${lavaObjects[0].x}, ${lavaObjects[0].y}`);
+    }
+
+    stopLava.remove();
+    lavaObjects[0].life = 1;
 });
 
 addTest('Sound Load Test', async () => {
@@ -200,6 +349,20 @@ addTest('Camera Moving', async () => {
         throw new Error('Camera position did not match ball position');
     cameraMode = "Center";
 });
+
+// Test that menu works
+// Test only runs if it starts on 'menu' screen
+// Needs keyPress simulation
+// May want to make a second version that tests 'R' as well
+/*addTest('Test restart', async () => {
+    // Test only works if we start from gameOver screen
+    if (gameState === 'gameOver'){
+        // Simulate pressing 'r'
+
+        await sleep(1000);
+        if (gameState !== 0) throw new Error(`Expected gameState to be gameOver but got ${gameState} instead.`);
+    }
+});*/
 
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
 addTest('Ball in Goal Logic', async () => {
