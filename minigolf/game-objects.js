@@ -127,9 +127,7 @@ class GameObject {
                             }
                     }
                     for (var windmill of getObjectsByType("windmill")) {
-                        for (var blade of windmill.sprites[1]) {
-                            blade.overlaps(lavaObjects[i])
-                        }
+                        lavaObjects[i].overlaps(windmill.sprites[0]);
                     }
                     for (var tubes of getObjectsByType("tubes")) {
                         lavaObjects[i].overlaps(tubes.sprites[1]);
