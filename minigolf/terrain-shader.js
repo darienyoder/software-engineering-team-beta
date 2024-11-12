@@ -24,6 +24,7 @@ const float WATER_HEIGHT = 843.0;
 
 uniform vec2 screenSize;
 uniform vec4 bounds;
+uniform vec4 visualBounds;
 
 const int maxModifiers = 10;
 uniform int action[maxModifiers];
@@ -42,7 +43,17 @@ vec2 reverseYCoordinates( vec2 screenCoords )
 
 vec2 screenToLevel( vec2 screenCoords )
 {
-	return bounds.xy + reverseYCoordinates(screenCoords.xy) / screenSize.xy * bounds.zw;
+    vec2 flippedCoords = reverseYCoordinates(screenCoords);
+
+    float normalizedX = (flippedCoords.x - visualBounds.x) / (visualBounds.z - visualBounds.x);
+    float normalizedY = (flippedCoords.y - visualBounds.y) / (visualBounds.w - visualBounds.y);
+
+    float gameX = bounds.x + normalizedX * (bounds.z - bounds.x);
+    float gameY = bounds.y + normalizedY * (bounds.w - bounds.y);
+
+    return vec2(gameX, gameY);
+
+	// return -visualBounds.xy + bounds.xy + reverseYCoordinates(screenCoords.xy) / screenSize.xy * (visualBounds.zw - visualBounds.xy);
 }
 
 float distanceSquaredToLineSegment(float lx1, float ly1, float lx2, float ly2, float px, float py) {
@@ -139,23 +150,22 @@ void main( void )
 
     float pointHeight = getHeight(coords);
 	vec3 color;
-    // if ( pointHeight == SAND_HEIGHT )
-    //     pointHeight = getHeight(coords + mod(vec2(coords.y * coords.x) + floor(10.0 * coords.x / coords.y) , 5.0) * 0.5);
+    if ( pointHeight == SAND_HEIGHT )
+        pointHeight = getHeight(coords + mod(vec2(coords.y * coords.x) + floor(10.0 * coords.x / coords.y) , 5.0) * 0.5);
 
     if ( pointHeight == SAND_HEIGHT )
     {
         color = vec3(0.824,0.706,0.549);
-
-        color *= 1.0 + 0.2 * mod(pow(mod(coords.x, 40.0), 2.0) * pow(mod(coords.y, 40.0), 2.0), 1.0);
+        color *= 1.0 + 0.2 * mod(pow(mod(coords.x, 40.0) + 2.0, 2.0) * pow(mod(coords.y, 40.0) + 2.0, 2.0), 1.0);
     }
     else if (pointHeight == WATER_HEIGHT)
     {
         color = vec3(0.194, 0.492, 0.776);
         float foam = 0.0;
-        for (int x = -3; x < 3; x++)
-        for (int y = -3; y < 3; y++)
+        for (float x = -3.0; x < 3.0; x++)
+        for (float y = -3.0; y < 3.0; y++)
         {
-            if (getHeight(coords + vec2(x, y) * 3.0) != WATER_HEIGHT)
+            if (getHeight(coords + vec2(x + (mod(y, 2.0) == 0.0 ? 0.5 : 0.0), y + (mod(x, 2.0) == 0.0 ? 0.5 : 0.0)) * 3.0) != WATER_HEIGHT)
                 foam += 0.05 * (sin(float(time) * 0.0004) * 0.3 + 0.7);
         }
         color = mix(color, vec3(1.0), foam);

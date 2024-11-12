@@ -603,7 +603,7 @@ class Level
         hole = hole.sprites[0];
         // Create obstacles
         this.createObstacles(levelDict.obstacles);
-      
+
         par = levelDict.par;
 
         this.maxHeight = 1;
@@ -850,6 +850,7 @@ class Level
         this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "bounds"), this.bounds.left, this.bounds.top, this.bounds.right - this.bounds.left, this.bounds.bottom - this.bounds.top);
+        this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "visualBounds"), levelToScreen(createVector(this.bounds.left, this.bounds.top)).x, levelToScreen(createVector(this.bounds.left, this.bounds.top)).y, levelToScreen(createVector(this.bounds.right, this.bounds.bottom)).x, levelToScreen(createVector(this.bounds.right, this.bounds.bottom)).y);
         this.ctx.uniform2f(this.ctx.getUniformLocation(this.shaderProgram, "screenSize"), window.innerWidth, window.innerHeight);
 
         let date = new Date();
@@ -869,4 +870,11 @@ class Level
             this.drawPolygons(this.negativeWalls, backgroundColor);
         }
     }
+}
+
+function levelToScreen(vector)
+{
+    let adjustedX = (vector.x - camera.position.x) * camera.zoom + width / 2;
+    let adjustedY = (vector.y - camera.position.y) * camera.zoom + height / 2;
+    return createVector(adjustedX, adjustedY);
 }
