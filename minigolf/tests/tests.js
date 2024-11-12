@@ -1,5 +1,4 @@
-const tests = []; // How is this working if it's constant?
-                  // Like I know it is, but How?
+const tests = [];
 
 function addTest(name, testFunction) {
     tests.push({ name, testFunction });
@@ -74,6 +73,7 @@ addTest('Ball Angle Bounce Test', async () => {
 
     ball.vel = { x: 0, y: 0 };
     ball.x = ball.y = 10;
+  
     await sleep(50); //Let the ball settle
 
     ball.applyForce(50, -50);
@@ -86,15 +86,12 @@ addTest('Ball Angle Bounce Test', async () => {
     // // Simple angle monitoring, uncomment if needed
     // console.log("initAngle: " + initAngle);
     // console.log("finAngle: " + finAngle);
-
+  
     if ((finAngle * -1) !== initAngle) {
         throw new Error('Expected ball to move');
     }
     ball.vel = { x: 0, y: 0 };
 });
-
-
-
 
 // Add this test to your existing tests array
 addTest('Ball Drag Test', async () => {
@@ -115,7 +112,6 @@ addTest('Ball Drag Test', async () => {
     }
     ball.vel = { x: 0, y: 0 };
 });
-
 
 // Test the Sand
 addTest('Sand test', async () => {
@@ -160,7 +156,6 @@ addTest('Windmill Push Test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
-
 // Test that the tubes work as expected
 // Be careful because on some maps, tubes put the ball in goal
 addTest('Tube Teleportation test', async () => {
@@ -174,7 +169,6 @@ addTest('Tube Teleportation test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
-
 // Test the water
 addTest('Water Test', async () => {
     ball.vel = { x: 0, y: 0 };
@@ -183,14 +177,13 @@ addTest('Water Test', async () => {
     ball.y = getObjectsByType("water")[0].sprites[0].y;
     initialX = ball.velocity.x
     await sleep (100)
-
+  
     // Check both that it's not at the water and is at lastHit
     if (ball.x == getObjectsByType("water")[0].sprites[0].x && ball.y == getObjectsByType("water")[0].sprites[0].y && ball.x != lastHit.x && ball.y != lastHit.y) {
         throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${getObjectsByType("water")[0].sprites[0].x}, ${getObjectsByType("water")[0].sprites[0].y}`);
     }
     ball.vel = { x: 0, y: 0 };
 });
-
 
 // Test the volcano
 addTest('Volcano Test', async () => {
@@ -323,38 +316,31 @@ addTest('Lava Windmill Test', async () => {
     lavaObjects[0].life = 1;
 });
 
-
-// Sound loading test
 addTest('Sound Load Test', async () => {
-    // Preload sounds
-    hitSound = loadSound('assets/golfPutt.wav');
-    holeSound = loadSound('assets/golfGoal.wav');
-    waterSplash = loadSound('assets/waterSplash.wav');
-
-    // Create an array to hold sound objects for checking
     const sounds = [hitSound, holeSound, waterSplash];
 
-    // Check if sounds are loaded correctly
     for (const sound of sounds) {
+        sound.play()
         if (sound === null) {
             throw new Error('Expected sound to be loaded but got null');
         }
-        if (!(sound instanceof Audio)) {
-            throw new Error('Expected sound to be an instance of Audio');
+        if (!(sound instanceof p5.SoundFile)) {
+            throw new Error('Expected sound to be an instance of p5.SoundFile');
         }
     }
 });
 
+addTest('Trajectory Color Changing Logic', async () => {
+    trajectoryColorSelector.value = "#ffffff";
 
-// All other tests should be placed before this one, as this one effectively ends the testing environemnt
-addTest('Ball in Goal Logic', async () => {
-    ball.vel = { x: 0, y: 0 };
-    //The following lines are a teleport
-    ball.x = hole.x;
-    ball.y = hole.y;
-    await sleep(100); // Wait for any animations
-    if (!ballInGoal) throw new Error('Expected ballInGoal to be true after moving into the hole');
-});
+    const event = new Event('change');
+    trajectoryColorSelector.dispatchEvent(event);
+
+    if(trajectoryColor != "#ffffff")
+    {
+        throw new Error("Trajectory color not changing")
+    }
+})
 
 addTest('Camera Moving', async () => {
     cameraMode = "Follow";
@@ -363,7 +349,6 @@ addTest('Camera Moving', async () => {
         throw new Error('Camera position did not match ball position');
     cameraMode = "Center";
 });
-
 
 // Test that menu works
 // Test only runs if it starts on 'menu' screen
@@ -379,6 +364,14 @@ addTest('Camera Moving', async () => {
     }
 });*/
 
+// All other tests should be placed before this one, as this one effectively ends the testing environemnt
+addTest('Ball in Goal Logic', async () => {
+    ball.vel = { x: 0, y: 0 };
+    ball.x = hole.x;
+    ball.y = hole.y;
+    await sleep(100);
+    if (!ballInGoal) throw new Error('Expected ballInGoal to be true after moving into the hole');
+});
 
 // Call this function to run all tests
 // runTests();

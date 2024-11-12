@@ -1,46 +1,61 @@
 const strokeForce = 25; // The speed of the ball when it is hit
-const friction = 0.5, slowFriction = 2, frictionTrigger = 0.2; // The rate at which the ball slows
+const friction = { reg: 0.5, slow: 2, trigger: 0.2 };
 const maxPullBackDistance = 100; // The maximum distance to pull back
 
-var gameObjects = [], strokeCounts = []; strokeCount = 0;
-var level = new Level(); // The level object; builds the stage
+var gameObjects = [], strokeCounts = []; strokeCount = 0, par = 0;
+var level; // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
 
 var gameState = 'menu';
 var fullGameMode = true;
+var parMsgVisible = false;
 
 cameraModeOptions = ["Center"] // Options that camera mode can take-- should be same as index.html's first camera option
 var cameraMode = cameraModeOptions[0];  // Current camera mode, starts at center
 
-let trajectoryColor = 'blue'; // Default trajectory color
-const trajectoryColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']; // Colors to cycle through
-let currentColorIndex = 4;
+let trajectoryColor = '#4433FF'; // Default trajectory color
 
 //variables for ball velocity from previous frame; used in wall physics calculations
 let prevVelX = 0;
 let prevVelY = 0;
+var ballLastPosition = 0;
+
+// The canvas for drawing terrain. Goes under the main canvas.
+var webglCanvas;
+var webglContext;
 
 // Sound variables
 let hitSound, holeSound, waterSplash;
 
+// Blitz Mode variable
+let blitzMode = false;
+
 // Loading sound files
-function preload(){
+async function loadSounds(){
     hitSound = loadSound('assets/golfPutt.wav');
     holeSound = loadSound('assets/golfGoal.wav');
     waterSplash = loadSound('assets/waterSplash.wav');
+    click = loadSound('assets/buttonpress.mp3');
+    boo = loadSound('assets/boo.mp3');
 }
 
 // Runs once when the program starts
 async function setup()
 {
+    await loadSounds();
+    
+    document.getElementById('mainMenuButton').style.display = 'none';
+    document.getElementById('retryButton').style.display = 'none';
+    
     // Starts the game / goes into level select once buttons are pressed if in the menu
     document.getElementById('startButton').addEventListener('click', () => {
         if(gameState == 'menu') {
             startGame();
             document.getElementById('startButton').style.display = 'none';
             document.getElementById('levelSelectButton').style.display = 'none';
+            document.getElementById('blitzModeButton').style.display = 'none';
         }    
 
         //Need this for camera to work
@@ -53,15 +68,36 @@ async function setup()
             levelSelect()
             document.getElementById('startButton').style.display = 'none';
             document.getElementById('levelSelectButton').style.display = 'none';
+            document.getElementById('blitzModeButton').style.display = 'none';
         }
     })
+    document.getElementById('mainMenuButton').addEventListener('click', () => {
+        gameState = 'menu';
+        document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
+        document.getElementById('levelSelectButton').style.display = 'block';
+        document.getElementById('mainMenuButton').style.display = 'none';
+        document.getElementById('retryButton').style.display = 'none';
+        document.getElementById('blitzModeButton').style.display = 'block';
+    })
+    document.getElementById('retryButton').addEventListener('click', () => {
+        document.getElementById('mainMenuButton').style.display = 'none';
+        document.getElementById('retryButton').style.display = 'none';
+        startGame();
+    })
+
+
+     // Blitz Mode toggle button setup
+     document.getElementById('blitzModeButton').addEventListener('click', () => {  // <---- ADDED
+        blitzMode = !blitzMode;
+        const blitzButton = document.getElementById('blitzModeButton');
+        blitzButton.textContent = "Blitz Mode: " + (blitzMode ? "On" : "Off");
+    });
 
     // Initialize canvas
     createCanvas();
 
     document.getElementById('cameraButton').addEventListener('click', () => {
 
-        // Change the trajectory color on click
         cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
         document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
 
@@ -77,11 +113,22 @@ async function setup()
     }
     });
 
-    document.getElementById('colorButton').addEventListener('click', () => {
-        // Change the trajectory color on click
-        currentColorIndex = (currentColorIndex + 1) % trajectoryColors.length;
-        trajectoryColor = trajectoryColors[currentColorIndex];
-    });
+    // Create WebGL Canvas
+    webglCanvas = document.createElement("canvas");
+    webglCanvas.id = "webglCanvas";
+    webglCanvas.setAttribute('width', window.innerWidth);
+    webglCanvas.setAttribute('height', window.innerHeight);
+    webglCanvas.style.width = "100%";
+    webglCanvas.style.height = "auto";
+    webglCanvas.style.position = "fixed";
+    webglCanvas.style.x = 0;
+    webglCanvas.style.y = 0;
+    webglCanvas.style.zIndex = 1;
+    document.getElementById("defaultCanvas0").style.zIndex = 2;
+    document.getElementsByTagName("main")[0].insertBefore(webglCanvas, document.getElementById("defaultCanvas0"));
+
+    // Pass WebGL canvas to level object for drawing
+    level = new Level(webglCanvas);
 }
 
 //Hit sound function
@@ -98,19 +145,30 @@ function playGoalSound() {
 function playWaterSound() {
     waterSplash.play();
 }
-
+function playClickSound(){
+    click.play();
+}
+function playBooSound(){
+    if (Math.random() > 0.999) {
+        boo.play();
+    }
+}
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
-  
+
     // Creating the putter head
-    putter = new Sprite(-1000, -1000, 10, 30, 'n');
+    putter = new Sprite(10,10,5,10,'n');
+    putter.image = 'assets/putter.png';
+    putter.image.scale = .25;
+    putter.image.offset.x = -50;
+    putter.image.offset.y = -100;
+    putter.visible = false;
     putter.layer = 1;
     putter.color = 130,130,130;
     putter.stroke = 'black';
-    //putter.debug = true;
-    putter.offset.x = -20;
-    // gameObjects.push(ball);
+    putter.debug = false;
+    putter.offset.x = -10;
 
 }
 
@@ -122,6 +180,7 @@ function startGame() {
     canMove = true;
     setupLevel(0);
     gameState = 'playing';
+    ballLastPosition = createVector(0, 0);
 }
 
 // Runs 60 times per second
@@ -130,8 +189,7 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-    background("white");
-
+  
     if (gameState === 'menu') {
         drawMainMenu();
     } else if (gameState === 'levelSelect') {
@@ -139,8 +197,13 @@ async function draw()
     }
     else if (gameState === 'playing') {
         // Draw the stage using "level-generation.js"
-        level.drawStage();
-        handleGamePlay();
+        if (parMsgVisible) {
+            clear()
+            await drawPar();
+        } else {
+            level.drawStage();
+            handleGamePlay();
+        }
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
         drawGameOver();
@@ -166,13 +229,14 @@ function drawMainMenu() {
     // Set text color to the current trajectory color
     fill(trajectoryColor);
     textSize(18);
-    text("Current Trajectory color: \n" + trajectoryColor, width / 2, (height * 2 / 3)+56);
+    text("Current Trajectory color\n", width / 2, (height * 2 / 3)+56);
 
     fill(0);
 }
 
 function levelSelect() {
     gameState = 'levelSelect';
+    document.getElementById('mainMenuButton').style.display = 'block';
 }
 
 function levelSquare(x, y, size, levelNum) {
@@ -184,6 +248,7 @@ function levelSquare(x, y, size, levelNum) {
 
     //if square is clicked
     if (mouse.pressed() && mouseX > x && mouseX < (x+size) && mouseY > y && mouseY < (y+size)) {
+        document.getElementById('mainMenuButton').style.display = 'none';
         playLevel(levelNum - 1);
     }
     return lvlSqr;
@@ -220,20 +285,6 @@ function handleLevelSelect() {
 
 }
 
-
-
-// function clearGameObjects() {
-//     clear();
-//
-//     for (var obj of gameObjects)
-//         obj.remove();
-//
-//     // for (var wall of walls)
-//     //     wall.remove();
-//
-//     // background(backgroundColor);
-// }
-
 function drawGameOver() {
     background("white");
     fill(0);
@@ -245,17 +296,19 @@ function drawGameOver() {
     for (var strokes of strokeCounts)
         totalStrokes += strokes;
     text(`Strokes: ${totalStrokes}`, width / 2, height / 2);
-    text("Press 'R' to Restart", width / 2, height / 1.5);
+    document.getElementById('mainMenuButton').style.display = 'block';
+    document.getElementById('retryButton').style.display = 'block';
+
 }
 
 function keyPressed() {
     if (gameState === 'playing' && key === '`') {
         // Tilde runs tests
         runTests();
-    } else if (gameState === 'gameOver' && (key === 'R' || key === 'r')) {
-        startGame();
+    } else if (key === '0') {
+        // Press zero for elevation debugging
+        showTopography = 1 - showTopography;
     }
-
 }
 
 async function handleGamePlay() {
@@ -273,29 +326,41 @@ async function handleGamePlay() {
         camera.y = ball.y;
     }
 
-    // Draw the stroke counter
-    drawStrokeCount();
+    // Draw the stroke counter & Par
+    
+    if (!blitzMode) {
+        drawStrokeCount();
+        drawParCount();
+    }
 
     // When mouse is pressed...
     if (mouse.presses() && canMove) {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
+        putter.moveTo(ball.x, ball.y,100);
     }
+
+    ball.velocity.x += level.getSlope(ball.x, ball.y).x;
+    ball.velocity.y += level.getSlope(ball.x, ball.y).y;
 
     var trueVel = sqrt((ball.velocity.x * ball.velocity.x) + (ball.velocity.y * ball.velocity.y));
 
     if (trueVel > 0) {
-        if (trueVel <= frictionTrigger && trueVel != 0) {
-            ball.drag = slowFriction;
+        if (trueVel <= friction.trigger && trueVel != 0) {
+            ball.drag = friction.slow;
+            //Ball spin relative to trueVel
+            ball.rotationSpeed = trueVel
         }
     } else {
-        ball.drag = friction;
+        ball.drag = friction.reg;
+        //Ball no spin
+        ball.rotationSpeed = 0
     }
 
 
     // When mouse is released...
-    if (mouse.releases() && canMove && pullStart) {
+    if (mouse.releases() && (canMove || true) && pullStart) {
         // Calculate the pull vector and force
         let pullEnd = createVector(mouseX, mouseY);
         let pullVector = pullStart.sub(pullEnd);
@@ -306,27 +371,39 @@ async function handleGamePlay() {
         // Reset the pullStart
         pullStart = null;
 
-        // Swinging the putter
-        putter.moveTo(ball.x - (5*(forceMagnitude/6))*forceDirection.x , ball.y - (5*(forceMagnitude/6))*forceDirection.y, .04*forceMagnitude);
-        // ^^ why is the modifier 5/6 ?
-        await sleep(2 * forceMagnitude); //Sorry, the slow putt speed was bothering me
-        putter.moveTo(ball.x, ball.y, .04*forceMagnitude);
-        await sleep(2*forceMagnitude);
+        putter.visible = false; // hides the putter while it does its move but still looks goofy
 
-        // Apply the calculated force to the ball if its in sand
-        // if (ball.overlaps(sandtrap)){
-        //     ball.applyForce((forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y)/3);
-        // }
-        // else{
-            //Apply calculated for normally
-            ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
-        // }
+        //putter.offset.x = 0;    // This moves the pivot point onto the handle
+        //putter.offset.y = 30;
+        putter.image.offset.x = 0;
+        putter.image.offset.y = 130;
+
+        putterRotation = putter.rotation;
+
+        putter.move(20,putterRotation-180,500); 
+        await sleep(0);       
+
+        putter.move(-60,putterRotation+90,500);
+        await sleep(0);
+        putter.visible = true;
+
+        // This is the swing
+        putter.rotate(90,forceMagnitude/50);
+        await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
+        putter.rotate(-90,forceMagnitude/50);
+        hitSound.play(); //Playing the ball hit sound
+        await sleep(forceMagnitude * 5);
 
         // Hide the putter
         putter.visible = false;
+        putter.image.offset.x = -50;
+        putter.image.offset.y = -100;
+
+        ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
+
 
         if (pullDistance > 0) {
-            playHitSound(); //Playing the ball hit sound
+            hitSound.play(); //Playing the ball hit sound
             incrementShots();
             // Just clicking does not increment shots anymore
         }
@@ -356,8 +433,8 @@ async function handleGamePlay() {
             // There is a normal vector for each side of the wall, so calculate each vector's distance to the ball and use whichever is closest
             else
             {
-                let positiveNormalVector = p5.Vector.fromAngle(wall.rotation + 90);
-                let negativeNormalVector = p5.Vector.fromAngle(wall.rotation - 90);
+                let positiveNormalVector = p5.Vector.fromAngle(radians(wall.rotation + 90));
+                let negativeNormalVector = p5.Vector.fromAngle(radians(wall.rotation - 90));
 
                 if (ball.distanceTo(createVector(wall.x, wall.y) + positiveNormalVector) < ball.distanceTo(createVector(wall.x, wall.y) + negativeNormalVector))
                 {
@@ -370,8 +447,9 @@ async function handleGamePlay() {
             }
 
             //Calculate new ball velocity manually
+            const wallFriction = 0.8;
             let velocityVector = createVector(prevVelX, prevVelY);
-            velocityVector.reflect(normalVector);
+            velocityVector.reflect(normalVector).mult(wallFriction);
             ball.vel.x = velocityVector.x;
             ball.vel.y = velocityVector.y;
 
@@ -388,12 +466,17 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        playGoalSound();
+        holeSound.play();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
         strokeCount = 0;
-        await sleep(3000);
+        await sleep(2000);
+
+        // clear();
+        level.clear();
+        parMsgVisible = true;
+        await sleep(2000);
 
         if (fullGameMode) {
             level.nextLevel();
@@ -408,21 +491,32 @@ async function handleGamePlay() {
             gameState = 'menu'; //return to menu
             document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
             document.getElementById('levelSelectButton').style.display = 'block';
-            
+
         }
     }
 
-    //Ball has to be stopped in order to move
-    if(!ballInGoal){
-        if (ball.vel.x==0 && ball.vel.y==0){
-            canMove=true //Player can take the next shot
-            if(!message) {
-            message = "Take Your Shot"; //Set the message
-            messageTime = millis(); //Record when message was displayed
+    // Ball has to be stopped in order to move
+    if(!ballInGoal) {
+        if (blitzMode)
+        { // Only allow instant hit if blitz mode is active
+            canMove = true;
+            if (!message) {
+                message = "Blitz Mode Active";
+                messageTime = millis();
             }
         }
-        else{
-            canMove=false
+        else if (ball.stillTime > 360) //(ball.vel.x==0 && ball.vel.y==0)
+        {
+            canMove = true //Player can take the next shot
+            ball.vel.setMag(0.0);
+            if (!message) {
+                message = "Take Your Shot"; //Set the message
+                messageTime = millis(); //Record when message was displayed
+            }
+        }
+        else
+        {
+            canMove = false
         }
 
         if(message){
@@ -433,7 +527,6 @@ async function handleGamePlay() {
             message = ''; //Reset the message
         }
     }
-    //ball.debug = mouse.pressing()
 }
 
 // Converts level coordinates to screen coordinates
@@ -457,6 +550,14 @@ function drawStrokeCount()
     textSize(20); // Set text size
     textAlign(RIGHT, TOP); // Align text to the top-right corner
     text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
+}
+
+function drawParCount()
+{
+    fill(0); // Set text color to black
+    textSize(20); // Set text size
+    textAlign(LEFT, TOP); // Align text to the top-right corner
+    text(`Par: ${par}`, 20, 20); // Draw the stroke count
 }
 
 function incrementShots()
@@ -525,8 +626,76 @@ function drawMessage() {
 
 function drawPutter(){
     // Draw the putter back in
-    putter.moveTo(ball.x, ball.y,100);
     putter.visible = true;
     let mouseOnScreen =  levelToScreen(createVector(mouseX, mouseY));
     putter.rotateTowards(atan2(levelToScreen(pullStart).y - mouseOnScreen.y, levelToScreen(pullStart).x - mouseOnScreen.x), .3);
+}
+
+function distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py) {
+   var ldx = lx2 - lx1,
+       ldy = ly2 - ly1,
+       lineLengthSquared = ldx*ldx + ldy*ldy;
+   return distanceSquaredToLineSegment2(lx1, ly1, ldx, ldy, lineLengthSquared, px, py);
+}
+
+function distanceToLineSegment(lx1, ly1, lx2, ly2, px, py)
+{
+   return Math.sqrt(distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py));
+}
+
+async function drawPar() {
+    // Clear the background if needed
+    // clear();
+    background(backgroundColor);
+    try {
+        let sCount = strokeCounts[strokeCounts.length - 1];
+        let lPar = par;
+        let parMsg = ""; // Use let for block scope
+
+        switch (sCount) {
+            case 1:
+                parMsg = "Ace / Hole in One";
+                break;
+            case lPar:
+                parMsg = "Par";
+                break;
+            case (lPar - 1):
+                parMsg = "Birdie";
+                break;
+            case (lPar - 2):
+                parMsg = "Eagle";
+                break;
+            case (lPar - 3):
+                parMsg = "Albatross";
+                break;
+            case (lPar + 1):
+                parMsg = "Bogey";
+                break;
+            case (lPar + 2):
+                parMsg = "Double Bogey";
+                break;
+            case (lPar + 3):
+                parMsg = "Triple Bogey";
+                break;
+            case (lPar + 4):
+                parMsg = "Quadruple Bogey";
+                break;
+            default:
+                parMsg = sCount + " Strokes";
+                break;
+        }
+        push();
+        // background("white");
+        fill(0); // Set text color
+        textSize(36);
+        textAlign(CENTER, TOP);
+        text(parMsg, width / 2, height / 3);
+        textSize(24);
+        text("Wait a moment...", width / 2, height / 1.5);
+        await sleep(2000)
+        pop();
+    } catch {
+        return;
+    }
+    parMsgVisible = false;
 }

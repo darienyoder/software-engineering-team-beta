@@ -12,13 +12,34 @@ class GameObject {
             this.sprites = _sprites;
         else
             this.sprites = [_sprites];
+        if (this.sprites.length > 0)
+            this.sprite = this.sprites[0];
     }
 
     // Runs every frame
     update() {
         switch (this.type) {
             case "ball":
+                switch (level.getSurface(this.sprite.x, this.sprite.y))
+                {
+                    case SURFACE_SAND:
+                        this.sprite.vel.setMag(Math.max(0.0, this.sprite.vel.mag() - 5 / deltaTime))
+                        break;
+                    case SURFACE_WATER:
+                        this.sprite.vel.x = 0;
+                        this.sprite.vel.y = 0;
+                        this.sprite.x = lastHit.x;
+                        this.sprite.y = lastHit.y;
+                        break;
+                }
+                if ( Math.sqrt(Math.pow(this.sprite.lastPos.x - this.sprite.pos.x, 2.0) + Math.pow(this.sprite.lastPos.y - this.sprite.pos.y, 2.0)) < 0.5)
+                    {
+                        this.sprite.stillTime += 1;
+                    }
+                else
+                    this.sprite.stillTime = 0;
 
+                    this.sprite.lastPos = createVector(this.sprite.x, this.sprite.y);
                 break;
 
             case "hole":
@@ -57,7 +78,8 @@ class GameObject {
 
                 if (this.sprites[0].overlaps(ball))
                 {
-                    // playWaterSound();
+                    waterSplash.play();
+                    
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = lastHit.x;
@@ -143,6 +165,37 @@ class GameObject {
 
                 break;
 
+            case "ghost":
+                //When active float towards ball
+                if (this.sprites[0].active){
+                    this.sprites[0].moveTowards(ball.x, ball.y, .005);
+                    playBooSound();
+                }
+                if (this.sprites[0].overlaps(ball))
+                {
+                    ball.vel.x = 0;
+                    ball.vel.y = 0;
+                    ball.x = ballStart.x;
+                    ball.y = ballStart.y;
+                }
+
+                break;
+
+            case "button":
+                if (this.sprites[0].overlaps(ball)&& !this.active){
+                    this.active=true;
+                    this.sprites[0].image = 'assets/Button-on.png';
+                    this.sprites[0].image.scale=.25;
+                    playClickSound();
+                    //This is where we need to modify the ghost object's .active and .visible
+                    let ghosts = getObjectsByType("ghost");
+                    if (ghosts.length > 0) {
+                        let ghost = ghosts[0]; // Assuming only one ghost
+                        ghost.sprites[0].active = true;
+                        ghost.sprites[0].visible = true;
+                }
+            }
+                break;
         }
     }
 
@@ -186,9 +239,11 @@ function Ball(x, y)
     newBall.diameter = 10;
     newBall.color = "#ffffff";
     newBall.layer = 2;
-    newBall.drag = friction;
+    newBall.drag = friction.reg;
+    newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
+    newBall.stillTime = 300;
     newBall.image = 'assets/ball.png'
-    newBall.image.scale = .025
+    newBall.image.scale = .012
 
     return new GameObject("ball", newBall);
 }
@@ -336,4 +391,33 @@ function Volcano(posX, posY) {
     // lava.life = 10;
 
     return new GameObject("volcano", volcano);
+}
+
+function Ghost(posX, posY){
+    let ghost = new Sprite(posX, posY);
+    ghost.width=10;
+    ghost.height=10;
+    ghost.image = 'assets/ghost.png';
+    ghost.image.scale=.25;
+    ghost.layer=0;
+    ghost.active=false;
+    ghost.visible=false;
+    return new GameObject("ghost", ghost);
+}
+function Button(posX, posY){
+    let button = new Sprite(posX,posY);
+    button.width=10;
+    button.height=10;
+    button.collider = 'none';
+    button.image = '/assets/Button-off.png';
+    button.image.scale=.25;
+    button.active=false;
+    return new GameObject("button", button)
+}
+function Rock(posX,posY){
+    let rock = new Sprite(posX,posY, 20, 20);
+    rock.color='gray';
+    rock.collider='static';
+    rock.rotation = random(-90,90);
+    return new GameObject("rock",rock);
 }

@@ -43,5 +43,5 @@ pip install selenium webdriver-manager requests
 
 Run the testing script:
 ```
-python minigolf/pytest.py
+python minigolf/tests/pytest.py
 ```

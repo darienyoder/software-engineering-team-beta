@@ -1,130 +1,211 @@
 <!DOCTYPE html>
 <html>
-    <head>
-    	<meta charset="UTF-8" />
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    	<link rel="icon" href="data:," />
-    	<title>Minigolf</title>
-    	<style>
-    		html,
-    		body {
-    			background-color: black;
-    			margin: 0;
-    			padding: 0;
-    			overscroll-behavior: none;
-    		}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>Minigolf</title>
+    <style>
+        html,
+        body {
+            background-color: black;
+            margin: 0;
+            padding: 0;
+            overscroll-behavior: none;
+        }
+      
+        .p5-fullscreen {
+            position: relative;
+            z-index: 0;
+        }
 
-            .homeButton {    
-                padding: 15px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 15px;
-                cursor: pointer;
-                min-width: 180px; /* arbitrary length, adjust if necessary */
-            }
-            .homeButton:hover {
-                background-color: #0056b3;
-            }
-            .homeButton:active {
-                background-color: #003874;
-            }
-            #levelSelectButton {
-                position: absolute;
-                left: 50%;
-                top: 60%;
-                transform: translate(-50%, -60%);
-            }
-            #startButton {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-            }
+        .homeButton {
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            min-width: 180px;
+            /* arbitrary length, adjust if necessary */
+        }
 
-			.settingsButton {
-            	padding: 10px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                min-width: 180px; /* arbitrary length, adjust if necessary */
-				display: none;
-            }
-            .settingsButton:hover {
-                background-color: #0056b3;
-            }
-            #menuButton {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                padding: 10px;
-                background-color: #626563;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-            #menuButton:hover {
-                background-color: #3e433f;
-            }
-			#colorButton {
-				position: fixed;
-            	bottom: 60px;
-            	right: 20px;
-			}
-			#cameraButton {
-				position: fixed;
-            	bottom: 100px;
-            	right: 20px;
-			}
-    	</style>
-    </head>
-    <body>
-    	<main></main>
+        .homeButton:hover {
+            background-color: #0056b3;
+        }
 
-        <button id="startButton" class="homeButton">Start Game</button>
-        <button id="levelSelectButton" class="homeButton">Level Select</button>
-        
-		<button id="menuButton">⚙️</button>
-        <div id="settingsMenu">
-            <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
-            <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
-        </div>
-		<!-- P5play -->
-    	<script src="https://q5js.org/q5.js"></script>
-    	<script src="https://p5play.org/v3/planck.min.js"></script>
-    	<script src="https://p5play.org/v3/p5play.js"></script>
+        .homeButton:active {
+            background-color: #003874;
+        }
 
-		<!-- P5 -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+        #levelSelectButton {
+            position: absolute;
+            left: 50%;
+            top: 55%;
+            transform: translate(-50%, -55%);
+        }
 
-        <!-- Clipper.js -->
-    	<script src="libraries/clipper.js"></script>
+        #startButton {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -45%);
+        }
 
-    	<!-- Project Scripts -->
-        <script src="game-objects.js"></script>
-    	<script src="level-data.js"></script>
-    	<script src="level-generation.js"></script>
-    	<script src="main.js"></script>
+        #blitzModeButton {
+            position: absolute;
+            left: 50%;
+            top: 62%;
+            transform: translate(-50%, -62%);
+        }
 
-        <!-- Tests -->
-    	<script src="tests.js"></script>
-    	<script src="tests/level-generation-tests.js"></script>
+        #mainMenuButton {
+            position: absolute;
+            left: 50%;
+            top: 90%;
+            transform: translate(-50%, -90%);
+        }
 
-		<!--Button Menu-->
-		<script>
-            const menuButton = document.getElementById('menuButton');
-            const settingsButtons = document.querySelectorAll('.settingsButton');
+        #retryButton {
+            position: absolute;
+            left: 50%;
+            top: 80%;
+            transform: translate(-50%, -80%);
+        }
 
-            menuButton.addEventListener('click', () => {
-                settingsButtons.forEach(button => {
-                    button.style.display = button.style.display === 'none' ? 'block' : 'none';
-                });
+        .settingsButton {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            min-width: 180px;
+            /* arbitrary length, adjust if necessary */
+            display: none;
+        }
+
+        .settingsButton:hover {
+            background-color: #0056b3;
+        }
+
+        #menuButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #626563;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #menuButton:hover {
+            background-color: #3e433f;
+        }
+
+        #colorButton {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+        }
+
+        #cameraButton {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+        }
+
+        #colorSelector {
+            position: fixed;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            bottom: 140px;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <main></main>
+
+    <button id="startButton" class="homeButton">Start Game</button>
+    <button id="levelSelectButton" class="homeButton">Level Select</button>
+    
+    <button id="mainMenuButton" class="homeButton">Return to Main Menu</button>
+    <button id="retryButton" class="homeButton">Replay Game</button>
+    <button id="blitzModeButton" class="homeButton">Blitz Mode: Off</button>
+
+    <button id="menuButton">⚙️</button>
+    <div id="settingsMenu">
+        <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
+        <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
+        <input id="colorSelector" type="color">
+    </div>
+    
+    <!-- P5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
+
+    <!-- P5play -->
+    <script src="https://p5play.org/v3/planck.min.js"></script>
+    <script src="https://p5play.org/v3/p5play.js"></script>
+
+    <!-- Clipper.js -->
+    <script src="libraries/clipper.js"></script>
+
+    <!-- Earcut.js -->
+    <script src="libraries/earcut.js"></script>
+
+    <!-- Project Scripts -->
+    <script src="game-objects.js"></script>
+    <script src="terrain-shader.js"></script>
+    <script src="level-data.js"></script>
+    <script src="level-generation.js"></script>
+    <script src="main.js"></script>
+
+    <!-- Tests -->
+    <script src="./tests/tests.js"></script>
+    <script src="./tests/level-generation-tests.js"></script>
+
+    <!--Button Menu-->
+    <script>
+        const menuButton = document.getElementById('menuButton');
+        const settingsButtons = document.querySelectorAll('.settingsButton');
+        const trajectoryColorSelector = document.getElementById('colorSelector');
+        const trajectoryButton = document.getElementById('colorButton')
+        const blitzModeButton = document.getElementById('blitzModeButton');
+
+        // Set the initial display to hidden so it only takes one click
+        settingsButtons.forEach(button => {
+            button.style.display = 'none'; // Ensure they are hidden initially
+        });
+
+        menuButton.addEventListener('click', () => {
+            settingsButtons.forEach(button => {
+                button.style.display = button.style.display === 'none' ? 'block' : 'none';
             });
-        </script>
-    </body>
+        });
+
+        trajectoryButton.addEventListener('click', () => {
+            trajectoryColorSelector.value = trajectoryColor;
+            trajectoryColorSelector.click();
+        });
+
+        trajectoryColorSelector.addEventListener("change", () => {
+            trajectoryColor = trajectoryColorSelector.value;
+        })
+
+        // Blitz Mode toggle button event listener
+        blitzModeButton.addEventListener("click", () => {
+            toggleBlitzMode();
+        });
+
+    </script>
+    
+
+</body>
+
 </html>
-
-
