@@ -54,6 +54,10 @@ class Level
         this.ctx.linkProgram(this.shaderProgram);
         this.ctx.useProgram(this.shaderProgram);
 
+        this.ctx.clearColor(0.949, 0.925, 0.89, 1.0);
+        this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
+        this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
+
         // Level Data
         this.number = -1; // Current level index; -1 indicates no level
         this.walls = []; // Wall sprites
@@ -437,7 +441,7 @@ class Level
         this.heightModifiers = [];
 
         // Erase terrain shader
-        this.ctx.clearColor(1.0, 1.0, 1.0, 1.0);
+        this.ctx.clearColor(0.949, 0.925, 0.89, 1.0);
         this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
         this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -900,7 +904,7 @@ class Level
     // Draws the stage
     drawStage()
     {
-        this.ctx.clearColor(1.0, 1.0, 1.0, 1.0);
+        this.ctx.clearColor(0.949, 0.925, 0.89, 1.0);
         this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
         this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
 
