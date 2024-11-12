@@ -39,6 +39,7 @@ async function loadSounds(){
     waterSplash = loadSound('assets/waterSplash.wav');
     click = loadSound('assets/buttonpress.mp3');
     boo = loadSound('assets/boo.mp3');
+    jimmy = loadSound('assets/Jimmy.mp3');
 }
 
 // Runs once when the program starts
@@ -150,9 +151,16 @@ function playClickSound(){
 }
 function playBooSound(){
     if (Math.random() > 0.999) {
+        boo.setVolume(0.5);
         boo.play();
     }
 }
+function playJimmySound(){
+    if (!jimmy.isPlaying()) {
+        jimmy.play();
+    }
+}
+
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
@@ -474,6 +482,7 @@ async function handleGamePlay() {
         await sleep(2000);
 
         // clear();
+        jimmy.stop();
         level.clear();
         parMsgVisible = true;
         await sleep(2000);

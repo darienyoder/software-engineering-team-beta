@@ -167,7 +167,12 @@ class GameObject {
 
             case "ghost":
                 //When active float towards ball
-                if (this.sprites[0].active){
+                this.sprites[0].rotationSpeed=0;
+                if (this.sprites[0].active && this.sprites[0].sg){
+                    this.sprites[0].moveTowards(ball.x, ball.y, .004);
+                    playJimmySound();
+                }
+                else if (this.sprites[0].active){
                     this.sprites[0].moveTowards(ball.x, ball.y, .004);
                     playBooSound();
                 }
@@ -397,9 +402,17 @@ function Ghost(posX, posY){
     let ghost = new Sprite(posX, posY);
     ghost.width=10;
     ghost.height=10;
+    ghost.sg=false;
     ghost.image = 'assets/ghost.png';
     ghost.image.scale=.3;
     ghost.layer=0;
+    //5 percent chance of the ghost being saul goodman
+    if (Math.random() > 0.95) {
+        ghost.sg=true;
+        ghost.image = 'assets/Saulbetter.png';
+        ghost.image.scale=.1;
+    }
+    ghost.layer=1;
     ghost.active=false;
     ghost.visible=false;
     return new GameObject("ghost", ghost);
@@ -412,6 +425,7 @@ function Button(posX, posY){
     button.image = '/assets/Button-off.png';
     button.image.scale=.25;
     button.active=false;
+    button.layer=0;
     return new GameObject("button", button)
 }
 function Rock(posX,posY){
