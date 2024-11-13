@@ -46,10 +46,10 @@ async function loadSounds(){
 async function setup()
 {
     await loadSounds();
-    
+
     document.getElementById('mainMenuButton').style.display = 'none';
     document.getElementById('retryButton').style.display = 'none';
-    
+
     // Starts the game / goes into level select once buttons are pressed if in the menu
     document.getElementById('startButton').addEventListener('click', () => {
         if(gameState == 'menu') {
@@ -57,7 +57,7 @@ async function setup()
             document.getElementById('startButton').style.display = 'none';
             document.getElementById('levelSelectButton').style.display = 'none';
             document.getElementById('blitzModeButton').style.display = 'none';
-        }    
+        }
 
         //Need this for camera to work
         if (cameraModeOptions.length<=1) {
@@ -197,7 +197,7 @@ async function draw()
 {
     // Erase what was drawn the last frame
     clear();
-  
+
     if (gameState === 'menu') {
         drawMainMenu();
     } else if (gameState === 'levelSelect') {
@@ -222,6 +222,7 @@ function drawMainMenu() {
     // Draw the main menu background
     fill(255); // White background for contrast
     rect(0, 0, width, height); // Optional: clear background
+    background(backgroundColor);
 
     fill(0); // Set text color to black
     textSize(48);
@@ -266,7 +267,7 @@ function playLevel(levelNum) {
     strokeCount = 0;
     ballInGoal = false;
     canMove = true;
-        
+
     //camera options need this to work properly
     if (cameraModeOptions.length<=1){
         cameraModeOptions.push("Follow");
@@ -335,7 +336,7 @@ async function handleGamePlay() {
     }
 
     // Draw the stroke counter & Par
-    
+
     if (!blitzMode) {
         drawStrokeCount();
         drawParCount();
@@ -388,8 +389,8 @@ async function handleGamePlay() {
 
         putterRotation = putter.rotation;
 
-        putter.move(20,putterRotation-180,500); 
-        await sleep(0);       
+        putter.move(20,putterRotation-180,500);
+        await sleep(0);
 
         putter.move(-60,putterRotation+90,500);
         await sleep(0);

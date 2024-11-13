@@ -54,6 +54,10 @@ class Level
         this.ctx.linkProgram(this.shaderProgram);
         this.ctx.useProgram(this.shaderProgram);
 
+        this.ctx.clearColor(0.949, 0.925, 0.89, 1.0);
+        this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
+        this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
+
         // Level Data
         this.number = -1; // Current level index; -1 indicates no level
         this.walls = []; // Wall sprites
@@ -435,6 +439,11 @@ class Level
             gameObjects.pop().delete();
         }
         this.heightModifiers = [];
+
+        // Erase terrain shader
+        this.ctx.clearColor(0.949, 0.925, 0.89, 1.0);
+        this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
+        this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
     shapeHasPoint(shape, pointX, pointY)
@@ -561,6 +570,76 @@ class Level
         this.positiveWalls = areaPolygons[0];
         this.negativeWalls = areaPolygons[1];
 
+        // Create golf ball at "ballPosition"
+        ball = Ball(levelDict.ballPosition[0], levelDict.ballPosition[1]);
+        ballStart = createVector(levelDict.ballPosition[0], levelDict.ballPosition[1]);
+        lastHit = ballStart;
+
+        gameObjects.push(ball);
+        ball = ball.sprites[0];
+
+        // Create hole at "holePosition"
+        hole = Hole(levelDict.holePosition[0], levelDict.holePosition[1]);
+        gameObjects.push(hole);
+        hole = hole.sprites[0];
+        // Create obstacles
+        this.createObstacles(levelDict.obstacles);
+
+        // Get level bounding rectangle
+        this.bounds = ClipperLib.Clipper.GetBounds(this.positiveWalls);
+        let levelWidth = this.bounds.right - this.bounds.left;
+        let levelHeight = this.bounds.bottom - this.bounds.top;
+
+        for (var posArea of this.positiveWalls)
+            for (var vertex of posArea)
+            {
+                vertex.X -= this.bounds.left;
+                vertex.Y -= this.bounds.top;
+            }
+        for (var negArea of this.negativeWalls)
+            for (var vertex of negArea)
+            {
+                vertex.X -= this.bounds.left;
+                vertex.Y -= this.bounds.top;
+            }
+        for (var obstacle of gameObjects)
+        {
+            for (var sprite of obstacle.sprites)
+            {
+                if (Array.isArray(sprite))
+                    for (var subsprite of sprite)
+                    {
+                        subsprite.x -= this.bounds.left;
+                        subsprite.y -= this.bounds.top;
+                    }
+                else
+                {
+                    sprite.x -= this.bounds.left;
+                    sprite.y -= this.bounds.top;
+                }
+            }
+        }
+
+        for (var modifier of this.heightModifiers)
+        {
+            switch (modifier.shape) {
+                case "oval":
+                    modifier.data.x -= this.bounds.left;
+                    modifier.data.y -= this.bounds.top;
+                    break;
+                case "rect":
+                    modifier.data.x -= this.bounds.left;
+                    modifier.data.y -= this.bounds.top;
+                    break;
+
+            }
+        }
+
+        this.bounds.bottom -= this.bounds.top;
+        this.bounds.right -= this.bounds.left;
+        this.bounds.top = 0.0;
+        this.bounds.left = 0.0;
+
         // Build all segments
         for (var polygon of this.positiveWalls)
         {
@@ -579,31 +658,11 @@ class Level
             }
         }
 
-        // Get level bounding rectangle
-        this.bounds = ClipperLib.Clipper.GetBounds(this.positiveWalls);
-        let levelWidth = this.bounds.right - this.bounds.left;
-        let levelHeight = this.bounds.bottom - this.bounds.top;
-
         // Position camera to center bounding rectangle
         camera.x = (this.bounds.right + this.bounds.left) / 2;
         camera.y = (this.bounds.bottom + this.bounds.top) / 2;
         camera.zoom = Math.min(((window.innerWidth - this.levelMargin) / levelWidth), ((window.innerHeight - this.levelMargin) / levelHeight))
 
-        // Create golf ball at "ballPosition"
-        ball = Ball(levelDict.ballPosition[0], levelDict.ballPosition[1]);
-        ballStart = createVector(levelDict.ballPosition[0], levelDict.ballPosition[1]);
-        lastHit = ballStart;
-
-        gameObjects.push(ball);
-        ball = ball.sprites[0];
-
-        // Create hole at "holePosition"
-        hole = Hole(levelDict.holePosition[0], levelDict.holePosition[1]);
-        gameObjects.push(hole);
-        hole = hole.sprites[0];
-        // Create obstacles
-        this.createObstacles(levelDict.obstacles);
-      
         par = levelDict.par;
 
         this.maxHeight = 1;
@@ -845,11 +904,12 @@ class Level
     // Draws the stage
     drawStage()
     {
-        this.ctx.clearColor(1.0, 1.0, 1.0, 1.0);
+        this.ctx.clearColor(0.949, 0.925, 0.89, 1.0);
         this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
         this.ctx.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "bounds"), this.bounds.left, this.bounds.top, this.bounds.right - this.bounds.left, this.bounds.bottom - this.bounds.top);
+        this.ctx.uniform4f(this.ctx.getUniformLocation(this.shaderProgram, "visualBounds"), levelToScreen(createVector(this.bounds.left, this.bounds.top)).x, levelToScreen(createVector(this.bounds.left, this.bounds.top)).y, levelToScreen(createVector(this.bounds.right, this.bounds.bottom)).x, levelToScreen(createVector(this.bounds.right, this.bounds.bottom)).y);
         this.ctx.uniform2f(this.ctx.getUniformLocation(this.shaderProgram, "screenSize"), window.innerWidth, window.innerHeight);
 
         let date = new Date();
@@ -869,4 +929,11 @@ class Level
             this.drawPolygons(this.negativeWalls, backgroundColor);
         }
     }
+}
+
+function levelToScreen(vector)
+{
+    let adjustedX = (vector.x - camera.position.x) * camera.zoom + width / 2;
+    let adjustedY = (vector.y - camera.position.y) * camera.zoom + height / 2;
+    return createVector(adjustedX, adjustedY);
 }
