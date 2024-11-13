@@ -500,6 +500,7 @@ async function handleGamePlay() {
             gameState = 'menu'; //return to menu
             document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
             document.getElementById('levelSelectButton').style.display = 'block';
+            document.getElementById('blitzModeButton').style.display = 'block';
 
         }
     }
