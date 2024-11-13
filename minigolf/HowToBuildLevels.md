@@ -84,3 +84,23 @@ SUB circle 250, 75, 100;
 ```
 
 You can write comments by starting a statement with `//`. **You must end the comment with a semicolon or the following statement will be ignored.**
+
+## Elevation
+
+```
+// Create a hill with radius at (100, 200), a peak at height 3, and a radius of (30, 40);
+HEIGHT + 3: hill 100, 200, 30, 40;
+```
+
+## Sand and Water
+
+```
+// Sand in a rectangle shape;
+HEIGHT = 01134: rect 0, 0, 50, 50;
+
+// Water in an oval shape;
+HEIGHT = 843: oval 50, 50, 20, 20;
+```
+
+
+
