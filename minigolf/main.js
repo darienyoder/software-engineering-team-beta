@@ -168,9 +168,9 @@ function setupLevel(levelNum) {
     // Creating the putter head
     putter = new Sprite(10,10,5,10,'n');
     putter.image = 'assets/putter.png';
-    putter.image.scale = .25;
-    putter.image.offset.x = -50;
-    putter.image.offset.y = -100;
+    putter.image.scale = .12;
+    putter.image.offset.x = -100;
+    putter.image.offset.y = -190;
     putter.visible = false;
     putter.layer = 1;
     putter.color = 130,130,130;
@@ -380,12 +380,11 @@ async function handleGamePlay() {
         // Reset the pullStart
         pullStart = null;
 
-        putter.visible = false; // hides the putter while it does its move but still looks goofy
-
-        //putter.offset.x = 0;    // This moves the pivot point onto the handle
-        //putter.offset.y = 30;
+        putter.visible = false; // hides the putter while it does its move
+        
+        // This moves the pivot point onto the handle
         putter.image.offset.x = 0;
-        putter.image.offset.y = 130;
+        putter.image.offset.y = 300;
 
         putterRotation = putter.rotation;
 
@@ -397,16 +396,16 @@ async function handleGamePlay() {
         putter.visible = true;
 
         // This is the swing
-        putter.rotate(90,forceMagnitude/50);
-        await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
-        putter.rotate(-90,forceMagnitude/50);
+        putter.rotate(90,forceMagnitude/10);    //The  /10 can be changed to whatever looks best
+        await sleep(250);
+        putter.rotate(-90,forceMagnitude/10);
         hitSound.play(); //Playing the ball hit sound
-        await sleep(forceMagnitude * 5);
+        await sleep(250);
 
         // Hide the putter
         putter.visible = false;
-        putter.image.offset.x = -50;
-        putter.image.offset.y = -100;
+        putter.image.offset.x = -100;
+        putter.image.offset.y = -190;
 
         ball.applyForce(forceMagnitude * forceDirection.x, forceMagnitude * forceDirection.y);
 
