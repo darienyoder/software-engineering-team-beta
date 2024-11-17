@@ -46,10 +46,12 @@ var levelData = [
             // End goal;
             ADD circle 250, 75, 50;
             ADD rect 225, 75, 50, 75;
-
+            
+            // Sand;
+            HEIGHT = 1134: rect 225, -75, 50, 50;
         `,
         obstacles: `
-            ADD Sandtrap 250 -50 50 50;
+            // ADD Sandtrap 250 -50 50 50;
             ADD Tubes 465 215 25 225;
             ADD Windmill 450 50;
         `,
@@ -76,43 +78,49 @@ var levelData = [
         holePosition: [
             360, 28
         ],
-        area: "ADD rect 0, 0, 390, 420;",
+        area: `
+        ADD rect 0, 0, 390, 420;
+        HEIGHT = 843: rect -5, -5, 85, 350;
+        HEIGHT = 843: rect -5, 340, 400, 80;
+        HEIGHT = 843: rect 310, 50, 80, 300;
+        HEIGHT = 843: rect 122, -5, 145, 310;
+        `,
         obstacles:`
 
             // Left column of water;
-            ADD Water 40 40;
-            ADD Water 40 110;
-            ADD Water 40 180;
-            ADD Water 40 250;
-            ADD Water 40 320;
+            // ADD Water 40 40;
+            // ADD Water 40 110;
+            // ADD Water 40 180;
+            // ADD Water 40 250;
+            // ADD Water 40 320;
 
             // Middle columns of water;
-            ADD Water 160 40;
-            ADD Water 160 110;
-            ADD Water 160 180;
-            ADD Water 160 250;
-            ADD Water 160 270;
+            // ADD Water 160 40;
+            // ADD Water 160 110;
+            // ADD Water 160 180;
+            // ADD Water 160 250;
+            // ADD Water 160 270;
 
-            ADD Water 230 40;
-            ADD Water 230 110;
-            ADD Water 230 180;
-            ADD Water 230 250;
-            ADD Water 230 270;
+            // ADD Water 230 40;
+            // ADD Water 230 110;
+            // ADD Water 230 180;
+            // ADD Water 230 250;
+            // ADD Water 230 270;
 
             // Right column of water;
-            ADD Water 350 90;
-            ADD Water 350 160;
-            ADD Water 350 230;
-            ADD Water 350 300;
-            ADD Water 350 370;
-            ADD Water 350 380;
+            // ADD Water 350 90;
+            // ADD Water 350 160;
+            // ADD Water 350 230;
+            // ADD Water 350 300;
+            // ADD Water 350 370;
+            // ADD Water 350 380;
 
             // Bottom row of water;
-            ADD Water 40 380;
-            ADD Water 110 380;
-            ADD Water 180 380;
-            ADD Water 250 380;
-            ADD Water 300 380;
+            // ADD Water 40 380;
+            // ADD Water 110 380;
+            // ADD Water 180 380;
+            // ADD Water 250 380;
+            // ADD Water 300 380;
             `,
         par: 7
     },
@@ -124,11 +132,13 @@ var levelData = [
             // Top section;
             ADD rect 0, 0, 300, 50;
             ADD rect 100, -25, 100, 30;
+            HEIGHT = 1134: rect 100, -21, 100, 50;
 
             // Middle section;
             ADD rect 0, 200, 300, 50;
             ADD circle 150, 200, 70, 70;
-            ADD rect 113, 110, 75, 75;
+            // ADD rect 113, 110, 75, 75;
+            HEIGHT = 843: rect 80, 100, 150, 100;
 
             // Bottom section;
             ADD rect 0, 400, 300, 50; 
@@ -138,9 +148,9 @@ var levelData = [
         
             ADD Tubes 275 25 25 225;
             ADD Tubes 275 225 25 425;
-            ADD Sandtrap 150 3 100 50;
+            // ADD Sandtrap 150 3 100 50;
             ADD Windmill 150 170;
-            ADD Water 150 150;
+            // ADD Water 150 150;
 
         `,
         par: 3
@@ -181,27 +191,50 @@ var levelData = [
     holePosition: [
         358, 48
     ],
-    area: "ADD rect 0, 0, 420, 420;",
+    area: `
+    ADD rect 0, 0, 420, 420;
+
+    // borders;
+    HEIGHT = 1134: rect 0, 0, 20, 420;
+    HEIGHT = 1134: rect 395, 0, 25, 420;
+    HEIGHT = 1134: rect 0, 0, 420, 25;
+    HEIGHT = 1134: rect 0, 390, 420, 30;
+
+    // sand above the ball by the circle portal;
+    HEIGHT = 1134: rect 0, 65, 152, 160;
+
+    // sand to the right;
+    HEIGHT = 1134: rect 50, 330, 350, 70;
+    HEIGHT = 1134: rect 50, 245, 130, 65;
+
+    // sand leading to the hole;
+    HEIGHT = 1134: rect 180, 70, 195, 240; 
+    HEIGHT = 1134: rect 180, 0, 110, 100;
+    `,
     obstacles:`
+
+        //this sandtrap is left to slow the ball down before entering the hole;
+          ADD Sandtrap 310 50 50 50;
+
           //borders;
-          ADD Sandtrap 15 210 20 410;
+           // ADD Sandtrap 15 210 20 410;
 
-          ADD Sandtrap 405 210 20 410;
+           // ADD Sandtrap 405 210 20 410;
 
-          ADD Sandtrap 210 15 410 20;
+           // ADD Sandtrap 210 15 410 20;
 
-          ADD Sandtrap 210 405 410 20;
+           // ADD Sandtrap 210 405 410 25;
 
           //inner part of maze;
           //first colums to the right;
-          ADD Sandtrap 90 360 80 70;
-          ADD Sandtrap 115 275 130 70;
+          // ADD Sandtrap 90 360 80 70;
+          // ADD Sandtrap 115 275 130 70;
           // coloums on the right that lead up to the hole;
-          ADD Sandtrap 262 360 265 70;
-          ADD Sandtrap 278 190 200 240;
-          ADD Sandtrap 256 60 156 70;
+          // ADD Sandtrap 262 360 265 70;
+          // ADD Sandtrap 278 190 200 240;
+          //  ADD Sandtrap 256 60 156 70;
           // colum right above the ball by the circle portal;
-          ADD Sandtrap 85 145 152 160;
+          // ADD Sandtrap 85 145 152 160;
           //the portals;
           ADD Tubes 35 45 310 50; 
         `,
