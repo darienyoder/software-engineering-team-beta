@@ -226,10 +226,10 @@ class Level
             case "rect":
                 shapeName = "rect";
                 shapeData = {
-                    x: shapeArgs[0],
-                    y: shapeArgs[1],
-                    w: shapeArgs[2],
-                    h: shapeArgs[3],
+                    x: Number(shapeArgs[0]),
+                    y: Number(shapeArgs[1]),
+                    w: Number(shapeArgs[2]),
+                    h: Number(shapeArgs[3]),
                 };
                 grad = "flat";
                 break;
