@@ -214,14 +214,16 @@ class Level
                 grad = "flat";
                 break;
             case "ramp":
+            case "line":
                 shapeName = "line";
                 shapeData = {
                     x1: shapeArgs[0],
                     y1: shapeArgs[1],
-                    w: shapeArgs[2],
-                    h: shapeArgs[3],
+                    x2: shapeArgs[2],
+                    y2: shapeArgs[3],
+                    w: shapeArgs[4],
                 };
-                grad = "flat";
+                grad = shapeType.toLowerCase() == "line" ? "flat" : "linear";
                 break;
             case "rect":
                 shapeName = "rect";
@@ -466,9 +468,24 @@ class Level
                     return weight;
                 break;
 
+            case "line":
+                let projection = projectAndLerp(createVector(shape.data.x1, shape.data.y1), createVector(shape.data.x2, shape.data.y2), createVector(pointX, pointY));
+                // console.log("(" + pointX + " " + pointY + ")\n(" + pointX + " " + pointY + ") - " + UdistanceToLineSegment(createVector(shape.data.x1, shape.data.y1), createVector(shape.data.x2, shape.data.y2), createVector(pointX, pointY)))
+                if (projection >= 0.0 && projection <= 1.0)
+                    if (VdistanceToLineSegment(createVector(shape.data.x1, shape.data.y1), createVector(shape.data.x2, shape.data.y2), createVector(pointX, pointY)) < shape.data.w)
+                    {
+                        if (shape.gradient.type == "flat")
+                            return 1.0;
+                        else if (shape.gradient.type == "linear")
+                            return projection;
+                    }
+                return 0.0;
+                break;
+
             default:
-                return false;
+                return 0.0;
         }
+        return 0.0;
     }
 
     getHeight(x, y)
@@ -681,7 +698,7 @@ class Level
             let modifier = this.heightModifiers[i];
             actions[i] = modifier.action == "set" ? 0 : 1;
             heights[i] = modifier.height;
-            gradients[i] = (["flat", "radial"]).indexOf(modifier.gradient.type);
+            gradients[i] = (["flat", "radial", "linear"]).indexOf(modifier.gradient.type);
             switch (modifier.shape) {
                 case "oval":
                     shapes[i] = 0;
@@ -706,6 +723,14 @@ class Level
                     datas[i * 4 + 3] = modifier.data.y2;
 
                     datas2[i * 4 + 0] = modifier.data.w;
+
+                    let height1 = this.getHeight(modifier.data.x1, modifier.data.y1);
+                    this.maxHeight = Math.max(this.maxHeight, height1);
+                    this.minHeight = Math.min(this.minHeight, height1);
+
+                    let height2 = this.getHeight(modifier.data.x2, modifier.data.y2);
+                    this.maxHeight = Math.max(this.maxHeight, height2);
+                    this.minHeight = Math.min(this.minHeight, height2);
                     break;
                 case "rect":
                     shapes[i] = 2;
@@ -931,9 +956,70 @@ class Level
     }
 }
 
+///////////////////
+//   Utilities   //
+///////////////////
+
+// Converts raw coordinates where that point is being drawn on the canvas
 function levelToScreen(vector)
 {
     let adjustedX = (vector.x - camera.position.x) * camera.zoom + width / 2;
     let adjustedY = (vector.y - camera.position.y) * camera.zoom + height / 2;
     return createVector(adjustedX, adjustedY);
+}
+
+function UdistanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py) {
+    lx1 = Number(lx1);
+    ly1 = Number(ly1);
+    lx2 = Number(lx2);
+    ly2 = Number(ly2);
+    px = Number(px);
+    py = Number(py);
+
+    let ldx = lx2 - lx1;
+    let ldy = ly2 - ly1;
+    let lineLengthSquared = ldx*ldx + ldy*ldy;
+
+    let t = 0.0;
+    if (lineLengthSquared == 0.0) {
+        t = 0.0;
+    }
+    else {
+        t = ((px - lx1) * ldx + (py - ly1) * ldy) / lineLengthSquared;
+
+        if (t < 0.0)
+            t = 0.0;
+        else if (t > 1.0)
+            t = 1.0;
+    }
+
+    let lx = lx1 + t * ldx;
+    let ly = ly1 + t * ldy;
+    let dx = px - lx;
+    let dy = py - ly;
+
+   return dx*dx + dy*dy;
+}
+
+function VdistanceToLineSegment(lineStart, lineEnd, point)
+{
+   return sqrt(UdistanceSquaredToLineSegment(lineStart.x, lineStart.y, lineEnd.x, lineEnd.y, point.x, point.y));
+}
+
+// Projects a point 'P' onto a line segment
+// between points 'A' and 'B' and returns a float
+// based on P's position between A and B
+// where 0.0 is directly on A and 1.0 is directly on B.
+function projectAndLerp(A, B, P)
+{
+    let a_to_p = P.sub(A);
+    let a_to_b = B.sub(A);
+
+    let atb2 = a_to_b.x * a_to_b.x + a_to_b.y * a_to_b.y;
+
+    let atp_dot_atb = a_to_p.x * a_to_b.x + a_to_p.y * a_to_b.y;
+
+    let t = atp_dot_atb / atb2;
+
+    return t;
 }
