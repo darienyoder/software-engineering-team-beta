@@ -4,12 +4,8 @@ var levelData = [
         holePosition: [250, 75],
         area: `
             ADD rect 0, 0, 300, 150;
-            ADD rect 75, 150, 150, 300;
-            ADD rect 0, 225, 300, 150;
         `,
         obstacles: `
-        ADD Tubes 150 150 0 300;
-        ADD Tubes 150 450 300 300;
         `,
         par: 2,
     },
