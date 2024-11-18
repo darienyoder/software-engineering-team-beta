@@ -4,6 +4,10 @@ var levelData = [
         holePosition: [250, 75],
         area: `
             ADD rect 0, 0, 300, 150;
+            // HEIGHT + 2: ramp 100, 100, 200, 50, 20;
+            // HEIGHT = -1: line 50, 20, 100, 30, 10;
+            // HEIGHT = 01134: line 20, 110, 100, 130, 20;
+            // HEIGHT = 843: line 250, 20, 220, 140, 30;
         `,
         obstacles: `
         `,
@@ -131,11 +135,11 @@ var levelData = [
             ADD rect 113, 110, 75, 75;
 
             // Bottom section;
-            ADD rect 0, 400, 300, 50; 
+            ADD rect 0, 400, 300, 50;
 
         `,
         obstacles: `
-        
+
             ADD Tubes 275 25 25 225;
             ADD Tubes 275 225 25 425;
             ADD Sandtrap 150 3 100 50;
@@ -149,7 +153,7 @@ var levelData = [
         ballPosition: [-130,50],
         holePosition: [150,50],
         area: `
-            
+
                 // Outside ring;
                 ADD circ 150, 50, 300;
                 SUB circ 150, 50, 250;
@@ -162,12 +166,12 @@ var levelData = [
                 ADD rect 225, 0, 100, 100;
                 // hole circle;
                 ADD circ 150, 50, 100;
-             
+
         `,
         obstacles: `
             ADD Sandtrap 80 50 10 50;
             // sandtrap is underneath tubeB, used to slow ball down so it enters hole;
-            ADD Tubes 425 50 75 50; 
+            ADD Tubes 425 50 75 50;
             ADD Windmill 150 -180;
             ADD Windmill 150 280;
         `,
@@ -203,7 +207,7 @@ var levelData = [
           // colum right above the ball by the circle portal;
           ADD Sandtrap 85 145 152 160;
           //the portals;
-          ADD Tubes 35 45 310 50; 
+          ADD Tubes 35 45 310 50;
         `,
         par: 3,
     },
