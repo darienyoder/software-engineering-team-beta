@@ -348,16 +348,32 @@ function Volcano(posX, posY) {
 function Fan(posX, posY, dir){
     let fan = new Sprite(posX, posY, 'k');
     fan.diameter = 50;
-    fan.rotation = dir;
-
-    fan.color = 'grey';
-    fan.stroke = 'black';
+    // let fan = new Sprite([[posX+25,posY], [posX, posY+25], [posX, posY-25], [posX+25, posY]]);
+    fan.color = '#A9A9A9';
     fan.layer = 0;
 
+    // Directional Arrows:
     // 0 = east (0 degrees)
+    if (dir == 0){
+        arrow = new Sprite([[posX+25,posY], [posX, posY+25], [posX, posY-25], [posX+25, posY]],'k');
+    }
     // 1 = south (90 degrees)
-    // 2 = west (180 degrees)
+    else if (dir == 1 || dir == 90){
+        arrow = new Sprite([[posX,posY+25], [posX+25, posY], [posX-25, posY], [posX, posY+25]],'k');
+    }
+    // 2 = west (180 degrees)    
+    else if (dir == 2 || dir == 180){
+        arrow = new Sprite([[posX-25,posY], [posX, posY+25], [posX, posY-25], [posX-25, posY]],'k');
+    }
     // 3 = north (270 degrees)
+    else{
+        arrow = new Sprite([[posX,posY-25], [posX+25, posY], [posX-25, posY], [posX, posY-25]],'k');
+    }
+
+    arrow.color = '#A9A9A9';
+    // fan.addCollider([[posX+25,posY], [posX, posY+25], [posX, posY-25], [posX+25, posY]]);
+    // fan.addCollider(0, 0, 50);
+    // fan.addCollider([[10,16],[123,203],[23,-23],[10,16]]);  
 
     /*windmillBlade1 = new Sprite([[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]]);
     fanBlade1.y= posY;
