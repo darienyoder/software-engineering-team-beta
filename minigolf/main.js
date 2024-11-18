@@ -26,26 +26,26 @@ var ballLastPosition = 0;
 var webglCanvas;
 var webglContext;
 
-// Sound variables
-let hitSound, holeSound, waterSplash;
-
 // Blitz Mode variable
 let blitzMode = false;
 
-// Loading sound files
-async function loadSounds(){
-    hitSound = loadSound('assets/golfPutt.wav');
-    holeSound = loadSound('assets/golfGoal.wav');
-    waterSplash = loadSound('assets/waterSplash.wav');
-    click = loadSound('assets/buttonpress.mp3');
-    boo = loadSound('assets/boo.mp3');
-    jimmy = loadSound('assets/Jimmy.mp3');
-}
+// Sound variables
+// let hitSound, holeSound, waterSplash;
+
+// //Loading sound files
+// async function loadSounds(){
+//     hitSound = loadSound('assets/golfPutt.wav');
+//     holeSound = loadSound('assets/golfGoal.wav');
+//     waterSplash = loadSound('assets/waterSplash.wav');
+//     click = loadSound('assets/buttonpress.mp3');
+//     boo = loadSound('assets/boo.mp3');
+//     jimmy = loadSound('assets/Jimmy.mp3');
+// }
 
 // Runs once when the program starts
 async function setup()
 {
-    await loadSounds();
+    // await loadSounds();
 
     document.getElementById('mainMenuButton').style.display = 'none';
     document.getElementById('retryButton').style.display = 'none';
@@ -133,33 +133,33 @@ async function setup()
 }
 
 //Hit sound function
-function playHitSound() {
-    hitSound.play();
-}
+// function playHitSound() {
+//     hitSound.play();
+// }
 
 //Hole sound function
-function playGoalSound() {
-    holeSound.play();
-}
+// function playGoalSound() {
+//     holeSound.play();
+// }
 
-//Hole sound function
-function playWaterSound() {
-    waterSplash.play();
-}
-function playClickSound(){
-    click.play();
-}
-function playBooSound(){
-    if (Math.random() > 0.999) {
-        boo.setVolume(0.5);
-        boo.play();
-    }
-}
-function playJimmySound(){
-    if (!jimmy.isPlaying()) {
-        jimmy.play();
-    }
-}
+// //Hole sound function
+// function playWaterSound() {
+//     waterSplash.play();
+// }
+// function playClickSound(){
+//     click.play();
+// }
+// function playBooSound(){
+//     if (Math.random() > 0.999) {
+//         boo.setVolume(0.5);
+//         boo.play();
+//     }
+// }
+// function playJimmySound(){
+//     if (!jimmy.isPlaying()) {
+//         jimmy.play();
+//     }
+// }
 
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
@@ -321,7 +321,7 @@ function keyPressed() {
 }
 
 async function handleGamePlay() {
-
+    
     // Behavior for all GameObjects, *including* the ball and hole
     // To add or change behavior, go to game-objects.js
     for (var object of gameObjects)
@@ -400,7 +400,7 @@ async function handleGamePlay() {
         putter.rotate(90,forceMagnitude/50);
         await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
         putter.rotate(-90,forceMagnitude/50);
-        hitSound.play(); //Playing the ball hit sound
+        // hitSound.play(); //Playing the ball hit sound
         await sleep(forceMagnitude * 5);
 
         // Hide the putter
@@ -412,7 +412,7 @@ async function handleGamePlay() {
 
 
         if (pullDistance > 0) {
-            hitSound.play(); //Playing the ball hit sound
+            // hitSound.play(); //Playing the ball hit sound // This is a duplicate; check 12 lines above
             incrementShots();
             // Just clicking does not increment shots anymore
         }
@@ -475,7 +475,7 @@ async function handleGamePlay() {
     if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
     {
         ballInGoal = true;
-        holeSound.play();
+        // holeSound.play();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
@@ -483,7 +483,7 @@ async function handleGamePlay() {
         await sleep(2000);
 
         // clear();
-        jimmy.stop();
+        // jimmy.stop(); // ? Does this even have a start code anywhere?
         level.clear();
         parMsgVisible = true;
         await sleep(2000);
@@ -505,9 +505,11 @@ async function handleGamePlay() {
 
         }
     }
+    
 
     // Ball has to be stopped in order to move
     if(!ballInGoal) {
+        
         if (blitzMode)
         { // Only allow instant hit if blitz mode is active
             canMove = true;
