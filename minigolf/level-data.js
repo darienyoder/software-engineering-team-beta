@@ -10,6 +10,7 @@ var levelData = [
         obstacles: `
         ADD Tubes 150 150 0 300;
         ADD Tubes 150 450 300 300;
+        ADD Fan 150 300 45;
         `,
         par: 2,
     },
@@ -285,3 +286,4 @@ const testLevel = {
     `,
     par: 5,
 };
+

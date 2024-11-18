@@ -143,6 +143,10 @@ class GameObject {
                 }
 
                 break;
+            
+            // Fan
+            case "fan":
+                break;
 
         }
     }
@@ -340,3 +344,34 @@ function Volcano(posX, posY) {
 }
 
 
+// Make fan
+function Fan(posX, posY, dir){
+    let fan = new Sprite(posX, posY, 'k');
+    fan.diameter = 50;
+    fan.rotation = dir;
+
+    fan.color = 'grey';
+    fan.stroke = 'black';
+    fan.layer = 0;
+
+    // 0 = east (0 degrees)
+    // 1 = south (90 degrees)
+    // 2 = west (180 degrees)
+    // 3 = north (270 degrees)
+
+    /*windmillBlade1 = new Sprite([[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]]);
+    fanBlade1.y= posY;
+    fanBlade1.offset.y = 50;
+    fanBlade1.color="#B8860B";
+    fanBlade1.stroke = 'black';
+    fanBlade1.collider = 'kinematic';*/
+
+    return new GameObject("fan", [fan/*, arrow,
+        [
+            fanBlade1,
+            fanBlade2,
+            fanBlade3,
+            fanBlade4
+        ]
+     */]);
+}
