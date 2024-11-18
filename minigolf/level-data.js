@@ -8,12 +8,10 @@ var levelData = [
             ADD rect 0, 225, 300, 150;
         `,
         obstacles: `
-        ADD Tubes 150 150 0 300;
-        ADD Tubes 150 450 300 300;
-        ADD Fan 150 300 90;
-        ADD Fan 100 300 180;
-        ADD Fan 150 250 270;
-        ADD Fan 200 300 0;
+        ADD Fan 150 150 90;
+        ADD Fan 300 300 180;
+        ADD Fan 150 450 270;
+        ADD Fan 0 300 0;
         `,
         par: 2,
     },
