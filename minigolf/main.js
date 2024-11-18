@@ -397,11 +397,11 @@ async function handleGamePlay() {
         putter.visible = true;
 
         // This is the swing
-        putter.rotate(90,forceMagnitude/50);
-        await sleep(forceMagnitude * 5);        //The 50 and 5 can be changed to whatever looks best
-        putter.rotate(-90,forceMagnitude/50);
-        hitSound.play(); //Playing the ball hit sound
-        await sleep(forceMagnitude * 5);
+        putter.rotate(90,forceMagnitude/10);    //The  /10 can be changed to whatever looks best
+        await sleep(250);
+        putter.rotate(-90,forceMagnitude/10);
+        // hitSound.play(); //Playing the ball hit sound
+        await sleep(250);
 
         // Hide the putter
         putter.visible = false;
