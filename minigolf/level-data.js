@@ -231,6 +231,26 @@ var levelData = [
         `,
         par: 3
     },
+    {
+        ballPosition: [0, 50],
+        holePosition: [0, 550],
+        area: `
+        ADD poly (0, 0), (200, 300), (0, 600), (-200, 300);
+        HEIGHT + -1: hill 50, 100, 60, 50;
+        HEIGHT = 843: oval 50, 100, 10, 10;
+        HEIGHT + 1: hill -90, 160, 80, 70;
+        HEIGHT + 1: hill 100, 230, 90, 70;
+        HEIGHT + -1: hill -120, 300, 80, 60;
+        HEIGHT = 843: oval -120, 300, 10, 10;
+        HEIGHT + 1: hill -80, 430, 110, 80;
+        HEIGHT + -1: hill 100, 380, 80, 70;
+        HEIGHT = 843: oval 100, 380, 10, 10;
+        HEIGHT = 1134: oval 0, 300, 20, 20;
+        `,
+        obstacles: `
+        `,
+        par: 10,
+    },
 ];
 
 const testLevel = {
