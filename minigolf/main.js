@@ -516,7 +516,7 @@ async function handleGamePlay() {
                 messageTime = millis();
             }
         }
-        else if (ball.stillTime > 360) //(ball.vel.x==0 && ball.vel.y==0)
+        else if (ball.stillTime > 360 || (ball.vel.x==0 && ball.vel.y==0))
         {
             canMove = true //Player can take the next shot
             ball.vel.setMag(0.0);
@@ -643,15 +643,15 @@ function drawPutter(){
 }
 
 function distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py) {
-   var ldx = lx2 - lx1,
+    var ldx = lx2 - lx1,
        ldy = ly2 - ly1,
        lineLengthSquared = ldx*ldx + ldy*ldy;
-   return distanceSquaredToLineSegment2(lx1, ly1, ldx, ldy, lineLengthSquared, px, py);
+    return distanceSquaredToLineSegment2(lx1, ly1, ldx, ldy, lineLengthSquared, px, py);
 }
 
 function distanceToLineSegment(lx1, ly1, lx2, ly2, px, py)
 {
-   return Math.sqrt(distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py));
+    return Math.sqrt(distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py));
 }
 
 async function drawPar() {
