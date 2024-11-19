@@ -516,7 +516,7 @@ async function handleGamePlay() {
                 messageTime = millis();
             }
         }
-        else if (ball.stillTime > 360) //(ball.vel.x==0 && ball.vel.y==0)
+        else if (ball.stillTime > 360 || (ball.vel.x==0 && ball.vel.y==0))
         {
             canMove = true //Player can take the next shot
             ball.vel.setMag(0.0);
