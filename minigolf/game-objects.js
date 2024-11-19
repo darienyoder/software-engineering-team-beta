@@ -150,47 +150,44 @@ class GameObject {
                 let fanPower = 25;
                 let  fanFurthest = 200;
 
-                // // East Blowing Fan
-                // if(this.sprites[0].rotation == 0){
-                //     if (ball.y >= this.sprites[0].y-25 && 
-                //         ball.y <= this.sprites[0].y+25 &&
-                //         ball.x >= this.sprites[0].x &&
-                //         ball.x <= this.sprites[0].x + fanFurthest){
+                // East Blowing Fan
+                if(this.sprites[0].rotation == 0){
+                    if (ball.y >= this.sprites[0].y-25 && 
+                        ball.y <= this.sprites[0].y+25 &&
+                        ball.x >= this.sprites[0].x &&
+                        ball.x <= this.sprites[0].x + fanFurthest){
                         
-                //         ball.vel.x += abs(fanPower/fanDist);
-                //     }
-                // }
+                        ball.vel.x += abs(fanPower/fanDist);
+                    }
+                }
 
-                // // South Blowing Fan
-                // if(this.sprites[0].rotation ==90){
-                //     if (ball.x >= this.sprites[0].x-25 && 
-                //         ball.x <= this.sprites[0].x+25 &&
-                //         ball.y <= this.sprites[0].y + fanFurthest && 
-                //         ball.y >= this.sprites[0].y){
+                // South Blowing Fan
+                else if(this.sprites[0].rotation ==90){
+                    if (ball.x >= this.sprites[0].x-25 && 
+                        ball.x <= this.sprites[0].x+25 &&
+                        ball.y <= this.sprites[0].y + fanFurthest && 
+                        ball.y >= this.sprites[0].y){
                         
-                //         ball.vel.y += abs(fanPower/fanDist);
-                //     }
-                // }
+                        ball.vel.y += abs(fanPower/fanDist);
+                    }
+                }
 
-                // // West Blowing Fan
-                // if(this.sprites[0].rotation == 180){
-                //     if (ball.y >= this.sprites[0].y-25 && 
-                //         ball.y <= this.sprites[0].y+25 &&
-                //         ball.x <= this.sprites.x &&
-                //         ball.x >= this.sprites[0].x - fanFurthest){
+                // West Blowing Fan
+                else if(this.sprites[0].rotation == 180){
+                    if (ball.y >= this.sprites[0].y-25 && 
+                        ball.y <= this.sprites[0].y+25 &&
+                        ball.x <= this.sprites[0].x &&
+                        ball.x >= this.sprites[0].x - fanFurthest){
                         
-                //         ball.vel.x -= abs(fanPower/fanDist);
-                //     }
-                // }
+                        ball.vel.x -= abs(fanPower/fanDist);
+                    }
+                }
 
                 // North Blowing Fan
-                if(ball.y < 100){
-                    ball.y = 455;
-                }
-                if(this.sprites[0].rotation ==90){
-                    if (/*ball.x >= this.sprites[0].x-25 && 
+                else {
+                    if (ball.x >= this.sprites[0].x-25 && 
                         ball.x <= this.sprites[0].x+25 &&
-                        ball.y <= this.sprites[0].y && */
+                        ball.y <= this.sprites[0].y && 
                         ball.y >= this.sprites[0].y - fanFurthest){
                         
                         ball.vel.y -= abs(fanPower/fanDist);
