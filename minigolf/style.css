@@ -29,6 +29,13 @@
     left: 20px;
     width: 100px;
     height: 100px;
+
+    background-color: #fcca5d;
+    background-image: url("assets/menu/back_arrow.png");
+    background-position: center;
+    background-size: contain;
+    border: solid 5px #fce4b0;
+    border-radius: 25%;
 }
 
 .center-content {
@@ -38,6 +45,21 @@
     align-items: center;
     justify-content: center;
     pointer-events: none;
+}
+
+button {
+    cursor: pointer;
+    transition: scale 0.1s;
+
+    background-color: #fcca5d;
+    background-position: center;
+    background-size: contain;
+    border: solid 5px #fce4b0;
+    border-radius: 25%;
+}
+
+button:hover {
+    scale: 1.1;
 }
 
 #main-menu button {
@@ -55,6 +77,15 @@
     width: 100px;
     height: 100px;
     margin: 10px;
+
+    background-color: #fcca5d;
+    /* background-image: url("assets/menu/pause.png"); */
+    background-position: center;
+    background-size: contain;
+    border: solid 5px #fce4b0;
+    border-radius: 25%;
+
+    font-size: 50px;
 }
 
 .pause-button {
@@ -63,10 +94,29 @@
     right: 20px;
     width: 100px;
     height: 100px;
+    background-color: #fcca5d;
+    background-image: url("assets/menu/pause.png");
+    background-position: center;
+    background-size: contain;
+    border: solid 5px #fce4b0;
+    border-radius: 25%;
 }
 
 #pause {
     background-color: #00000080;
+}
+
+#pause h1 {
+    padding: 0px;
+    text-align: center;
+}
+
+#pause button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 30px;
 }
 
 #settings {
@@ -100,8 +150,20 @@
     writing-mode: vertical-lr;
     direction: rtl;
     appearance: slider-vertical;
-    width: 16px;
+    width: 25px;
     vertical-align: bottom;
+
+    background-color: #ffd080;
+
+}
+
+#zoom-slider::-webkit-slider-thumb, #zoom-slider::-moz-range-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 100px; /* Set a specific slider handle width */
+  height: 50px; /* Slider handle height */
+  background: orange; /* Green background */
+  cursor: pointer; /* Cursor on hover */
 }
 
 #sideways-notifier {
