@@ -167,7 +167,7 @@
                     <h1>Great Job!</h1>
                     <div class="spaced-row">
                         <button onclick="level.clear(); setMenu('level-select');" style="background-image:url('assets/menu/home.png')"></button>
-                        <button onclick="level.nextLevel();" style="background-image:url('assets/menu/forward_arrow.png')"></button>
+                        <button onclick="if (level.number == levelData.length - 1) {level.clear(); setMenu('level-select');} else level.nextLevel();" style="background-image:url('assets/menu/forward_arrow.png')"></button>
                     </div>
                 </div>
             </div>
