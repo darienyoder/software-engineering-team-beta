@@ -1,0 +1,32 @@
+name: Deploy to SSH Server
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Runs on a GitHub-hosted Ubuntu runner
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3  # This checks out your repository so that we can deploy the code
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3  # Set up SSH with the private key
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Use the private key stored in GitHub Secrets
+
+    - name: Deploy to server
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openssh-client
+
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd ~/github_contents || exit
+
+          git pull origin main || exit
+          
+          cp -r minigolf/* ~/public_html/ || exit
+        EOF
