@@ -112,7 +112,7 @@ button:hover {
     border-radius: 25%;
 }
 
-#pause {
+#pause, #level-complete {
     background-color: #00000080;
 }
 
