@@ -20,7 +20,7 @@ const vec3 minHeightColor = vec3(.149, .298, .149);
 const vec3 maxHeightColor = vec3(.447, .898, .447);
 
 const float SAND_HEIGHT = 01134.0;
-const float WATER_HEIGHT = 843.0;
+const float WATER_HEIGHT = -843.0;
 
 uniform vec2 screenSize;
 uniform vec4 bounds;
