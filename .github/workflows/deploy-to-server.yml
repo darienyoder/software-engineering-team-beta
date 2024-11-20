@@ -24,7 +24,8 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y openssh-client
 
-        ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        # ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF' #SSHKey not enabled yet
+        ssh -p ${{ secrets.SSH_PASSWORD }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd ~/github_contents || exit
 
           git pull origin main || exit
