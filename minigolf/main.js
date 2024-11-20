@@ -502,13 +502,13 @@ async function handleGamePlay() {
         await sleep(2000);
 
         // clear();
-        jimmy.stop();
-        level.clear();
-        parMsgVisible = true;
-        await sleep(2000);
+        // jimmy.stop();
+        // level.clear();
+        // parMsgVisible = true;
+        // await sleep(2000);
 
-        level.clear();
-        setMenu("level-select");
+        // level.clear();
+        setMenu("level-complete");
         ballInGoal = false;
         canMove = true;
     }
