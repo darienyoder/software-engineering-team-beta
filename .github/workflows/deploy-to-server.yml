@@ -14,19 +14,24 @@ jobs:
       uses: actions/checkout@v3  # This checks out your repository so that we can deploy the code
 
     - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3  # Set up SSH with the private key
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Use the private key stored in GitHub Secrets
+      run: |
+
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+        chmod 600 private_key.pem  # Secure the private key file
 
     - name: Deploy to server
       run: |
         sudo apt-get update
         sudo apt-get install -y openssh-client
 
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY}} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd ~/github_contents || exit
 
           git pull origin main || exit
           
           cp -r minigolf/* ~/public_html/ || exit
         EOF
+
+    - name: Clean up SSH private key
+      run: |
+        rm -f private_key.pem
