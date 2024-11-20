@@ -26,9 +26,9 @@ jobs:
 
         ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF' #SSHKey not enabled yet
         #ssh -p ${{ secrets.SSH_PASSWORD }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd ~/github_contents || exit
+          cd ~/github_contents/software-engineering-team-beta || exit
 
-          git pull origin main || exit
+          git pull || exit
           
           cp -r minigolf/* ~/public_html/ || exit
         EOF
