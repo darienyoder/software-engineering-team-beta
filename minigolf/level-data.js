@@ -84,10 +84,10 @@ var levelData = [
         ],
         area: `
         ADD rect 0, 0, 390, 420;
-        HEIGHT = 843: rect -5, -5, 85, 350;
-        HEIGHT = 843: rect -5, 340, 400, 80;
-        HEIGHT = 843: rect 310, 50, 80, 300;
-        HEIGHT = 843: rect 122, -5, 145, 310;
+        HEIGHT = -843: rect -5, -5, 85, 350;
+        HEIGHT = -843: rect -5, 340, 400, 80;
+        HEIGHT = -843: rect 310, 50, 80, 300;
+        HEIGHT = -843: rect 122, -5, 145, 310;
         `,
         obstacles:`
 
@@ -142,7 +142,7 @@ var levelData = [
             ADD rect 0, 200, 300, 50;
             ADD circle 150, 200, 70, 70;
             // ADD rect 113, 110, 75, 75;
-            HEIGHT = 843: rect 80, 100, 150, 100;
+            HEIGHT = -843: rect 80, 100, 150, 100;
 
             // Bottom section;
             ADD rect 0, 400, 300, 50;
@@ -274,14 +274,14 @@ var levelData = [
         area: `
         ADD poly (0, 0), (200, 300), (0, 600), (-200, 300);
         HEIGHT + -1: hill 50, 100, 60, 50;
-        HEIGHT = 843: oval 50, 100, 10, 10;
+        HEIGHT = -843: oval 50, 100, 10, 10;
         HEIGHT + 1: hill -90, 160, 80, 70;
         HEIGHT + 1: hill 100, 230, 90, 70;
         HEIGHT + -1: hill -120, 300, 80, 60;
-        HEIGHT = 843: oval -120, 300, 10, 10;
+        HEIGHT = -843: oval -120, 300, 10, 10;
         HEIGHT + 1: hill -80, 430, 110, 80;
         HEIGHT + -1: hill 100, 380, 80, 70;
-        HEIGHT = 843: oval 100, 380, 10, 10;
+        HEIGHT = -843: oval 100, 380, 10, 10;
         HEIGHT = 1134: oval 0, 300, 20, 20;
         `,
         obstacles: `
@@ -303,11 +303,11 @@ var levelData = [
              ADD rect 150, -150, 230, 70;
 
              //water in the course ;
-             HEIGHT = 843: oval 10, 10, 42, 37; 
-             HEIGHT = 843: oval 58, 150, 30, 35; 
-             HEIGHT = 843: oval 195, 54, 39, 34; 
-             HEIGHT = 843: oval 165, -140, 40, 35; 
-             HEIGHT = 843: oval 290, -80, 35, 30; 
+             HEIGHT = -843: oval 10, 10, 42, 37; 
+             HEIGHT = -843: oval 58, 150, 30, 35; 
+             HEIGHT = -843: oval 195, 54, 39, 34; 
+             HEIGHT = -843: oval 165, -140, 40, 35; 
+             HEIGHT = -843: oval 290, -80, 35, 30; 
         `,
         obstacles:`
             

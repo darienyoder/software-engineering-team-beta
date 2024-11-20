@@ -16,7 +16,7 @@ var wallStroke = 'black';
 // Any terrain at these heights will be treated as their respective obstacles.
 // Values are arbitrary.
 const SAND_HEIGHT = 1134; // h3ll0
-const WATER_HEIGHT = 843; // BY3
+const WATER_HEIGHT = -843; // BY3
 
 // Terrain types
 const SURFACE_FLOOR = 0;
