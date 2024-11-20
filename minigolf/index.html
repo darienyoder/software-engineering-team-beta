@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="data:," />
     <title>Minigolf</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         html,
         body {
@@ -13,7 +14,7 @@
             padding: 0;
             overscroll-behavior: none;
         }
-      
+
         .p5-fullscreen {
             position: relative;
             z-index: 0;
@@ -131,20 +132,86 @@
 <body>
     <main></main>
 
-    <button id="startButton" class="homeButton">Start Game</button>
-    <button id="levelSelectButton" class="homeButton">Level Select</button>
-    
-    <button id="mainMenuButton" class="homeButton">Return to Main Menu</button>
-    <button id="retryButton" class="homeButton">Replay Game</button>
-    <button id="blitzModeButton" class="homeButton">Blitz Mode: Off</button>
-
-    <button id="menuButton">⚙️</button>
-    <div id="settingsMenu">
-        <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
-        <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
-        <input id="colorSelector" type="color">
+    <div id="menus">
+        <div id="main-menu">
+            <div class="center-content">
+                <button onclick="setMenu('level-select'); blitzMode=false;">Play</button>
+                <button onclick="setMenu('level-select'); blitzMode=true;">Blitz</button>
+                <button onclick="setMenu('settings');">Settings</button>
+            </div>
+        </div>
+        <div id="level-select">
+            <button class="back-button" onclick="setMenu('main-menu');">Back</button>
+            <div class="center-content">
+                <div id="level-select-wrapper"></div>
+            </div>
+        </div>
+        <div id="level">
+            <input type="range" min="0.0" max="1.0" step="0.01" value="0.0" class="slider" id="zoom-slider" orient="vertical">
+            <button class="pause-button" onclick="setMenu('pause');">Pause</button>
+        </div>
+        <div id="pause">
+            <div class="center-content">
+                <div class="menu-panel">
+                    <h1>Paused</h1>
+                    <button onclick="setMenu('level');">Resume</button>
+                    <button onclick="setMenu('level'); level.load(level.number);">Restart</button>
+                    <button onclick="setMenu('settings');">Settings</button>
+                    <button onclick="setMenu('level-select');level.clear();">Quit</button>
+                </div>
+            </div>
+        </div>
+        <div id="settings">
+            <div class="center-content">
+                <div>
+                    <button class="back-button" onclick="if (level.number == -1) setMenu('main-menu'); else setMenu('pause');">Back</button>
+                    <h1>Settings</h1>
+                    <!-- Music Volume -->
+                    <h2>Music Volume</h2>
+                    <div class="full-width">
+                        <input type="range" min="0.0" max="2.0" step="0.1" value="1.0" class="slider">
+                    </div>
+                    <!-- Sound Effect Volume -->
+                    <h2>Sound Effect Volume</h2>
+                    <div class="full-width">
+                        <input type="range" min="0.0" max="2.0" step="0.1" value="1.0" class="slider">
+                    </div>
+                    <!-- Show Topography -->
+                    <h2>
+                        <input id="showTopography" type="checkbox" name="showTopography">
+                        <label for="showTopography">Show Topography</label>
+                    </h2>
+                    <!-- Grid on floor -->
+                    <h2>
+                        <input id="checkeredGrass" type="checkbox" name="checkeredGrass" checked>
+                        <label for="checkeredGrass">Checkered Grass</label>
+                    </h2>
+                </div>
+            </div>
+        </div>
     </div>
-    
+
+    <div id="sideways-notifier">
+        <h1>Turn your phone sideways</h1>
+    </div>
+
+    <!-- Old Menus -->
+    <div style="display:none;">
+        <button id="startButton" class="homeButton">Start Game</button>
+        <button id="levelSelectButton" class="homeButton">Level Select</button>
+
+        <button id="mainMenuButton" class="homeButton">Return to Main Menu</button>
+        <button id="retryButton" class="homeButton">Replay Game</button>
+        <button id="blitzModeButton" class="homeButton">Blitz Mode: Off</button>
+
+        <button id="menuButton">⚙️</button>
+        <div id="settingsMenu">
+            <button class="settingsButton" id="colorButton">Change Trajectory Color</button>
+            <button class="settingsButton" id="cameraButton">Camera Mode: Center</button>
+            <input id="colorSelector" type="color">
+        </div>
+    </div>
+
     <!-- P5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
@@ -204,7 +271,7 @@
         });
 
     </script>
-    
+
 
 </body>
 

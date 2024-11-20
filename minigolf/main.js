@@ -7,6 +7,7 @@ var level; // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
+var putter;
 
 var gameState = 'menu';
 var fullGameMode = true;
@@ -102,16 +103,6 @@ async function setup()
         cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
         document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
 
-        if (gameState==='playing'){
-
-            if(cameraMode == "Center")
-            {
-            // Set the camera to be at the center of the canvas
-            camera.x = (level.bounds.right + level.bounds.left) / 2;
-            camera.y = (level.bounds.bottom + level.bounds.top) / 2;
-            }
-
-    }
     });
 
     // Create WebGL Canvas
@@ -130,6 +121,30 @@ async function setup()
 
     // Pass WebGL canvas to level object for drawing
     level = new Level(webglCanvas);
+
+    // Add level select buttons to menu
+    for (var i in levelData)
+    {
+        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + ")'>" + (Number(i) + 1) +"</button>"
+    }
+
+    setMenu("main-menu");
+
+    createPutter();
+}
+
+var currentMenu = "";
+
+function setMenu(newMenu)
+{
+    currentMenu = newMenu;
+    for (var menu of document.getElementById("menus").children)
+    {
+        if (menu.id == newMenu)
+            menu.style.display = "block";
+        else
+            menu.style.display = "none";
+    }
 }
 
 //Hit sound function
@@ -164,7 +179,10 @@ function playJimmySound(){
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
+}
 
+function createPutter()
+{
     // Creating the putter head
     putter = new Sprite(10,10,5,10,'n');
     putter.image = 'assets/putter.png';
@@ -199,17 +217,18 @@ async function draw()
     clear();
 
     if (gameState === 'menu') {
-        drawMainMenu();
+        // drawMainMenu();
     } else if (gameState === 'levelSelect') {
-        handleLevelSelect();
+        // handleLevelSelect();
     }
-    else if (gameState === 'playing') {
+    if (gameState === 'playing' || currentMenu == "level") {
         // Draw the stage using "level-generation.js"
+        level.drawStage();
+
         if (parMsgVisible) {
             clear()
             await drawPar();
         } else {
-            level.drawStage();
             handleGamePlay();
         }
     } else if (gameState === 'gameOver') {
@@ -327,13 +346,11 @@ async function handleGamePlay() {
     for (var object of gameObjects)
         object.update();
 
-
-    // Sets ball position when camera is follow
-    if (cameraMode === "Follow") {
-        // Make camera follow the ball's position
-        camera.x = ball.x;
-        camera.y = ball.y;
-    }
+    // Lerps camera zoom between just the ball and the entire level
+    levelZoom = document.getElementById("zoom-slider").value;
+    camera.x = lerp((level.bounds.right + level.bounds.left) / 2, ball.x, levelZoom);
+    camera.y = lerp((level.bounds.bottom + level.bounds.top) / 2, ball.y, levelZoom);
+    camera.zoom = lerp(Math.min(((window.innerWidth - level.levelMargin) / (level.bounds.right - level.bounds.left)), ((window.innerHeight - level.levelMargin) / (level.bounds.bottom - level.bounds.top))), 3.0, levelZoom);
 
     // Draw the stroke counter & Par
 
@@ -343,7 +360,7 @@ async function handleGamePlay() {
     }
 
     // When mouse is pressed...
-    if (mouse.presses() && canMove) {
+    if (mouse.presses() && canMove && levelToScreen(mouse.pos).x > 100 && levelToScreen(mouse.pos).x < window.innerWidth - 120) {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
@@ -381,7 +398,6 @@ async function handleGamePlay() {
         pullStart = null;
 
         putter.visible = false; // hides the putter while it does its move
-        
 
         // This moves the pivot point onto the handle
         putter.image.offset.x = 0;
@@ -488,22 +504,10 @@ async function handleGamePlay() {
         parMsgVisible = true;
         await sleep(2000);
 
-        if (fullGameMode) {
-            level.nextLevel();
-            ballInGoal = false;
-            canMove = true;
-        }
-        else { //if in single level mode
-
-            //clear everything
-            level.clear();
-
-            gameState = 'menu'; //return to menu
-            document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
-            document.getElementById('levelSelectButton').style.display = 'block';
-            document.getElementById('blitzModeButton').style.display = 'block';
-
-        }
+        level.clear();
+        setMenu("level-select");
+        ballInGoal = false;
+        canMove = true;
     }
 
     // Ball has to be stopped in order to move

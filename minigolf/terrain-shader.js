@@ -35,6 +35,7 @@ uniform vec4 data2[maxModifiers];
 uniform int gradient[maxModifiers];
 
 uniform int showTopography;
+uniform int checkeredGrass;
 
 vec2 reverseYCoordinates( vec2 screenCoords )
 {
@@ -195,11 +196,11 @@ void main( void )
     else
     {
         color = mix( minHeightColor, maxHeightColor, (pointHeight - minHeight) / (maxHeight - minHeight) );
-        if (mod(floor(coords.x / 20.0) + floor(coords.y / 20.0), 2.0) == 0.0)
+        if (checkeredGrass == 1 && mod(floor(coords.x / 20.0) + floor(coords.y / 20.0), 2.0) == 0.0)
             color /= 1.1; //+= vec3(0.05);
     }
 
-    if (isTopographyLine(pointHeight))
+    if (isTopographyLine(pointHeight) && mod(pointHeight, 1.0) != 0.0)
         color = vec3(0.2 + 0.8 * (pointHeight - minHeight) / (maxHeight - minHeight));
 
 	gl_FragColor.rgb = color;
