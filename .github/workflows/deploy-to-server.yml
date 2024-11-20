@@ -22,8 +22,41 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y openssh-client
+        
+        SSH_USER="${{ secrets.SSH_USER }}"
+        SERVER_IP="${{ secrets.SERVER_IP }}"
+        PASSWORD="${{ secrets.SSH_PASSWORD }}"
+        
+        attempt_ssh_with_key() {
+          echo "Attempting SSH with SSH key..."
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SSH_USER@$SERVER_IP 'echo SSH key authentication succeeded.' > /dev/null 2>&1
+          return $?
+        }
 
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        attempt_ssh_with_password() {
+          echo "Attempting SSH with username/password..."
+          sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP 'echo SSH password authentication succeeded.' > /dev/null 2>&1
+          return $?
+        }
+
+        attempt_ssh_with_key
+        SSH_STATUS=$?
+
+        if [ $SSH_STATUS -eq 0 ]; then
+          echo "SSH authentication succeeded with the key."
+        else
+          echo "SSH key authentication failed, trying with username/password..."
+          attempt_ssh_with_password
+          SSH_STATUS=$?
+          if [ $SSH_STATUS -eq 0 ]; then
+            echo "SSH authentication succeeded with username/password."
+          else
+            echo "SSH authentication failed with both key and password."
+            exit 1
+          fi
+        fi
+        
+        ssh -o StrictHostKeyChecking=no $SSH_USER@$SERVER_IP << 'EOF'
           cd ~/github_contents || exit
 
           git pull origin main || exit
