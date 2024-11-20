@@ -216,6 +216,8 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
+    world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
+
     if (gameState === 'menu') {
         // drawMainMenu();
     } else if (gameState === 'levelSelect') {
@@ -233,7 +235,7 @@ async function draw()
         }
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
-        drawGameOver();
+        // drawGameOver();
     }
 }
 
@@ -343,8 +345,9 @@ async function handleGamePlay() {
 
     // Behavior for all GameObjects, *including* the ball and hole
     // To add or change behavior, go to game-objects.js
-    for (var object of gameObjects)
-        object.update();
+    if (currentMenu == "level")
+        for (var object of gameObjects)
+            object.update();
 
     // Lerps camera zoom between just the ball and the entire level
     levelZoom = document.getElementById("zoom-slider").value;
@@ -360,7 +363,7 @@ async function handleGamePlay() {
     }
 
     // When mouse is pressed...
-    if (mouse.presses() && canMove && levelToScreen(mouse.pos).x > 100 && levelToScreen(mouse.pos).x < window.innerWidth - 120) {
+    if (mouse.presses() && canMove && levelToScreen(mouse.pos).x > 125 && levelToScreen(mouse.pos).x < window.innerWidth - 120) {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
@@ -561,18 +564,18 @@ function sleep(milliseconds)
 
 function drawStrokeCount()
 {
-    fill(0); // Set text color to black
-    textSize(20); // Set text size
-    textAlign(RIGHT, TOP); // Align text to the top-right corner
-    text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
+    // fill(0); // Set text color to black
+    // textSize(20); // Set text size
+    // textAlign(RIGHT, TOP); // Align text to the top-right corner
+    // text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
 }
 
 function drawParCount()
 {
-    fill(0); // Set text color to black
-    textSize(20); // Set text size
-    textAlign(LEFT, TOP); // Align text to the top-right corner
-    text(`Par: ${par}`, 20, 20); // Draw the stroke count
+    // fill(0); // Set text color to black
+    // textSize(20); // Set text size
+    // textAlign(LEFT, TOP); // Align text to the top-right corner
+    // text(`Par: ${par}`, 20, 20); // Draw the stroke count
 }
 
 function incrementShots()
@@ -633,10 +636,10 @@ function drawUserAssistance() {
 }
 
 function drawMessage() {
-    fill(0); //Setting text color
-    textSize(24); //Setting text size
-    textAlign(CENTER, CENTER); // Centering text
-    text(message, width / 2, height / 9 * 2.5); //Moving the up
+    // fill(0); //Setting text color
+    // textSize(24); //Setting text size
+    // textAlign(CENTER, CENTER); // Centering text
+    // text(message, width / 2, height / 9 * 2.5); //Moving the up
 }
 
 function drawPutter(){

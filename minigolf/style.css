@@ -1,3 +1,7 @@
+* {
+    font-family: sans-serif;
+}
+
 #menus {
     position: fixed;
     top: 0px;
@@ -62,6 +66,12 @@ button:hover {
     scale: 1.1;
 }
 
+#main-menu, #level-select, #settings {
+    background-image: url("assets/menu/main_background.png");
+    background-position: center;
+    background-size: cover;
+}
+
 #main-menu button {
     width: 10%;
     aspect-ratio: 1;
@@ -124,15 +134,24 @@ button:hover {
     text-align: center;
 }
 
+#settings > .center-content > div {
+    background-color: #f2ece3;
+    border: solid 5px black;
+    padding: 50px;
+    border-radius: 50px;
+}
+
 .menu-panel {
-    background-color: gray;
-    border: solid 2px black;
+    background-color: #ccc7bf;
+    border: solid 5px black;
+    border-radius: 50px;
     padding: 50px;
     position: relative;
 }
 
 .menu-panel button {
     display: block;
+    min-width: 200px;
 }
 
 .full-width {
@@ -140,7 +159,6 @@ button:hover {
 }
 
 #zoom-slider {
-
     position: absolute;
     top: 50px;
     bottom: 50px;
@@ -154,7 +172,6 @@ button:hover {
     vertical-align: bottom;
 
     background-color: #ffd080;
-
 }
 
 #zoom-slider::-webkit-slider-thumb, #zoom-slider::-moz-range-thumb {
@@ -164,6 +181,24 @@ button:hover {
   height: 50px; /* Slider handle height */
   background: orange; /* Green background */
   cursor: pointer; /* Cursor on hover */
+}
+
+#level-complete {
+    text-align: center;
+}
+
+#level-complete button {
+    width: 100px !important;
+    height: 100px !important;
+    min-width: 0px;
+    aspect-ratio: 1/1;
+}
+
+.spaced-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 20px;
 }
 
 #sideways-notifier {
@@ -178,10 +213,14 @@ button:hover {
         bottom: 0px;
         left: 0px;
         right: 0px;
-        background-color: red;
+
+        background-image: url("assets/menu/main_background.png");
+        background-position: center;
+        background-size: cover;
 
         display: flex;
         justify-content: center;
         align-items: center;
+        text-align: center;
     }
 }
