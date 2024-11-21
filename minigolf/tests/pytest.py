@@ -74,11 +74,11 @@ try:
 
     # Wait for the page to load (waiting for a specific element to appear)
     WebDriverWait(driver, 45).until(
-        EC.presence_of_element_located((By.ID, "startButton"))
+        EC.presence_of_element_located((By.ID, "start-button"))
     )
 
     # Interact with the page (for example, trigger the start button)
-    startButton = driver.find_element(By.ID, "startButton")
+    startButton = driver.find_element(By.ID, "start-button")
     startButton.click()
 
     # Optionally, capture console logs

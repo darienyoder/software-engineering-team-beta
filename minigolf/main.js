@@ -51,20 +51,20 @@ async function setup()
     document.getElementById('mainMenuButton').style.display = 'none';
     document.getElementById('retryButton').style.display = 'none';
 
-    // Starts the game / goes into level select once buttons are pressed if in the menu
-    document.getElementById('startButton').addEventListener('click', () => {
-        if(gameState == 'menu') {
-            startGame();
-            document.getElementById('startButton').style.display = 'none';
-            document.getElementById('levelSelectButton').style.display = 'none';
-            document.getElementById('blitzModeButton').style.display = 'none';
-        }
-
-        //Need this for camera to work
-        if (cameraModeOptions.length<=1) {
-            cameraModeOptions.push("Follow");
-        }
-    })
+    // // Starts the game / goes into level select once buttons are pressed if in the menu
+    // document.getElementById('startButton').addEventListener('click', () => {
+    //     if(gameState == 'menu') {
+    //         startGame();
+    //         document.getElementById('startButton').style.display = 'none';
+    //         document.getElementById('levelSelectButton').style.display = 'none';
+    //         document.getElementById('blitzModeButton').style.display = 'none';
+    //     }
+    //
+    //     //Need this for camera to work
+    //     if (cameraModeOptions.length<=1) {
+    //         cameraModeOptions.push("Follow");
+    //     }
+    // })
     document.getElementById('levelSelectButton').addEventListener('click', () => {
         if(gameState == 'menu') {
             levelSelect()
