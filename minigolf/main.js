@@ -216,6 +216,9 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
+    webglCanvas.setAttribute('width', window.innerWidth);
+    webglCanvas.setAttribute('height', window.innerHeight);
+
     world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
 
     if (gameState === 'menu') {
@@ -349,6 +352,8 @@ async function handleGamePlay() {
         for (var object of gameObjects)
             object.update();
 
+    canvas.resize(window.innerWidth, window.innerHeight);
+    
     // Lerps camera zoom between just the ball and the entire level
     levelZoom = document.getElementById("zoom-slider").value;
     camera.x = lerp((level.bounds.right + level.bounds.left) / 2, ball.x, levelZoom);
