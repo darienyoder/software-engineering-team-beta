@@ -315,6 +315,27 @@ var levelData = [
         `,
         par:4
     },
+    {
+        // Circular Hilly Level
+        ballPosition: [300, 525],
+        holePosition: [300, 300],
+        area: `
+
+            ADD circle 300, 300, 200;
+            ADD rect 250, 450, 100, 120;
+
+            HEIGHT + 1: hill 300, 400, 60, 60;
+            HEIGHT + 1: hill 300, 200, 60, 60;
+            HEIGHT + 1: hill 400, 300, 60, 60;
+            HEIGHT + 1: hill 200, 300, 60, 60;
+
+            HEIGHT = -843: oval 300, 360, 75, 25;
+            
+        `,
+        obstacles: `
+        `,
+        par: 4
+    },
 ];
 
 const testLevel = {
