@@ -491,7 +491,7 @@ async function handleGamePlay() {
     prevVelY = ball.vel.y;
 
     // Hole functionality Ball must be going slow to get in hole
-    if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
+    if (hole.overlaps(ball))
     {
         ballInGoal = true;
         holeSound.play();
