@@ -34,7 +34,7 @@ jobs:
 
           cd ~/public_html/ || exit
 
-          nohup python -m http.server 9008 --directory ~/public_html & || exit
+          nohup python -m http.server 9008 --directory ~/public_html &
         EOF
 
     - name: Clean up SSH private key
