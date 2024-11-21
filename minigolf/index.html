@@ -46,12 +46,12 @@
             transform: translate(-50%, -55%);
         }
 
-        #startButton {
+        /* #startButton {
             position: absolute;
             left: 50%;
             top: 45%;
             transform: translate(-50%, -45%);
-        }
+        } */
 
         #blitzModeButton {
             position: absolute;
@@ -135,7 +135,7 @@
     <div id="menus">
         <div id="main-menu">
             <div class="center-content">
-                <button onclick="setMenu('level-select'); blitzMode=false;" style="background-image:url('assets/menu/play.png')"></button>
+                <button id="startButton" onclick="setMenu('level-select'); blitzMode=false;" style="background-image:url('assets/menu/play.png')"></button>
                 <button onclick="setMenu('level-select'); blitzMode=true;" style="background-image:url('assets/menu/blitz.png')"></button>
                 <button onclick="setMenu('settings');" style="background-image:url('assets/menu/settings.png')"></button>
             </div>
