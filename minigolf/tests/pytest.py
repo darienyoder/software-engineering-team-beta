@@ -39,10 +39,14 @@ def wait_for_server(timeout=45):
         try:
             response = requests.get(f'http://localhost:{PORT}/{HTML_FILE}')
             if response.status_code == 200:
+                print("Server is up and running.")
                 return True
         except requests.ConnectionError:
-            time.sleep(1)  # Wait a moment before retrying
+            print("Waiting for server to start...")
+            time.sleep(1)
+    print("Server did not start in time.")
     return False
+
 
 # Setup Chrome options
 chrome_options = Options()
