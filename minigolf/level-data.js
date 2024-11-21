@@ -343,10 +343,9 @@ var levelData = [
             HEIGHT + 1: hill 350, 170, 60, 100;
             HEIGHT + 1: hill 90, 50, 60, 60;
             HEIGHT + -1: hill 0, 300, 60, 60;
-             //water in the course ;
-             HEIGHT = -843: oval 200, 150, 100, 50; 
-             HEIGHT = -843: oval 0, 300, 20, 20;
-             HEIGHT = 1134: rect 100, 250, 100, 50;
+            HEIGHT = -843: oval 200, 150, 100, 50; 
+            HEIGHT = -843: oval 0, 300, 20, 20;
+            HEIGHT = 1134: rect 100, 250, 100, 50;
         `,
         obstacles:`
             ADD Volcano 300 220;
