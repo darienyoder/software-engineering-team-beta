@@ -1,5 +1,5 @@
 var levelData = [
-    {
+        {
         ballPosition: [50, 75],
         holePosition: [250, 75],
         area: `
@@ -236,6 +236,39 @@ var levelData = [
             ADD Rock 50 550;
         `,
         par: 3
+    },
+    {
+        ballPosition: [50, 25],
+        holePosition: [270, 720],
+        area: `
+            ADD rect 0, 0, 300, 750;
+            ADD rect 300, 200, 200, 150;
+
+            SUB rect 60, 700, 10, 50;
+            SUB rect 130, 700, 10, 50;
+            SUB rect 230, 700, 10, 50;
+            HEIGHT = -843: oval 185, 750, 50, 50; 
+
+            SUB poly (100, 399), (175, 450), (50, 499);
+        `,
+        obstacles: `
+        ADD Windmill 100 675;
+        ADD Windmill 177 235;
+        ADD Tubes 450 325 25 270;
+        ADD Tubes 30 720 25 25;
+        ADD Volcano 350 270; 
+        ADD Rock 43 283;
+        ADD Rock 248 566;
+        ADD Rock 132 252;
+        ADD Rock 30 152;
+        ADD Rock 259 585;
+        ADD Rock 192 436;
+        ADD Rock 168 145;
+        ADD Rock 173 437;
+        ADD Rock 49 264;
+        ADD Rock 26 129;
+        `,
+        par: 5,
     },
 ];
 
