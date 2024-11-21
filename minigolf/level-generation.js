@@ -3,8 +3,9 @@ const SUBTRACT = 1;
 const SUB = 1;
 
 var showTopography = 0;
+var checkeredGrass = 1;
 
-var ballStart, lastHit;
+var ballStart, lastHit, levelZoom = 0.0;
 
 var floorColor = "#408040";
 var minFloorColor = "#264c26";
@@ -426,6 +427,7 @@ class Level
 
     clear()
     {
+        this.number = -1;
         this.positiveWalls = [];
         this.negativeWalls = [];
         for (var wall of this.walls)
@@ -579,6 +581,10 @@ class Level
 
     loadLevelFromDict(levelDict)
     {
+        // Show level UI
+        setMenu("level");
+        document.getElementById("zoom-slider").value = 0.0;
+
         // Delete any existing level
         this.clear();
 
@@ -807,8 +813,8 @@ class Level
 
     load(number)
     {
-        this.number = number;
         this.loadLevelFromDict(levelData[number]);
+        this.number = number;
     }
 
 
@@ -940,7 +946,8 @@ class Level
         let date = new Date();
         this.ctx.uniform1i(this.ctx.getUniformLocation(this.shaderProgram, "time"), date.getTime() * 5.0);
 
-        this.ctx.uniform1i(this.ctx.getUniformLocation(this.shaderProgram, "showTopography"), showTopography);
+        this.ctx.uniform1i(this.ctx.getUniformLocation(this.shaderProgram, "showTopography"), document.getElementById("showTopography").checked ? 1 : 0);
+        this.ctx.uniform1i(this.ctx.getUniformLocation(this.shaderProgram, "checkeredGrass"), document.getElementById("checkeredGrass").checked ? 1 : 0);
 
         let baseScale = (0 - this.minHeight) / (this.maxHeight - this.minHeight)
         let baseFloorColor = this.lerpColor(minFloorColor, maxFloorColor, baseScale);//"#" + this.lerpHexColor(maxFloorColor.slice(1, 2), minFloorColor.slice(1, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(3, 2), minFloorColor.slice(3, 2), baseScale) + this.lerpHexColor(maxFloorColor.slice(5, 2), minFloorColor.slice(5, 2), baseScale);
@@ -1023,3 +1030,6 @@ function projectAndLerp(A, B, P)
 
     return t;
 }
+
+// Prototype from main.js
+function setMenu(newMenu) {}

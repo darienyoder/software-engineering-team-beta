@@ -73,7 +73,7 @@ addTest('Ball Angle Bounce Test', async () => {
 
     ball.vel = { x: 0, y: 0 };
     ball.x = ball.y = 10;
-  
+
     await sleep(50); //Let the ball settle
 
     ball.applyForce(50, -50);
@@ -86,7 +86,7 @@ addTest('Ball Angle Bounce Test', async () => {
     // // Simple angle monitoring, uncomment if needed
     // console.log("initAngle: " + initAngle);
     // console.log("finAngle: " + finAngle);
-  
+
     if ((finAngle * -1) !== initAngle) {
         throw new Error('Expected ball to move');
     }
@@ -177,7 +177,7 @@ addTest('Water Test', async () => {
     ball.y = getObjectsByType("water")[0].sprites[0].y;
     initialX = ball.velocity.x
     await sleep (100)
-  
+
     // Check both that it's not at the water and is at lastHit
     if (ball.x == getObjectsByType("water")[0].sprites[0].x && ball.y == getObjectsByType("water")[0].sprites[0].y && ball.x != lastHit.x && ball.y != lastHit.y) {
         throw new Error(`Expected ball to not be at ${lastHit.x}, ${lastHit.y}, but it is at ${getObjectsByType("water")[0].sprites[0].x}, ${getObjectsByType("water")[0].sprites[0].y}`);
@@ -193,18 +193,18 @@ addTest('Volcano Test', async () => {
         getObjectsByType("volcano")[0].sprites[0].y-15],
         [getObjectsByType("volcano")[0].sprites[0].x+100,
         getObjectsByType("volcano")[0].sprites[0].y-15]],'s');
-    
+
     // Wait for lava to despawn then move ball
     while(frameCount % 75 > 1){
         await sleep(1);
     }
 
-    
-    ball.x = getObjectsByType("volcano")[0].sprites[0].x+50; 
-    ball.y = getObjectsByType("volcano")[0].sprites[0].y; 
+
+    ball.x = getObjectsByType("volcano")[0].sprites[0].x+50;
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y;
     ball.vel.x = -5;
     await sleep(500);
-    
+
     // Check that it didn't get past the volcano
     if (ball.x <= getObjectsByType("volcano")[0].sprites[0].x) {
         throw new Error(`Expected ball.x to be greater than ${getObjectsByType("volcano")[0].sprites[0].y-15}, but instead got ${ball.x}`);
@@ -218,8 +218,8 @@ addTest('Volcano Test', async () => {
 // Test the volcano's lava with the ball
 addTest('Lava Test', async () => {
     ball.vel = { x: 0, y: 0 };
-    ball.x = getObjectsByType("volcano")[0].sprites[0].x; 
-    ball.y = getObjectsByType("volcano")[0].sprites[0].y-75; 
+    ball.x = getObjectsByType("volcano")[0].sprites[0].x;
+    ball.y = getObjectsByType("volcano")[0].sprites[0].y-75;
     await sleep (2500);
 
     // Check that it's at ballStart and isn't moving
@@ -247,7 +247,7 @@ addTest('Lava Sandtrap Test', async () => {
     await sleep (100);
 
     // Check that it's inside the sandtrap and not outside of it
-    if (lavaObjects[0].x > getObjectsByType("sandtrap")[0].sprites[0].x+50 
+    if (lavaObjects[0].x > getObjectsByType("sandtrap")[0].sprites[0].x+50
         || lavaObjects[0].x < getObjectsByType("sandtrap")[0].sprites[0].x-50
         || lavaObjects[0].y > getObjectsByType("sandtrap")[0].sprites[0].y+50
         || lavaObjects[0].y < getObjectsByType("sandtrap")[0].sprites[0].y-50) {
@@ -267,13 +267,13 @@ addTest('Lava Tubes Test', async () => {
     while(frameCount % 75 > 1){
         await sleep(1);
     }
-    
+
     lavaObjects[0].x = getObjectsByType("tubes")[0].sprites[0].x;
     lavaObjects[0].y = getObjectsByType("tubes")[0].sprites[0].y;
     await sleep (100);
 
     // Check that it's inside the sandtrap and not outside of it
-    if (lavaObjects[0].x > getObjectsByType("tubes")[0].sprites[1].x+50 
+    if (lavaObjects[0].x > getObjectsByType("tubes")[0].sprites[1].x+50
         || lavaObjects[0].x < getObjectsByType("tubes")[0].sprites[1].x-50
         || lavaObjects[0].y > getObjectsByType("tubes")[0].sprites[1].y+50
         || lavaObjects[0].y < getObjectsByType("tubes")[0].sprites[1].y-50) {
@@ -294,7 +294,7 @@ addTest('Lava Windmill Test', async () => {
         await sleep(1);
     }
     lavaObjects[0].diameter = 20;
-    
+
     lavaObjects[0].x = getObjectsByType("windmill")[0].sprites[0].x-25;
     lavaObjects[0].y = getObjectsByType("windmill")[0].sprites[0].y;
     stopLava = new Sprite([[getObjectsByType("volcano")[0].sprites[0].x-100,
@@ -342,13 +342,14 @@ addTest('Trajectory Color Changing Logic', async () => {
     }
 })
 
-addTest('Camera Moving', async () => {
-    cameraMode = "Follow";
-    draw();
-    if (camera.x != ball.x || camera.y != ball.y)
-        throw new Error('Camera position did not match ball position');
-    cameraMode = "Center";
-});
+// Camera system has changed so this is no longer relevant
+// addTest('Camera Moving', async () => {
+//     cameraMode = "Follow";
+//     draw();
+//     if (camera.x != ball.x || camera.y != ball.y)
+//         throw new Error('Camera position did not match ball position');
+//     cameraMode = "Center";
+// });
 
 // Test that menu works
 // Test only runs if it starts on 'menu' screen
