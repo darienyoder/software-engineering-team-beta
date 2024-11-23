@@ -148,16 +148,16 @@
         </div>
         <div id="level">
             <input type="range" min="0.0" max="1.0" step="0.01" value="0.0" class="slider" id="zoom-slider" orient="vertical">
-            <button class="pause-button" onclick="setMenu('pause');"></button>
+            <button class="pause-button" onclick="setMenu('pause'); courseMusic.pause();"></button>
         </div>
         <div id="pause">
             <div class="center-content">
                 <div class="menu-panel">
                     <h1>Paused</h1>
-                    <button onclick="setMenu('level');">Resume</button>
+                    <button onclick="setMenu('level'); courseMusic.play();">Resume</button>
                     <button onclick="setMenu('level'); level.load(level.number);">Restart</button>
                     <button onclick="setMenu('settings');">Settings</button>
-                    <button onclick="setMenu('level-select');level.clear();">Quit</button>
+                    <button onclick="setMenu('level-select'); level.clear(); courseMusic.stop(); menuMusic.play();">Quit</button>
                 </div>
             </div>
         </div>
@@ -166,8 +166,8 @@
                 <div class="menu-panel">
                     <h1>Great Job!</h1>
                     <div class="spaced-row">
-                        <button onclick="level.clear(); setMenu('level-select');" style="background-image:url('assets/menu/home.png')"></button>
-                        <button onclick="if (level.number == levelData.length - 1) {level.clear(); setMenu('level-select');} else level.nextLevel();" style="background-image:url('assets/menu/forward_arrow.png')"></button>
+                        <button onclick="level.clear(); setMenu('level-select'); courseMusic.stop(); menuMusic.play();" style="background-image:url('assets/menu/home.png')"></button>
+                        <button onclick="if (level.number == levelData.length - 1) {level.clear(); setMenu('level-select'); courseMusic.stop(); menuMusic.play();} else level.nextLevel();" style="background-image:url('assets/menu/forward_arrow.png')"></button>
                     </div>
                 </div>
             </div>

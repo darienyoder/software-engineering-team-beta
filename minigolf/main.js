@@ -41,6 +41,12 @@ async function loadSounds(){
     click = loadSound('assets/buttonpress.mp3');
     boo = loadSound('assets/boo.mp3');
     jimmy = loadSound('assets/Jimmy.mp3');
+
+    // Music
+    menuMusic = loadSound("assets/music/menu.wav");
+    menuMusic.loop(true);
+    courseMusic = loadSound("assets/music/course.mp3");
+    courseMusic.loop(true);
 }
 
 // Runs once when the program starts
@@ -125,10 +131,11 @@ async function setup()
     // Add level select buttons to menu
     for (var i in levelData)
     {
-        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + ")'>" + (Number(i) + 1) +"</button>"
+        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + "); menuMusic.stop(); courseMusic.play();'>" + (Number(i) + 1) +"</button>"
     }
 
     setMenu("main-menu");
+    menuMusic.play();
 
     createPutter();
 }
@@ -353,7 +360,7 @@ async function handleGamePlay() {
             object.update();
 
     canvas.resize(window.innerWidth, window.innerHeight);
-    
+
     // Lerps camera zoom between just the ball and the entire level
     levelZoom = document.getElementById("zoom-slider").value;
     camera.x = lerp((level.bounds.right + level.bounds.left) / 2, ball.x, levelZoom);
