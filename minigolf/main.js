@@ -44,9 +44,9 @@ async function loadSounds(){
 
     // Music
     menuMusic = loadSound("assets/music/menu.wav");
-    menuMusic.loop(true);
+    menuMusic.loop();
     courseMusic = loadSound("assets/music/course.mp3");
-    courseMusic.loop(true);
+    courseMusic.loop();
 }
 
 // Runs once when the program starts
@@ -223,8 +223,11 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
-    webglCanvas.setAttribute('width', window.innerWidth);
-    webglCanvas.setAttribute('height', window.innerHeight);
+    if (webglCanvas)
+    {
+        webglCanvas.setAttribute('width', window.innerWidth);
+        webglCanvas.setAttribute('height', window.innerHeight);
+    }
 
     world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
 
