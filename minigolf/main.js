@@ -148,6 +148,7 @@ async function setup()
 function loadMainMenu()
 {
     setMenu("main-menu");
+    courseMusic.stop();
     menuMusic.play();
 }
 
