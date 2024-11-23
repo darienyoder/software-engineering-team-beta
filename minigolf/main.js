@@ -41,18 +41,22 @@ async function loadSounds(){
     click = loadSound('assets/buttonpress.mp3');
     boo = loadSound('assets/boo.mp3');
     jimmy = loadSound('assets/Jimmy.mp3');
+}
 
+function preload()
+{
     // Music
     menuMusic = loadSound("assets/music/menu.wav");
-    menuMusic.loop();
     courseMusic = loadSound("assets/music/course.mp3");
-    courseMusic.loop();
 }
 
 // Runs once when the program starts
 async function setup()
 {
     await loadSounds();
+
+    menuMusic.loop();
+    courseMusic.loop();
 
     document.getElementById('mainMenuButton').style.display = 'none';
     document.getElementById('retryButton').style.display = 'none';
