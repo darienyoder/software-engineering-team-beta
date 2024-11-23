@@ -139,7 +139,6 @@ async function setup()
     }
 
     setMenu("main-menu");
-    setTimeout(menuMusic.play, 100);
 
     createPutter();
 }
@@ -156,6 +155,8 @@ function setMenu(newMenu)
         else
             menu.style.display = "none";
     }
+    if (newMenu == "main-menu" && !menuMusic.isPlaying())
+        newMenu.play();
 }
 
 //Hit sound function
