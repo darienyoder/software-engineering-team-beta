@@ -138,7 +138,8 @@ async function setup()
         document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + "); menuMusic.stop(); courseMusic.play();'>" + (Number(i) + 1) +"</button>"
     }
 
-    setMenu("loading-screen");
+    document.getElementById("loading-message").style.display = "none";
+    document.getElementById("loading-button").style.display = "block";
 
     createPutter();
 }
@@ -152,7 +153,7 @@ function loadMainMenu()
     menuMusic.play();
 }
 
-var currentMenu = "";
+var currentMenu = "loading-screen";
 
 function setMenu(newMenu)
 {
