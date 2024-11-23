@@ -66,7 +66,7 @@ button:hover {
     scale: 1.1;
 }
 
-#main-menu, #level-select, #settings {
+#main-menu, #level-select, #settings, #credits {
     background-image: url("assets/menu/main_background.png");
     background-position: center;
     background-size: cover;
@@ -76,6 +76,18 @@ button:hover {
     width: 10%;
     aspect-ratio: 1;
     margin: 20px;
+}
+
+#crew-names {
+    text-align: center;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+
+    position: relative;
+    top: 100vh;
+
+    transition: top 10s linear;
 }
 
 #level-select-wrapper {

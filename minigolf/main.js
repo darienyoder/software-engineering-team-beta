@@ -722,3 +722,8 @@ async function drawPar() {
     }
     parMsgVisible = false;
 }
+
+function rollCredits()
+{
+    document.getElementById("crew-names").style.top = -1171;
+}
