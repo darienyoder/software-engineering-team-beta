@@ -243,9 +243,9 @@ async function draw()
     }
 
     if (menuMusic.isPlaying())
-        menuMusic.setVolume(document.getElementById("music-volume").value);
+        menuMusic.setVolume(Number(document.getElementById("music-volume").value));
     if (courseMusic.isPlaying())
-        courseMusic.setVolume(document.getElementById("music-volume").value);
+        courseMusic.setVolume(Number(document.getElementById("music-volume").value));
 
     world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
 
