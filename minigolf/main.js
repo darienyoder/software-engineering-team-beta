@@ -46,7 +46,7 @@ async function loadSounds(){
 function preload()
 {
     // Music
-    menuMusic = loadSound("assets/music/menu.wav");
+    menuMusic = loadSound("assets/music/menu.mp3");
     courseMusic = loadSound("assets/music/course.mp3");
 }
 
