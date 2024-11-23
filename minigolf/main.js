@@ -139,7 +139,7 @@ async function setup()
     }
 
     setMenu("main-menu");
-    menuMusic.play();
+    setTimeout(menuMusic.play, 100);
 
     createPutter();
 }

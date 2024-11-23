@@ -155,7 +155,7 @@
                 <div class="menu-panel">
                     <h1>Paused</h1>
                     <button onclick="setMenu('level'); courseMusic.play();">Resume</button>
-                    <button onclick="setMenu('level'); level.load(level.number);">Restart</button>
+                    <button onclick="setMenu('level'); level.load(level.number); courseMusic.stop(); courseMusic.play();">Restart</button>
                     <button onclick="setMenu('settings');">Settings</button>
                     <button onclick="setMenu('level-select'); level.clear(); courseMusic.stop(); menuMusic.play();">Quit</button>
                 </div>
