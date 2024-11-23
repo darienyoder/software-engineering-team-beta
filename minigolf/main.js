@@ -242,8 +242,10 @@ async function draw()
         webglCanvas.setAttribute('height', window.innerHeight);
     }
 
-    menuMusic.setVolume(document.getElementById("music-volume").value);
-    courseMusic.setVolume(document.getElementById("music-volume").value);
+    if (menuMusic.isPlaying())
+        menuMusic.setVolume(document.getElementById("music-volume").value);
+    if (courseMusic.isPlaying())
+        courseMusic.setVolume(document.getElementById("music-volume").value);
 
     world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
 
