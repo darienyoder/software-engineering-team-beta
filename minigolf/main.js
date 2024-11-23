@@ -138,9 +138,17 @@ async function setup()
         document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + "); menuMusic.stop(); courseMusic.play();'>" + (Number(i) + 1) +"</button>"
     }
 
-    setMenu("main-menu");
+    setMenu("loading-screen");
 
     createPutter();
+}
+
+// Runs once, when the user starts the game
+// Has to be separate from setup because music can't autoplay
+function loadMainMenu()
+{
+    setMenu("main-menu");
+    menuMusic.play();
 }
 
 var currentMenu = "";
