@@ -20,7 +20,7 @@ const vec3 minHeightColor = vec3(.149, .298, .149);
 const vec3 maxHeightColor = vec3(.447, .898, .447);
 
 const float SAND_HEIGHT = 01134.0;
-const float WATER_HEIGHT = 843.0;
+const float WATER_HEIGHT = -843.0;
 
 uniform vec2 screenSize;
 uniform vec4 bounds;
@@ -35,6 +35,7 @@ uniform vec4 data2[maxModifiers];
 uniform int gradient[maxModifiers];
 
 uniform int showTopography;
+uniform int checkeredGrass;
 
 vec2 reverseYCoordinates( vec2 screenCoords )
 {
@@ -86,6 +87,22 @@ float distanceToLineSegment(vec2 lineStart, vec2 lineEnd, vec2 point)
    return sqrt(distanceSquaredToLineSegment(lineStart.x, lineStart.y, lineEnd.x, lineEnd.y, point.x, point.y));
 }
 
+float projectAndLerp(vec2 A, vec2 B, vec2 P)
+{
+    vec2 a_to_p = P - A;
+    vec2 a_to_b = B - A;
+
+    float atb2 = a_to_b.x * a_to_b.x + a_to_b.y * a_to_b.y;
+
+    float atp_dot_atb = a_to_p.x * a_to_b.x + a_to_p.y * a_to_b.y;
+
+    float t = atp_dot_atb / atb2;
+
+    return t;
+
+    // return A + a_to_b * t;
+}
+
 float shapeHasPoint(int shapeType, vec4 shapeData, vec4 shapeData2, int grad, vec2 point)
 {
     if (shapeType == 0) // Oval
@@ -100,11 +117,15 @@ float shapeHasPoint(int shapeType, vec4 shapeData, vec4 shapeData2, int grad, ve
     }
     if (shapeType == 1) // Line
     {
-        float weight = (distanceToLineSegment(shapeData.xy, shapeData.zw, point.xy) < shapeData2.x) ? 1.0 : 0.0;
-        if (grad == 0)
-            return ceil(weight);
-        else
-            return weight;
+        float projection = projectAndLerp(shapeData.xy, shapeData.zw, point.xy);
+        if (distanceToLineSegment(shapeData.xy, shapeData.zw, point.xy) < shapeData2.x && projection > 0.0 && projection < 1.0)
+        {
+            if (grad == 0)
+                return 1.0;
+            else
+                return projection;
+        }
+        return 0.0;
     }
     if (shapeType == 2) // Rect
     {
@@ -151,7 +172,9 @@ void main( void )
     float pointHeight = getHeight(coords);
 	vec3 color;
     if ( pointHeight == SAND_HEIGHT )
-        pointHeight = getHeight(coords + mod(vec2(coords.y * coords.x) + floor(10.0 * coords.x / coords.y) , 5.0) * 0.5);
+        pointHeight = getHeight(coords + mod(vec2(coords.y * coords.x) + floor(10.0 * coords.x / coords.y), 5.0) * 0.5 * 1.0);
+        if ( pointHeight == SAND_HEIGHT )
+            pointHeight = getHeight(coords + mod(vec2(coords.y * coords.x) + floor(10.0 * coords.x / coords.y), 5.0) * 0.5 * -1.0);
 
     if ( pointHeight == SAND_HEIGHT )
     {
@@ -173,11 +196,11 @@ void main( void )
     else
     {
         color = mix( minHeightColor, maxHeightColor, (pointHeight - minHeight) / (maxHeight - minHeight) );
-        if (mod(floor(coords.x / 20.0) + floor(coords.y / 20.0), 2.0) == 0.0)
+        if (checkeredGrass == 1 && mod(floor(coords.x / 20.0) + floor(coords.y / 20.0), 2.0) == 0.0)
             color /= 1.1; //+= vec3(0.05);
     }
 
-    if (isTopographyLine(pointHeight))
+    if (isTopographyLine(pointHeight) && mod(pointHeight, 1.0) != 0.0)
         color = vec3(0.2 + 0.8 * (pointHeight - minHeight) / (maxHeight - minHeight));
 
 	gl_FragColor.rgb = color;
