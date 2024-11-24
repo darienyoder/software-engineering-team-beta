@@ -167,7 +167,7 @@ class GameObject {
 
             case "ghost":
                 //When active float towards ball
-                this.sprites[0].rotationSpeed=0;
+                this.sprites[0].rotation = 0;
                 if (this.sprites[0].active && this.sprites[0].sg){
                     this.sprites[0].moveTowards(ball.x, ball.y, .004);
                     playJimmySound();
@@ -425,13 +425,6 @@ function Volcano(posX, posY) {
     volcano.stroke = 'black';
     volcano.layer = 0;
     volcano.collider = 'kinematic';
-
-    // lava = new Sprite(posX,posY,10);
-    // lava.color = 'red';
-    // lava.stroke = '#8B0000';
-    // lava.layer = 0;
-    // lava.diameter = 10;
-    // lava.life = 10;
 
     return new GameObject("volcano", volcano);
 }

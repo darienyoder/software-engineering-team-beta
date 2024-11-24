@@ -4,10 +4,7 @@ var levelData = [
         holePosition: [250, 75],
         area: `
             ADD rect 0, 0, 300, 150;
-            // HEIGHT + 2: ramp 100, 100, 200, 50, 20;
-            // HEIGHT = -1: line 50, 20, 100, 30, 10;
-            // HEIGHT = 01134: line 20, 110, 100, 130, 20;
-            // HEIGHT = 843: line 250, 20, 220, 140, 30;
+            ADD rect 0, 0, 300, 450;
         `,
         obstacles: `
         ADD Fan 150 150 90;
