@@ -531,9 +531,9 @@ async function handleGamePlay() {
 
         if (strokeCount <= levelData[level.number].par)
             starCount[level.number] = 3;
-        if (strokeCount <= levelData[level.number].par - 1)
+        else if (strokeCount <= levelData[level.number].par + 1)
             starCount[level.number] = Math.max(2, starCount[level.number]);
-        if (strokeCount <= levelData[level.number].par - 2)
+        else if (strokeCount <= levelData[level.number].par + 2)
             starCount[level.number] = Math.max(1, starCount[level.number]);
 
         await sleep(2000);
