@@ -63,14 +63,17 @@ var levelData = [
     },
     {
         ballPosition: [
-          26,
+          46,
           26
         ],
         holePosition: [
           46,
           286
         ],
-        area: "ADD rect 21, 21, 50, 300;",
+        area: `
+        ADD rect 21, 21, 50, 300;
+        HEIGHT = 1134: oval 25, 25, 16, 16;
+        `,
         obstacles: "ADD Windmill -16 146;",
         par: 5
     },
