@@ -99,7 +99,7 @@ HEIGHT + 3: hill 100, 200, 30, 40;
 HEIGHT = 01134: rect 0, 0, 50, 50;
 
 // Water in an oval shape;
-HEIGHT = 843: oval 50, 50, 20, 20;
+HEIGHT = -843: oval 50, 50, 20, 20;
 ```
 
 

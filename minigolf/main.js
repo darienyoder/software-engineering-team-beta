@@ -7,6 +7,7 @@ var level; // The level object; builds the stage
 var ball, hole; // The player's golf ball and the hole
 var canMove = true, ballInGoal = false, pullStart = null; // Starter variables
 var message = '', messageTime = 0;
+var putter;
 
 var gameState = 'menu';
 var fullGameMode = true;
@@ -26,44 +27,44 @@ var ballLastPosition = 0;
 var webglCanvas;
 var webglContext;
 
+// Sound variables
+let hitSound, holeSound, waterSplash;
+
 // Blitz Mode variable
 let blitzMode = false;
 
-// Sound variables
-// let hitSound, holeSound, waterSplash;
-
-// //Loading sound files
-// async function loadSounds(){
-//     hitSound = loadSound('assets/golfPutt.wav');
-//     holeSound = loadSound('assets/golfGoal.wav');
-//     waterSplash = loadSound('assets/waterSplash.wav');
-//     click = loadSound('assets/buttonpress.mp3');
-//     boo = loadSound('assets/boo.mp3');
-//     jimmy = loadSound('assets/Jimmy.mp3');
-// }
+// Loading sound files
+async function loadSounds(){
+    hitSound = loadSound('assets/golfPutt.wav');
+    holeSound = loadSound('assets/golfGoal.wav');
+    waterSplash = loadSound('assets/waterSplash.wav');
+    click = loadSound('assets/buttonpress.mp3');
+    boo = loadSound('assets/boo.mp3');
+    jimmy = loadSound('assets/Jimmy.mp3');
+}
 
 // Runs once when the program starts
 async function setup()
 {
-    // await loadSounds();
+    await loadSounds();
 
     document.getElementById('mainMenuButton').style.display = 'none';
     document.getElementById('retryButton').style.display = 'none';
 
-    // Starts the game / goes into level select once buttons are pressed if in the menu
-    document.getElementById('startButton').addEventListener('click', () => {
-        if(gameState == 'menu') {
-            startGame();
-            document.getElementById('startButton').style.display = 'none';
-            document.getElementById('levelSelectButton').style.display = 'none';
-            document.getElementById('blitzModeButton').style.display = 'none';
-        }
-
-        //Need this for camera to work
-        if (cameraModeOptions.length<=1) {
-            cameraModeOptions.push("Follow");
-        }
-    })
+    // // Starts the game / goes into level select once buttons are pressed if in the menu
+    // document.getElementById('startButton').addEventListener('click', () => {
+    //     if(gameState == 'menu') {
+    //         startGame();
+    //         document.getElementById('startButton').style.display = 'none';
+    //         document.getElementById('levelSelectButton').style.display = 'none';
+    //         document.getElementById('blitzModeButton').style.display = 'none';
+    //     }
+    //
+    //     //Need this for camera to work
+    //     if (cameraModeOptions.length<=1) {
+    //         cameraModeOptions.push("Follow");
+    //     }
+    // })
     document.getElementById('levelSelectButton').addEventListener('click', () => {
         if(gameState == 'menu') {
             levelSelect()
@@ -102,16 +103,6 @@ async function setup()
         cameraMode = cameraModeOptions[(cameraModeOptions.indexOf(cameraMode) + 1) % cameraModeOptions.length];
         document.getElementById('cameraButton').innerText = `Camera Mode: ${cameraMode}`;
 
-        if (gameState==='playing'){
-
-            if(cameraMode == "Center")
-            {
-            // Set the camera to be at the center of the canvas
-            camera.x = (level.bounds.right + level.bounds.left) / 2;
-            camera.y = (level.bounds.bottom + level.bounds.top) / 2;
-            }
-
-    }
     });
 
     // Create WebGL Canvas
@@ -130,41 +121,68 @@ async function setup()
 
     // Pass WebGL canvas to level object for drawing
     level = new Level(webglCanvas);
+
+    // Add level select buttons to menu
+    for (var i in levelData)
+    {
+        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + ")'>" + (Number(i) + 1) +"</button>"
+    }
+
+    setMenu("main-menu");
+
+    createPutter();
+}
+
+var currentMenu = "";
+
+function setMenu(newMenu)
+{
+    currentMenu = newMenu;
+    for (var menu of document.getElementById("menus").children)
+    {
+        if (menu.id == newMenu)
+            menu.style.display = "block";
+        else
+            menu.style.display = "none";
+    }
 }
 
 //Hit sound function
-// function playHitSound() {
-//     hitSound.play();
-// }
+function playHitSound() {
+    hitSound.play();
+}
 
 //Hole sound function
-// function playGoalSound() {
-//     holeSound.play();
-// }
+function playGoalSound() {
+    holeSound.play();
+}
 
-// //Hole sound function
-// function playWaterSound() {
-//     waterSplash.play();
-// }
-// function playClickSound(){
-//     click.play();
-// }
-// function playBooSound(){
-//     if (Math.random() > 0.999) {
-//         boo.setVolume(0.5);
-//         boo.play();
-//     }
-// }
-// function playJimmySound(){
-//     if (!jimmy.isPlaying()) {
-//         jimmy.play();
-//     }
-// }
+//Hole sound function
+function playWaterSound() {
+    waterSplash.play();
+}
+function playClickSound(){
+    click.play();
+}
+function playBooSound(){
+    if (Math.random() > 0.999) {
+        boo.setVolume(0.5);
+        boo.play();
+    }
+}
+function playJimmySound(){
+    if (!jimmy.isPlaying()) {
+        jimmy.play();
+    }
+}
 
 function setupLevel(levelNum) {
     // Create the level layout using "level-generation.js"
     level.load(levelNum);
+}
 
+function createPutter()
+{
     // Creating the putter head
     putter = new Sprite(10,10,5,10,'n');
     putter.image = 'assets/putter.png';
@@ -198,23 +216,29 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
+    webglCanvas.setAttribute('width', window.innerWidth);
+    webglCanvas.setAttribute('height', window.innerHeight);
+
+    world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
+
     if (gameState === 'menu') {
-        drawMainMenu();
+        // drawMainMenu();
     } else if (gameState === 'levelSelect') {
-        handleLevelSelect();
+        // handleLevelSelect();
     }
-    else if (gameState === 'playing') {
+    if (gameState === 'playing' || currentMenu == "level") {
         // Draw the stage using "level-generation.js"
+        level.drawStage();
+
         if (parMsgVisible) {
             clear()
             await drawPar();
         } else {
-            level.drawStage();
             handleGamePlay();
         }
     } else if (gameState === 'gameOver') {
         // clearGameObjects(); // Clear objects before showing game over
-        drawGameOver();
+        // drawGameOver();
     }
 }
 
@@ -321,19 +345,20 @@ function keyPressed() {
 }
 
 async function handleGamePlay() {
-    
+
     // Behavior for all GameObjects, *including* the ball and hole
     // To add or change behavior, go to game-objects.js
-    for (var object of gameObjects)
-        object.update();
+    if (currentMenu == "level")
+        for (var object of gameObjects)
+            object.update();
 
-
-    // Sets ball position when camera is follow
-    if (cameraMode === "Follow") {
-        // Make camera follow the ball's position
-        camera.x = ball.x;
-        camera.y = ball.y;
-    }
+    canvas.resize(window.innerWidth, window.innerHeight);
+    
+    // Lerps camera zoom between just the ball and the entire level
+    levelZoom = document.getElementById("zoom-slider").value;
+    camera.x = lerp((level.bounds.right + level.bounds.left) / 2, ball.x, levelZoom);
+    camera.y = lerp((level.bounds.bottom + level.bounds.top) / 2, ball.y, levelZoom);
+    camera.zoom = lerp(Math.min(((window.innerWidth - level.levelMargin) / (level.bounds.right - level.bounds.left)), ((window.innerHeight - level.levelMargin) / (level.bounds.bottom - level.bounds.top))), 3.0, levelZoom);
 
     // Draw the stroke counter & Par
 
@@ -343,7 +368,7 @@ async function handleGamePlay() {
     }
 
     // When mouse is pressed...
-    if (mouse.presses() && canMove) {
+    if (mouse.presses() && canMove && levelToScreen(mouse.pos).x > 125 && levelToScreen(mouse.pos).x < window.innerWidth - 120) {
         // Record the start position of the pull-back
         lastHit = createVector(ball.x, ball.y);
         pullStart = createVector(mouseX, mouseY);
@@ -381,7 +406,7 @@ async function handleGamePlay() {
         pullStart = null;
 
         putter.visible = false; // hides the putter while it does its move
-        
+
         // This moves the pivot point onto the handle
         putter.image.offset.x = 0;
         putter.image.offset.y = 300;
@@ -471,10 +496,10 @@ async function handleGamePlay() {
     prevVelY = ball.vel.y;
 
     // Hole functionality Ball must be going slow to get in hole
-    if (hole.overlaps(ball) &&ball.vel.x<=1.5 &&ball.vel.y<=1.5)
+    if (hole.overlaps(ball))
     {
         ballInGoal = true;
-        // holeSound.play();
+        holeSound.play();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
@@ -482,33 +507,19 @@ async function handleGamePlay() {
         await sleep(2000);
 
         // clear();
-        // jimmy.stop(); // ? Does this even have a start code anywhere?
-        level.clear();
-        parMsgVisible = true;
-        await sleep(2000);
+        // jimmy.stop();
+        // level.clear();
+        // parMsgVisible = true;
+        // await sleep(2000);
 
-        if (fullGameMode) {
-            level.nextLevel();
-            ballInGoal = false;
-            canMove = true;
-        }
-        else { //if in single level mode
-
-            //clear everything
-            level.clear();
-
-            gameState = 'menu'; //return to menu
-            document.getElementById('startButton').style.display = 'block';  // Show the button once in menu
-            document.getElementById('levelSelectButton').style.display = 'block';
-            document.getElementById('blitzModeButton').style.display = 'block';
-
-        }
+        // level.clear();
+        setMenu("level-complete");
+        ballInGoal = false;
+        canMove = true;
     }
-    
 
     // Ball has to be stopped in order to move
     if(!ballInGoal) {
-        
         if (blitzMode)
         { // Only allow instant hit if blitz mode is active
             canMove = true;
@@ -517,7 +528,7 @@ async function handleGamePlay() {
                 messageTime = millis();
             }
         }
-        else if (ball.stillTime > 360) //(ball.vel.x==0 && ball.vel.y==0)
+        else if (ball.stillTime > 360 || (ball.vel.x==0 && ball.vel.y==0))
         {
             canMove = true //Player can take the next shot
             ball.vel.setMag(0.0);
@@ -558,18 +569,18 @@ function sleep(milliseconds)
 
 function drawStrokeCount()
 {
-    fill(0); // Set text color to black
-    textSize(20); // Set text size
-    textAlign(RIGHT, TOP); // Align text to the top-right corner
-    text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
+    // fill(0); // Set text color to black
+    // textSize(20); // Set text size
+    // textAlign(RIGHT, TOP); // Align text to the top-right corner
+    // text(`Strokes: ${strokeCount}`, width - 20, 20); // Draw the stroke count
 }
 
 function drawParCount()
 {
-    fill(0); // Set text color to black
-    textSize(20); // Set text size
-    textAlign(LEFT, TOP); // Align text to the top-right corner
-    text(`Par: ${par}`, 20, 20); // Draw the stroke count
+    // fill(0); // Set text color to black
+    // textSize(20); // Set text size
+    // textAlign(LEFT, TOP); // Align text to the top-right corner
+    // text(`Par: ${par}`, 20, 20); // Draw the stroke count
 }
 
 function incrementShots()
@@ -630,10 +641,10 @@ function drawUserAssistance() {
 }
 
 function drawMessage() {
-    fill(0); //Setting text color
-    textSize(24); //Setting text size
-    textAlign(CENTER, CENTER); // Centering text
-    text(message, width / 2, height / 9 * 2.5); //Moving the up
+    // fill(0); //Setting text color
+    // textSize(24); //Setting text size
+    // textAlign(CENTER, CENTER); // Centering text
+    // text(message, width / 2, height / 9 * 2.5); //Moving the up
 }
 
 function drawPutter(){
@@ -644,15 +655,15 @@ function drawPutter(){
 }
 
 function distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py) {
-   var ldx = lx2 - lx1,
+    var ldx = lx2 - lx1,
        ldy = ly2 - ly1,
        lineLengthSquared = ldx*ldx + ldy*ldy;
-   return distanceSquaredToLineSegment2(lx1, ly1, ldx, ldy, lineLengthSquared, px, py);
+    return distanceSquaredToLineSegment2(lx1, ly1, ldx, ldy, lineLengthSquared, px, py);
 }
 
 function distanceToLineSegment(lx1, ly1, lx2, ly2, px, py)
 {
-   return Math.sqrt(distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py));
+    return Math.sqrt(distanceSquaredToLineSegment(lx1, ly1, lx2, ly2, px, py));
 }
 
 async function drawPar() {
