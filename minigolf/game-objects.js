@@ -71,7 +71,7 @@ class GameObject {
                 
                 // Generate Lava
                 if (frameCount % volcSpeed == 0) {
-                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(5,20));
+                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(10,20));
                     aLava.life = volcSpeed;
                     let randColor = random(0, 3);
                     if (randColor < 1)
