@@ -55,7 +55,7 @@ class GameObject {
                 break;
 
             case "tubes":
-                if (this.sprites[0].overlaps(ball) && ball.vel.x <= 1.5 && ball.vel.y <= 1.5)
+                if (this.sprites[0].overlaps(ball))
                 {
                     ball.x = this.sprites[1].x;
                     ball.y = this.sprites[1].y;
@@ -300,8 +300,8 @@ function Ball(x, y)
     newBall.drag = friction.reg;
     newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
     newBall.stillTime = 300;
-    // newBall.image = 'assets/ball.png'
-    // newBall.image.scale = .012
+    newBall.image = 'assets/ball.png'
+    newBall.image.scale = .012
 
     return new GameObject("ball", newBall);
 }

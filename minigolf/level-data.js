@@ -4,13 +4,8 @@ var levelData = [
         holePosition: [250, 75],
         area: `
             ADD rect 0, 0, 300, 150;
-            ADD rect 0, 0, 300, 450;
         `,
         obstacles: `
-        ADD Fan 150 150 90;
-        ADD Fan 300 300 180;
-        ADD Fan 150 450 270;
-        ADD Fan 0 300 0;
         `,
         par: 2,
     },
@@ -424,7 +419,7 @@ const testLevel = {
         ADD Sandtrap 250 -50 50 50;
         ADD Tubes 465 215 25 225;
         ADD Windmill 425 45;
-        ADD Water 460 30;
+        ADD Water 460 40;
         ADD Volcano 50 75;
         ADD Fan 745 225 0;
     `,
