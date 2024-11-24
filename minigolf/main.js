@@ -170,6 +170,16 @@ function setMenu(newMenu)
                 }
             }
         }
+    else if (newMenu == "level-complete")
+    {
+        for (var star = 0; star < 3; star++)
+        {
+            if (strokeCount <= levelData[level.number].par + 2 - star)
+                document.getElementById("level-complete-stars").children[star].src = "assets/menu/star_gold.png";
+            else
+                document.getElementById("level-complete-stars").children[star].src = "assets/menu/star_black.png";
+        }
+    }
 }
 
 //Hit sound function
