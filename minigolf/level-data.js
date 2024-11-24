@@ -1,39 +1,5 @@
 var levelData = [
     {
-        ballPosition: [50, 25],
-        holePosition: [270, 720],
-        area: `
-            ADD rect 0, 0, 300, 750;
-            ADD rect 300, 200, 150, 150;
-
-            SUB rect 60, 700, 10, 50;
-            SUB rect 130, 700, 10, 50;
-            SUB rect 230, 700, 10, 50;
-            HEIGHT = -843: oval 185, 750, 50, 50; 
-            HEIGHT = 1, 0, 75, 0, 700, 300;
-
-            SUB poly (75, 399), (165, 450), (50, 499);
-        `,
-        obstacles: `
-        ADD Windmill 100 675;
-        ADD Windmill 177 235;
-        ADD Tubes 400 300 25 270;
-        ADD Tubes 30 720 25 25;
-        ADD Volcano 350 270; 
-        ADD Rock 153 302;
-        ADD Rock 103 477;
-        ADD Rock 133 436;
-        ADD Rock 174 442;
-        ADD Rock 150 462;
-        ADD Rock 153 417;
-        ADD Rock 197 337;
-        ADD Rock 163 349;
-        ADD Rock 180 453;
-        ADD Rock 194 343;
-        `,
-        par: 5,
-    },
-    {
         ballPosition: [50, 75],
         holePosition: [250, 75],
         area: `
@@ -354,24 +320,43 @@ var levelData = [
         par:4
     },
     {
-        ballPosition: [0, 50],
-        holePosition: [0, 550],
+        ballPosition: [50, 25],
+        holePosition: [270, 720],
         area: `
-        ADD poly (0, 0), (200, 300), (0, 600), (-200, 300);
-        HEIGHT + -1: hill 50, 100, 60, 50;
-        HEIGHT = -843: oval 50, 100, 10, 10;
-        HEIGHT + 1: hill -90, 160, 80, 70;
-        HEIGHT + 1: hill 100, 230, 90, 70;
-        HEIGHT + -1: hill -120, 300, 80, 60;
-        HEIGHT = -843: oval -120, 300, 10, 10;
-        HEIGHT + 1: hill -80, 430, 110, 80;
-        HEIGHT + -1: hill 100, 380, 80, 70;
-        HEIGHT = -843: oval 100, 380, 10, 10;
-        HEIGHT = 1134: oval 0, 300, 20, 20;
+            ADD rect 0, 0, 300, 750;
+            ADD rect 300, 200, 150, 150;
+
+            SUB rect 60, 700, 10, 50;
+            SUB rect 130, 700, 10, 50;
+            SUB rect 230, 700, 10, 50;
+            HEIGHT = -843: oval 185, 750, 50, 50; 
+            HEIGHT = 1, 150, 75, 150, 700, 300;
+
+            SUB poly (75, 399), (165, 450), (50, 499);
         `,
         obstacles: `
+        ADD Rock 62 318;
+        ADD Rock 272 254;
+        ADD Rock 236 157;
+        ADD Rock 39 141;
+        ADD Rock 67 241;
+        ADD Rock 27 603;
+        ADD Rock 157 499;
+        ADD Rock 136 192;
+        ADD Rock 241 586;
+        ADD Rock 49 520;
+        ADD Rock 270 496;
+        ADD Rock 251 355;
+        ADD Rock 153 395;
+        ADD Rock 234 433;
+        ADD Rock 125 567;
+        ADD Windmill 100 675;
+        ADD Windmill 177 235;
+        ADD Tubes 400 300 25 270;
+        ADD Tubes 30 720 25 25;
+        ADD Volcano 350 270; 
         `,
-        par: 10,
+        par: 5,
     },
     {
         ballPosition: [250, 50],  

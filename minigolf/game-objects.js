@@ -299,8 +299,8 @@ function Ball(x, y)
     newBall.drag = friction.reg;
     newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
     newBall.stillTime = 300;
-    newBall.image = 'assets/ball.png'
-    newBall.image.scale = .012
+    // newBall.image = 'assets/ball.png'
+    // newBall.image.scale = .012
 
     return new GameObject("ball", newBall);
 }
