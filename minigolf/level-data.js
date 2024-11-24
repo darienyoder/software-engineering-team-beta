@@ -413,6 +413,12 @@ const testLevel = {
         ADD circle 250, 75, 50;
         ADD rect 225, 75, 50, 75;
 
+        // Fan area;
+        {
+            ADD rect 520, 200, 450, 50;
+            ADD rect 720, 0, 50, 450;
+        }
+
         `,
         obstacles: `
         ADD Sandtrap 250 -50 50 50;
@@ -420,6 +426,7 @@ const testLevel = {
         ADD Windmill 425 45;
         ADD Water 460 30;
         ADD Volcano 50 75;
+        ADD Fan 745 225 0;
     `,
     par: 5,
 };

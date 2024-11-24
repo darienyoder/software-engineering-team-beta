@@ -30,19 +30,6 @@ function setupTestEnvironment() {
     level.loadLevelFromDict(testLevel);
 };
 
-// Test that menu works
-// Test only runs if it starts on 'menu' screen
-// Needs keyPress simulation
-/*addTest('Test Menu', async () => {
-    // Test only works if we start from menu screen
-    if (gameState === 'menu'){
-        // Simulate pressing 'Enter'
-
-        await sleep(1000);
-        if (gameState !== 0) throw new Error(`Expected gameState to be playing but got ${gameState} instead.`);
-    }
-});*/
-
 
 // Example Tests
 addTest('Initial Stroke Count', async () => {
@@ -315,6 +302,91 @@ addTest('Lava Windmill Test', async () => {
     stopLava.remove();
     lavaObjects[0].life = 1;
 });
+
+// Test fan movement
+addTest('East Fan Move Test', async () => {
+    
+    ball.vel = { x: 0, y: 0 };
+    ball.x = 795;
+    ball.y = 225;
+    getObjectsByType("fan")[0].sprites[0].rotation = 0;
+    await sleep (100);
+
+    // Check that it moved and has velocity
+    if (ball.x <= 795) { // Check coordinates
+        throw new Error(`Expected ball x to be greater than ${795} but it is at ${ball.x}`);
+    }
+    if (ball.vel.x <= 0) { // Check vel
+        throw new Error(`Expected ball.vel.x to be greater than ${0}, but got ${ball.vel.x}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan movement
+addTest('South Fan Move Test', async () => {
+    
+    ball.vel = { x: 0, y: 0 };
+    ball.x = 745;
+    ball.y = 275;
+    getObjectsByType("fan")[0].sprites[0].rotation = 90;
+    await sleep (100);
+
+    // Check that it moved and has velocity
+    if (ball.y <= 275) { // Check coordinates
+        throw new Error(`Expected ball y to be greater than ${275} but it is at ${ball.y}`);
+    }
+    if (ball.vel.y <= 0) { // Check vel
+        throw new Error(`Expected ball.vel.y to be greater than ${0}, but got ${ball.vel.y}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan movement
+addTest('West Fan Move Test', async () => {
+    
+    ball.vel = { x: 0, y: 0 };
+    ball.x = 695;
+    ball.y = 225;
+    getObjectsByType("fan")[0].sprites[0].rotation = 180;
+    await sleep (100);
+
+    // Check that it moved and has velocity
+    if (ball.x >= 695) { // Check coordinates
+        throw new Error(`Expected ball x to be greater than ${695} but it is at ${ball.x}`);
+    }
+    if (ball.vel.x >= 0) { // Check vel
+        throw new Error(`Expected ball.vel.x to be less than ${0}, but got ${ball.vel.x}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan movement
+addTest('North Fan Move Test', async () => {
+    
+    ball.vel = { x: 0, y: 0 };
+    ball.x = 745;
+    ball.y = 175;
+    getObjectsByType("fan")[0].sprites[0].rotation = 270;
+    await sleep (100);
+
+    // Check that it moved and has velocity
+    if (ball.y >= 175) { // Check coordinates
+        throw new Error(`Expected ball y to be less than ${175} but it is at ${ball.x}`);
+    }
+    if (ball.vel.y <= 0) { // Check vel
+        throw new Error(`Expected ball.vel.y to be less than ${0}, but got ${ball.vel.y}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
 
 addTest('Sound Load Test', async () => {
     const sounds = [hitSound, holeSound, waterSplash];

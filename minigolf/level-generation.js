@@ -442,6 +442,9 @@ class Level
         {
             gameObjects.pop().delete();
         }
+        for (let i = 0; i < lavaObjects.length; i++){
+            lavaObjects[i].life = 1;
+        }
         this.heightModifiers = [];
 
         // Erase terrain shader

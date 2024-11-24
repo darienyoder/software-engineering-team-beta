@@ -190,10 +190,11 @@ class GameObject {
             case "fan":
                 let fanDist = sqrt(((ball.x-this.sprites[0].x)**2)+((ball.y-this.sprites[0].y)**2));
                 let fanPower = 25;
-                let  fanFurthest = 200;
+                let  fanFurthest = 100;
 
                 // East Blowing Fan
                 if(this.sprites[0].rotation == 0){
+
                     if (ball.y >= this.sprites[0].y-25 && 
                         ball.y <= this.sprites[0].y+25 &&
                         ball.x >= this.sprites[0].x &&
