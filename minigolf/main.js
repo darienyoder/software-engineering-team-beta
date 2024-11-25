@@ -45,10 +45,20 @@ async function loadSounds(){
     jimmy = loadSound('assets/Jimmy.mp3');
 }
 
+function preload()
+{
+    // Music
+    menuMusic = loadSound("assets/music/menu.mp3");
+    courseMusic = loadSound("assets/music/course.mp3");
+}
+
 // Runs once when the program starts
 async function setup()
 {
     await loadSounds();
+
+    menuMusic.loop();
+    courseMusic.loop();
 
     document.getElementById('mainMenuButton').style.display = 'none';
     document.getElementById('retryButton').style.display = 'none';
@@ -136,12 +146,22 @@ async function setup()
         starCount.push(0);
     }
 
-    setMenu("main-menu");
+    document.getElementById("loading-message").style.display = "none";
+    document.getElementById("loading-button").style.display = "block";
 
     createPutter();
 }
 
-var currentMenu = "";
+// Runs once, when the user starts the game
+// Has to be separate from setup because music can't autoplay
+function loadMainMenu()
+{
+    setMenu("main-menu");
+    courseMusic.stop();
+    menuMusic.play();
+}
+
+var currentMenu = "loading-screen";
 
 function setMenu(newMenu)
 {
@@ -251,8 +271,16 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
-    webglCanvas.setAttribute('width', window.innerWidth);
-    webglCanvas.setAttribute('height', window.innerHeight);
+    if (webglCanvas)
+    {
+        webglCanvas.setAttribute('width', window.innerWidth);
+        webglCanvas.setAttribute('height', window.innerHeight);
+    }
+
+    if (menuMusic.isPlaying())
+        menuMusic.setVolume(Number(document.getElementById("music-volume").value));
+    if (courseMusic.isPlaying())
+        courseMusic.setVolume(Number(document.getElementById("music-volume").value));
 
     world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
 

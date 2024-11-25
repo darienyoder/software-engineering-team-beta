@@ -2,6 +2,10 @@
     font-family: sans-serif;
 }
 
+#p5_loading, #p5play-intro {
+    display: none !important;
+}
+
 #menus {
     position: fixed;
     top: 0px;
