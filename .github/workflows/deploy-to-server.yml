@@ -15,7 +15,6 @@ jobs:
 
     - name: Set up SSH
       run: |
-
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
         chmod 600 private_key.pem  # Secure the private key file
 
@@ -25,7 +24,6 @@ jobs:
         sudo apt-get install -y openssh-client
 
         ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF' #SSHKey not enabled yet
-        #ssh -p ${{ secrets.SSH_PASSWORD }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd ~/github_contents/software-engineering-team-beta || exit
 
           git pull || exit
@@ -34,7 +32,11 @@ jobs:
 
           cd ~/public_html/ || exit
 
-          nohup python -m http.server 9008 --directory ~/public_html &
+          pid=$(lsof -t -i:9008) && if [ ! -z "$pid" ]; then kill -9 $pid; fi
+
+          # Run python HTTP server in the background and redirect output to /dev/null
+          nohup python -m http.server 9008 --directory ~/public_html > /dev/null 2>&1 &
+
         EOF
 
     - name: Clean up SSH private key
