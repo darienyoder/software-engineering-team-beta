@@ -459,7 +459,7 @@ async function handleGamePlay() {
         putter.rotate(90,forceMagnitude/10);    //The  /10 can be changed to whatever looks best
         await sleep(250);
         putter.rotate(-90,forceMagnitude/10);
-        hitSound.play(); //Playing the ball hit sound
+        // hitSound.play(); //Playing the ball hit sound
         await sleep(250);
 
         // Hide the putter
