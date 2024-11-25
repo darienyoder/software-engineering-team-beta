@@ -36,7 +36,7 @@ jobs:
 
           pid=$(lsof -t -i:9008) && if [ ! -z "$pid" ]; then kill -9 $pid; fi
 
-          nohup python -m http.server 9008 --directory ~/public_html &
+          nohup python -m http.server 9008 --directory ~/public_html
         EOF
 
     - name: Clean up SSH private key
