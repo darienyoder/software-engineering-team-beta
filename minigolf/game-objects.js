@@ -79,7 +79,7 @@ class GameObject {
                 if (this.sprites[0].overlaps(ball))
                 {
                     waterSplash.play();
-                    
+
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = lastHit.x;
@@ -256,7 +256,7 @@ function Ball(x, y)
 function Hole(x, y)
 {
     let newHole = new Sprite(x, y);
-    newHole.diameter = 40;
+    newHole.diameter = 20;
     newHole.collider = 'kinematic';
     newHole.layer = 1;
     newHole.color = 'grey';

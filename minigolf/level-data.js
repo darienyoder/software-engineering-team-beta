@@ -63,14 +63,17 @@ var levelData = [
     },
     {
         ballPosition: [
-          26,
+          46,
           26
         ],
         holePosition: [
           46,
           286
         ],
-        area: "ADD rect 21, 21, 50, 300;",
+        area: `
+        ADD rect 21, 21, 50, 300;
+        HEIGHT = 1134: oval 25, 25, 16, 16;
+        `,
         obstacles: "ADD Windmill -16 146;",
         par: 5
     },
@@ -314,6 +317,54 @@ var levelData = [
 
         `,
         par:4
+    },
+    {
+        ballPosition: [250, 50],  
+        holePosition: [250, 230], 
+        area: `
+            ADD rect 0, 0, 350, 300;
+            HEIGHT + 1: hill 350, 170, 60, 100;
+            HEIGHT + 1: hill 90, 50, 60, 60;
+            HEIGHT + -1: hill 0, 300, 60, 60;
+            HEIGHT = -843: oval 200, 150, 100, 50; 
+            HEIGHT = -843: oval 0, 300, 20, 20;
+            HEIGHT = 1134: rect 100, 250, 100, 50;
+        `,
+        obstacles:`
+            ADD Volcano 300 220;
+            ADD Rock 40 175;
+        `,
+        par:3
+    },
+    { // Darien.2 - "Shortcut"
+        ballPosition: [30, 100],
+        holePosition: [270, 170],
+        area: `
+            // Level boundary;
+            ADD rect 0, 0, 300, 200;
+
+            // Sand at center;
+            HEIGHT = 01134: rect 180, 60, 60, 140;
+            HEIGHT = 01134: rect 120, 150, 60, 50;
+            HEIGHT = 0: oval 110, 145, 60, 50;
+            HEIGHT = 01134: line 190, 200, 210, 60, 30;
+
+            // Sand on left side;
+            HEIGHT = 01134: rect 0, 0, 100, 100;
+            HEIGHT = 0: oval 15, 100, 45, 20;
+            HEIGHT = 01134: oval 95, 100, 35, 30;
+            HEIGHT = 01134: line 100, 100, 110, 0, 30;
+
+            // Upper part on the right side;
+            HEIGHT + 0.2: ramp 180, 30, 240, 30, 30;
+            HEIGHT = 0.2: rect 240, 0, 80, 200;
+
+            // Wall against ramp;
+            SUB rect 180, 60, 60, 1;
+        `,
+        obstacles: `
+        `,
+        par: 3,
     },
     {
         // Circular Hilly Level
