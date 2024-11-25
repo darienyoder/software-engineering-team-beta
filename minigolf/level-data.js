@@ -4,10 +4,6 @@ var levelData = [
         holePosition: [250, 75],
         area: `
             ADD rect 0, 0, 300, 150;
-            // HEIGHT + 2: ramp 100, 100, 200, 50, 20;
-            // HEIGHT = -1: line 50, 20, 100, 30, 10;
-            // HEIGHT = 01134: line 20, 110, 100, 130, 20;
-            // HEIGHT = 843: line 250, 20, 220, 140, 30;
         `,
         obstacles: `
         `,
@@ -396,6 +392,45 @@ var levelData = [
         `,
         par: 4
     },
+    { // Plinko
+        ballPosition: [50, 25],
+        holePosition: [270, 720],
+        area: `
+            ADD rect 0, 0, 300, 750;
+            ADD rect 300, 200, 150, 150;
+
+            SUB rect 60, 700, 10, 50;
+            SUB rect 130, 700, 10, 50;
+            SUB rect 230, 700, 10, 50;
+            HEIGHT = -843: oval 185, 750, 50, 50; 
+            HEIGHT = 1, 150, 75, 150, 700, 300;
+
+            SUB poly (75, 399), (165, 450), (50, 499);
+        `,
+        obstacles: `
+        ADD Rock 62 318;
+        ADD Rock 272 254;
+        ADD Rock 236 157;
+        ADD Rock 39 141;
+        ADD Rock 67 241;
+        ADD Rock 27 603;
+        ADD Rock 157 499;
+        ADD Rock 136 192;
+        ADD Rock 241 586;
+        ADD Rock 49 520;
+        ADD Rock 270 496;
+        ADD Rock 251 355;
+        ADD Rock 153 395;
+        ADD Rock 234 433;
+        ADD Rock 125 567;
+        ADD Windmill 100 675;
+        ADD Windmill 177 235;
+        ADD Tubes 400 300 25 270;
+        ADD Tubes 30 720 25 25;
+        ADD Volcano 350 270; 
+        `,
+        par: 5,
+    },
 ];
 
 const testLevel = {
@@ -436,13 +471,21 @@ const testLevel = {
         ADD circle 250, 75, 50;
         ADD rect 225, 75, 50, 75;
 
+        // Fan area;
+        {
+            ADD rect 520, 200, 450, 50;
+            ADD rect 720, 0, 50, 450;
+        }
+
         `,
         obstacles: `
         ADD Sandtrap 250 -50 50 50;
         ADD Tubes 465 215 25 225;
         ADD Windmill 425 45;
-        ADD Water 460 30;
+        ADD Water 460 40;
         ADD Volcano 50 75;
+        ADD Fan 745 225 0;
     `,
     par: 5,
 };
+

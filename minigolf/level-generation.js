@@ -442,6 +442,9 @@ class Level
         {
             gameObjects.pop().delete();
         }
+        for (let i = 0; i < lavaObjects.length; i++){
+            lavaObjects[i].life = 1;
+        }
         this.heightModifiers = [];
 
         // Erase terrain shader
@@ -575,6 +578,8 @@ class Level
                 return Button(objectData.position[0], objectData.position[1]);
             case 'Rock':
                 return Rock(objectData.position[0], objectData.position[1]);
+            case 'Fan':
+                return Fan(objectData.position[0], objectData.position[1], objectData.wind);
             default:
                 console.warn(`Unknown object type: ${objectData.type}`);
                 return null;
@@ -802,6 +807,11 @@ class Level
                         break;
                     case 'Rock':
                         objectData.position =[Number(parts[2]), Number(parts[3])];
+                        break;
+                    case 'Fan':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        objectData.wind = Number(parts[4]);
+                        break; 
                     // Add more cases for other object types as needed
                 }
 
