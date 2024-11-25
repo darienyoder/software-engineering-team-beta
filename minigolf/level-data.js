@@ -432,6 +432,29 @@ var levelData = [
         `,
         par: 5,
     },
+    {
+        ballPosition: [25, 150],  
+        holePosition: [20,25], 
+        area: `
+             //the corse and the rects the cut the middle out;
+            ADD rect 0, 0, 300, 300;
+            SUB rect 50, 50, 200, 200;
+            SUB rect 0, 50, 100, 75;
+            
+            //the ramp at the bottom;
+            HEIGHT + .5: ramp 250, 270, 5, 270, 27;
+            HEIGHT = 0.5: rect 5, 130, 50, 170;
+            //water at the bottom;
+            HEIGHT = -843: oval 290, 285, 13, 15; 
+            HEIGHT = -843: oval 290, 15, 13, 15; 
+        
+        `,
+        obstacles:`
+         ADD Windmill 150 91;
+            
+        `,
+        par:3
+    },
 ];
 
 const testLevel = {
