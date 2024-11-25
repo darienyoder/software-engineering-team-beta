@@ -315,8 +315,8 @@ var levelData = [
         par:4
     },
     {
-        ballPosition: [250, 50],  
-        holePosition: [250, 230], 
+        ballPosition: [250, 50],
+        holePosition: [250, 230],
         area: `
             ADD rect 0, 0, 350, 300;
             HEIGHT + 1: hill 350, 170, 60, 100;
@@ -375,16 +375,16 @@ var levelData = [
 
             // Comment this section for lake;
             // SUB oval 300, 400, 100, 40;
-            // SUB rect 200, 360, 200, 40; 
+            // SUB rect 200, 360, 200, 40;
 
             // Comment this section for cutout area;
             HEIGHT + 1: hill 300, 400, 60, 60;
             HEIGHT = -843: oval 300, 370, 75, 25;
 
-            
+
             HEIGHT + 1: hill 300, 200, 90, 60;
             HEIGHT + 1: hill 400, 300, 60, 60;
-            HEIGHT + 1: hill 200, 300, 60, 60; 
+            HEIGHT + 1: hill 200, 300, 60, 60;
         `,
         obstacles: `
             ADD Windmill 120 400;
@@ -402,8 +402,9 @@ var levelData = [
             SUB rect 60, 700, 10, 50;
             SUB rect 130, 700, 10, 50;
             SUB rect 230, 700, 10, 50;
-            HEIGHT = -843: oval 185, 750, 50, 50; 
-            HEIGHT = 1, 150, 75, 150, 700, 300;
+            HEIGHT = -1: ramp 150, 75, 150, 700, 300;
+            HEIGHT = -1: rect 0, 700, 300, 60;
+            HEIGHT = -843: oval 185, 750, 50, 50;
 
             SUB poly (75, 399), (165, 450), (50, 499);
         `,
@@ -427,7 +428,7 @@ var levelData = [
         ADD Windmill 177 235;
         ADD Tubes 400 300 25 270;
         ADD Tubes 30 720 25 25;
-        ADD Volcano 350 270; 
+        ADD Volcano 350 270;
         `,
         par: 5,
     },
@@ -488,4 +489,3 @@ const testLevel = {
     `,
     par: 5,
 };
-
