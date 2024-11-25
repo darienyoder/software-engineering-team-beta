@@ -137,7 +137,7 @@ async function setup()
     // Add level select buttons to menu
     for (var i in levelData)
     {
-        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + ")'>"
+        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + "); menuMusic.stop(); courseMusic.play();'>"
             + (Number(i) + 1)
             + "<div class='level-select-star'></div>"
             + "<div class='level-select-star'></div>"
