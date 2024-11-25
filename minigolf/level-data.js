@@ -410,7 +410,7 @@ var levelData = [
         `,
         obstacles: `
         ADD Rock 62 318;
-        ADD Rock 272 254;
+        ADD Rock 290 275;
         ADD Rock 236 157;
         ADD Rock 39 141;
         ADD Rock 67 241;
