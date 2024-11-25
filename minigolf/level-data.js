@@ -366,6 +366,36 @@ var levelData = [
         `,
         par: 3,
     },
+    {
+        // Circular Hilly Level
+        ballPosition: [300, 525],
+        holePosition: [300, 300],
+        area: `
+
+            ADD circle 300, 300, 200;
+            SUB circle 300, 100, 125;
+            SUB rect 0, 70, 500, 80;
+            ADD rect 250, 450, 100, 120;
+
+            // Comment this section for lake;
+            // SUB oval 300, 400, 100, 40;
+            // SUB rect 200, 360, 200, 40; 
+
+            // Comment this section for cutout area;
+            HEIGHT + 1: hill 300, 400, 60, 60;
+            HEIGHT = -843: oval 300, 370, 75, 25;
+
+            
+            HEIGHT + 1: hill 300, 200, 90, 60;
+            HEIGHT + 1: hill 400, 300, 60, 60;
+            HEIGHT + 1: hill 200, 300, 60, 60; 
+        `,
+        obstacles: `
+            ADD Windmill 120 400;
+            ADD Windmill 480 400;
+        `,
+        par: 4
+    },
 ];
 
 const testLevel = {
