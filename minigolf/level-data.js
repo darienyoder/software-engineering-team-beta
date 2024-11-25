@@ -7,7 +7,7 @@ var levelData = [
         `,
         obstacles: `
         `,
-        par: 2,
+        par: 1,
     },
     {
         ballPosition: [75, 75],
@@ -46,7 +46,7 @@ var levelData = [
             // End goal;
             ADD circle 250, 75, 50;
             ADD rect 225, 75, 50, 75;
-            
+
             // Sand;
             HEIGHT = 1134: rect 225, -75, 50, 50;
         `,
@@ -211,7 +211,7 @@ var levelData = [
     HEIGHT = 1134: rect 50, 245, 130, 65;
 
     // sand leading to the hole;
-    HEIGHT = 1134: rect 180, 70, 195, 240; 
+    HEIGHT = 1134: rect 180, 70, 195, 240;
     HEIGHT = 1134: rect 180, 0, 110, 100;
     `,
     obstacles:`
@@ -288,8 +288,8 @@ var levelData = [
         par: 10,
     },
     {
-        ballPosition: [35, 220],  
-        holePosition: [350, -115], 
+        ballPosition: [35, 220],
+        holePosition: [350, -115],
         area: `
             //middle horizontal piece;
              ADD rect 0, 0, 220, 70;
@@ -302,14 +302,14 @@ var levelData = [
              ADD rect 150, -150, 230, 70;
 
              //water in the course ;
-             HEIGHT = -843: oval 10, 10, 42, 37; 
-             HEIGHT = -843: oval 58, 150, 30, 35; 
-             HEIGHT = -843: oval 195, 54, 39, 34; 
-             HEIGHT = -843: oval 165, -140, 40, 35; 
-             HEIGHT = -843: oval 290, -80, 35, 30; 
+             HEIGHT = -843: oval 10, 10, 42, 37;
+             HEIGHT = -843: oval 58, 150, 30, 35;
+             HEIGHT = -843: oval 195, 54, 39, 34;
+             HEIGHT = -843: oval 165, -140, 40, 35;
+             HEIGHT = -843: oval 290, -80, 35, 30;
         `,
         obstacles:`
-            
+
 
         `,
         par:4
@@ -322,7 +322,7 @@ var levelData = [
             HEIGHT + 1: hill 350, 170, 60, 100;
             HEIGHT + 1: hill 90, 50, 60, 60;
             HEIGHT + -1: hill 0, 300, 60, 60;
-            HEIGHT = -843: oval 200, 150, 100, 50; 
+            HEIGHT = -843: oval 200, 150, 100, 50;
             HEIGHT = -843: oval 0, 300, 20, 20;
             HEIGHT = 1134: rect 100, 250, 100, 50;
         `,
