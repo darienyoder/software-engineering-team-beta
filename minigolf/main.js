@@ -33,6 +33,8 @@ let hitSound, holeSound, waterSplash;
 // Blitz Mode variable
 let blitzMode = false;
 
+var starCount = [];
+
 // Loading sound files
 async function loadSounds(){
     hitSound = loadSound('assets/golfPutt.wav');
@@ -135,7 +137,13 @@ async function setup()
     // Add level select buttons to menu
     for (var i in levelData)
     {
-        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + "); menuMusic.stop(); courseMusic.play();'>" + (Number(i) + 1) +"</button>"
+        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + ")'>"
+            + (Number(i) + 1)
+            + "<div class='level-select-star'></div>"
+            + "<div class='level-select-star'></div>"
+            + "<div class='level-select-star'></div>"
+        + "</button>";
+        starCount.push(0);
     }
 
     document.getElementById("loading-message").style.display = "none";
@@ -164,6 +172,33 @@ function setMenu(newMenu)
             menu.style.display = "block";
         else
             menu.style.display = "none";
+    }
+    if (newMenu == "level-select")
+        for (var i in levelData)
+        {
+            for (var star = 0; star < 3; star++)
+            {
+                if (starCount[i] == 0)
+                    document.getElementById("level-select-wrapper").children[i].children[star].style.display = "none";
+                else
+                {
+                    document.getElementById("level-select-wrapper").children[i].children[star].style.display = "block";
+                    if (star + 1 <= starCount[i])
+                        document.getElementById("level-select-wrapper").children[i].children[star].style.backgroundImage = "url('assets/menu/star_gold.png')";
+                    else
+                        document.getElementById("level-select-wrapper").children[i].children[star].style.backgroundImage = "url('assets/menu/star_black.png')";
+                }
+            }
+        }
+    else if (newMenu == "level-complete")
+    {
+        for (var star = 0; star < 3; star++)
+        {
+            if (strokeCount <= levelData[level.number].par + 2 - star)
+                document.getElementById("level-complete-stars").children[star].src = "assets/menu/star_gold.png";
+            else
+                document.getElementById("level-complete-stars").children[star].src = "assets/menu/star_black.png";
+        }
     }
 }
 
@@ -452,7 +487,7 @@ async function handleGamePlay() {
         putter.rotate(90,forceMagnitude/10);    //The  /10 can be changed to whatever looks best
         await sleep(250);
         putter.rotate(-90,forceMagnitude/10);
-        hitSound.play(); //Playing the ball hit sound
+        // hitSound.play(); //Playing the ball hit sound
         await sleep(250);
 
         // Hide the putter
@@ -531,7 +566,14 @@ async function handleGamePlay() {
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
         strokeCounts.push(strokeCount);
-        strokeCount = 0;
+
+        if (strokeCount <= levelData[level.number].par)
+            starCount[level.number] = 3;
+        else if (strokeCount <= levelData[level.number].par + 1)
+            starCount[level.number] = Math.max(2, starCount[level.number]);
+        else if (strokeCount <= levelData[level.number].par + 2)
+            starCount[level.number] = Math.max(1, starCount[level.number]);
+
         await sleep(2000);
 
         // clear();

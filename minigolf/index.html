@@ -171,6 +171,11 @@
             <div class="center-content">
                 <div class="menu-panel">
                     <h1>Great Job!</h1>
+                    <div id="level-complete-stars">
+                        <img height="150" width="150">
+                        <img height="150" width="150">
+                        <img height="150" width="150">
+                    </div>
                     <div class="spaced-row">
                         <button onclick="level.clear(); setMenu('level-select'); courseMusic.stop(); menuMusic.play();" style="background-image:url('assets/menu/home.png')"></button>
                         <button onclick="if (level.number == levelData.length - 1) {level.clear(); setMenu('level-select'); courseMusic.stop(); menuMusic.play();} else level.nextLevel();" style="background-image:url('assets/menu/forward_arrow.png')"></button>
