@@ -695,7 +695,7 @@ class Level
 
         par = levelDict.par;
 
-        this.maxHeight = 1;
+        this.maxHeight = 0.5;
         this.minHeight = -1;
 
         // Draw shader
@@ -811,7 +811,7 @@ class Level
                     case 'Fan':
                         objectData.position = [Number(parts[2]), Number(parts[3])];
                         objectData.wind = Number(parts[4]);
-                        break; 
+                        break;
                     // Add more cases for other object types as needed
                 }
 
