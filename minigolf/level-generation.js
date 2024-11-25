@@ -531,7 +531,9 @@ class Level
             slope = slope.sub(createVector(x, y).mult(this.getHeight(pointX + x * 5, pointY + y * 5)));
         }
 
-        return slope.normalize().mult(0.1);
+        if (slope.mag() > 0.001)
+            return slope.normalize().mult(0.07);
+        return createVector();
 
         // return (   createVector(x + 0.5, y, this.getHeight(x + 0.5, y)).sub(createVector(x - 0.5, y, this.getHeight(x - 0.5, y))).normalize()   ).cross(   createVector(x, y + 0.5, this.getHeight(x, y + 0.5)).sub(createVector(x, y - 0.5, this.getHeight(x, y - 0.5))).normalize()   );
     }
