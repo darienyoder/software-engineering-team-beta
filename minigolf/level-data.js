@@ -421,7 +421,7 @@ var levelData = [
         ADD Rock 49 520;
         ADD Rock 270 496;
         ADD Rock 251 355;
-        ADD Rock 153 395;
+        ADD Rock 153 310;
         ADD Rock 234 433;
         ADD Rock 125 567;
         ADD Windmill 100 675;
