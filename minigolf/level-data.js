@@ -431,6 +431,38 @@ var levelData = [
         `,
         par: 5,
     },
+    {
+        ballPosition: [30, 470],
+        holePosition: [170, 50],
+        area: `
+             ADD rect 0, 0, 200, 500;
+             SUB rect 0, 400, 150, 10;
+
+             SUB rect 50, 300, 150, 10;
+             SUB rect 0, 200, 150, 10;
+             SUB rect 50, 100, 150, 10;
+
+             HEIGHT = -843: oval 190, 490, 40, 40;
+             HEIGHT = 01134: rect 65, 375, 70, 60;
+
+             HEIGHT = -843: oval 13, 385, 30, 30;
+
+             HEIGHT = 01134: rect 0, 200, 150, 40;
+
+             HEIGHT = 01134: rect 70, 270, 150, 40;
+
+             HEIGHT = -843: oval 13, 180, 33, 33;
+
+             HEIGHT = -843: oval 13, 15, 33, 33;
+
+             HEIGHT = 01134: rect 70, 75, 150, 60;
+           
+        `,
+        obstacles: `
+            
+        `,
+        par: 6
+    }
 ];
 
 const testLevel = {
