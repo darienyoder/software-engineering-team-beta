@@ -456,7 +456,8 @@ var levelData = [
             HEIGHT = 1134: rect 50, 200, 45, 20;
             
         `,
-        obstacles: `   `,
+        obstacles: ` 
+          `,
         par: 5,
     },
   {
