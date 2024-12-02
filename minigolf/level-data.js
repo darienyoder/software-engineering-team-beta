@@ -552,6 +552,53 @@ var levelData = [
         `,
         par: 1 //Yes, this is possible to do in 1
     },
+    {
+        ballPosition: [100, 25],  
+        holePosition: [340,450], 
+        area: `
+            // Greens;
+            ADD poly (0, 50), (50, 0), (450, 0), (500, 50), (500, 450), (450, 500), (50, 500), (0, 450);
+            // Water on the sides;
+            HEIGHT = -843: oval 7, 245, 7, 175;
+            HEIGHT = -843: oval 493, 245, 7, 175;
+            // Water spots;
+            HEIGHT = -843: oval 200, 150, 17, 14; 
+            HEIGHT = -843: oval 400, 160, 10, 12; 
+            HEIGHT = -843: oval 340, 300, 14, 14;
+            HEIGHT = -843: oval 250, 400, 12, 13;
+            HEIGHT = -843: oval 460, 480, 16, 14;
+            HEIGHT = -843: oval 250, 20, 14, 12;
+            // Sandtrap;
+            HEIGHT = 1134: oval 300, 200, 18, 18;
+            HEIGHT = 1134: oval 230, 240, 18, 18;
+               
+        `,
+        obstacles:`
+            ADD Rock 172 172;
+            ADD Rock 43 325;
+            ADD Windmill 175 330;
+            ADD Rock 100 125;
+            ADD Rock 199 200;
+            ADD Rock 375 175;
+            ADD Rock 264 350;
+            ADD Rock 312 90;
+            ADD Rock 410 270;
+            ADD Fan 10 125 0;
+            ADD Fan 175 60 1;
+            ADD Fan 325 125 0;
+            ADD Fan 325 125 2;
+            ADD Fan 100 200 2;
+            ADD Fan 100 200 0;
+            ADD Fan 285 300 3;
+            ADD Fan 400 50 2;
+            ADD Fan 440 350 3;
+            ADD Fan 100 450 3;
+            ADD Fan 440 400 2;
+            ADD Fan 250 475 2;
+
+        `,
+        par:5
+    },
 ];
 
 const testLevel = {
