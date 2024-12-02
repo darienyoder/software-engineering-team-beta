@@ -433,6 +433,33 @@ var levelData = [
         par: 5,
     },
     {
+        // I shaped level
+        ballPosition: [-15, 225],
+        holePosition: [330, 25],
+        area: `
+            ADD rect 75, 0, 275, 50;
+            ADD rect -50, 200, 275, 50;
+            ADD rect 125, 0, 50, 200;
+
+            HEIGHT = -843: rect 75, 0, 55, 50;
+            HEIGHT = -843: rect 170, 200, 55, 50;
+            HEIGHT = -843: rect -80, 200, 55, 50;
+
+            HEIGHT = 1134: rect 115, 55, 30, 36;
+            HEIGHT = 1134: rect 155, 115, 30, 25;
+
+            HEIGHT = 1134: rect 130, 0, 20, 20;
+            HEIGHT = 1134: rect 220, 0, 50, 20;
+            HEIGHT = 1134: rect 275, 35, 30, 20;
+
+            HEIGHT = 1134: rect -10, 230, 15, 20;
+            HEIGHT = 1134: rect 50, 200, 45, 20;
+            
+        `,
+        obstacles: `   `,
+        par: 5,
+    },
+  {
         ballPosition: [25, 150],  
         holePosition: [20,25], 
         area: `
