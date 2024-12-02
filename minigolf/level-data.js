@@ -480,6 +480,49 @@ var levelData = [
             ADD Windmill 170 -100;
         `,
         par: 5
+},
+  {
+        ballPosition: [-60, 375],
+        holePosition: [0, -70],
+        area: `
+        ADD rect -40, -100, 80, 500;
+        ADD rect -80, 350, 160, 50;
+        ADD circ 0, -50, 100, 100;
+
+        ADD circ 60, 275, 50, 50;
+        ADD rect 0, 225, 60, 100;
+
+        ADD circ -60, 125, 50, 50;
+        ADD rect -60, 75, 50, 100;
+
+        ADD rect -80, 250, 50, 50;
+        HEIGHT = -843: rect -80, 250, 40, 50;
+        
+        ADD rect 40, 100, 40, 50;
+        HEIGHT = -843: rect 40, 100, 40, 50;
+        `,
+        obstacles: `
+        ADD Fan 0 0 1;
+        ADD Fan 60 275 2;
+        ADD Fan -60 125 0;
+        `,
+        par: 8
+    },
+    {
+        ballPosition: [30, 585],
+        holePosition: [50, 40],
+        area: `
+        ADD rect 0, 0, 100, 625;
+        HEIGHT + 1: ramp 0, 500, 0, 100, 100;
+        HEIGHT = 1: rect 0, 0, 100, 100;
+        HEIGHT = -843: oval -20, 450, 60, 100;
+        `,
+        obstacles: `
+        ADD Fan 80 600 3;
+        ADD Fan 20 320 3;
+        ADD Fan 80 220 3;
+        `,
+        par: 1 //Yes, this is possible to do in 1
     },
 ];
 
