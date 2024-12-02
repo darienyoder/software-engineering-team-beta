@@ -7,7 +7,7 @@ var levelData = [
         `,
         obstacles: `
         `,
-        par: 2,
+        par: 1,
     },
     {
         ballPosition: [75, 75],
@@ -46,7 +46,7 @@ var levelData = [
             // End goal;
             ADD circle 250, 75, 50;
             ADD rect 225, 75, 50, 75;
-            
+
             // Sand;
             HEIGHT = 1134: rect 225, -75, 50, 50;
         `,
@@ -211,7 +211,7 @@ var levelData = [
     HEIGHT = 1134: rect 50, 245, 130, 65;
 
     // sand leading to the hole;
-    HEIGHT = 1134: rect 180, 70, 195, 240; 
+    HEIGHT = 1134: rect 180, 70, 195, 240;
     HEIGHT = 1134: rect 180, 0, 110, 100;
     `,
     obstacles:`
@@ -288,8 +288,8 @@ var levelData = [
         par: 10,
     },
     {
-        ballPosition: [35, 220],  
-        holePosition: [350, -115], 
+        ballPosition: [35, 220],
+        holePosition: [350, -115],
         area: `
             //middle horizontal piece;
              ADD rect 0, 0, 220, 70;
@@ -302,27 +302,27 @@ var levelData = [
              ADD rect 150, -150, 230, 70;
 
              //water in the course ;
-             HEIGHT = -843: oval 10, 10, 42, 37; 
-             HEIGHT = -843: oval 58, 150, 30, 35; 
-             HEIGHT = -843: oval 195, 54, 39, 34; 
-             HEIGHT = -843: oval 165, -140, 40, 35; 
-             HEIGHT = -843: oval 290, -80, 35, 30; 
+             HEIGHT = -843: oval 10, 10, 42, 37;
+             HEIGHT = -843: oval 58, 150, 30, 35;
+             HEIGHT = -843: oval 195, 54, 39, 34;
+             HEIGHT = -843: oval 165, -140, 40, 35;
+             HEIGHT = -843: oval 290, -80, 35, 30;
         `,
         obstacles:`
-            
+
 
         `,
         par:4
     },
     {
-        ballPosition: [250, 50],  
-        holePosition: [250, 230], 
+        ballPosition: [250, 50],
+        holePosition: [250, 230],
         area: `
             ADD rect 0, 0, 350, 300;
             HEIGHT + 1: hill 350, 170, 60, 100;
             HEIGHT + 1: hill 90, 50, 60, 60;
             HEIGHT + -1: hill 0, 300, 60, 60;
-            HEIGHT = -843: oval 200, 150, 100, 50; 
+            HEIGHT = -843: oval 200, 150, 100, 50;
             HEIGHT = -843: oval 0, 300, 20, 20;
             HEIGHT = 1134: rect 100, 250, 100, 50;
         `,
@@ -375,16 +375,16 @@ var levelData = [
 
             // Comment this section for lake;
             // SUB oval 300, 400, 100, 40;
-            // SUB rect 200, 360, 200, 40; 
+            // SUB rect 200, 360, 200, 40;
 
             // Comment this section for cutout area;
             HEIGHT + 1: hill 300, 400, 60, 60;
             HEIGHT = -843: oval 300, 370, 75, 25;
 
-            
+
             HEIGHT + 1: hill 300, 200, 90, 60;
             HEIGHT + 1: hill 400, 300, 60, 60;
-            HEIGHT + 1: hill 200, 300, 60, 60; 
+            HEIGHT + 1: hill 200, 300, 60, 60;
         `,
         obstacles: `
             ADD Windmill 120 400;
@@ -402,32 +402,33 @@ var levelData = [
             SUB rect 60, 700, 10, 50;
             SUB rect 130, 700, 10, 50;
             SUB rect 230, 700, 10, 50;
-            HEIGHT = -843: oval 185, 750, 50, 50; 
-            HEIGHT = 1, 150, 75, 150, 700, 300;
+            HEIGHT = -1: ramp 150, 75, 150, 700, 300;
+            HEIGHT = -1: rect 0, 700, 300, 60;
+            HEIGHT = -843: oval 185, 750, 50, 50;
 
             SUB poly (75, 399), (165, 450), (50, 499);
         `,
         obstacles: `
         ADD Rock 62 318;
-        ADD Rock 272 254;
+        ADD Rock 290 275;
         ADD Rock 236 157;
         ADD Rock 39 141;
         ADD Rock 67 241;
-        ADD Rock 27 603;
+        ADD Rock 45 603;
         ADD Rock 157 499;
         ADD Rock 136 192;
         ADD Rock 241 586;
         ADD Rock 49 520;
         ADD Rock 270 496;
         ADD Rock 251 355;
-        ADD Rock 153 395;
+        ADD Rock 153 310;
         ADD Rock 234 433;
         ADD Rock 125 567;
         ADD Windmill 100 675;
         ADD Windmill 177 235;
         ADD Tubes 400 300 25 270;
         ADD Tubes 30 720 25 25;
-        ADD Volcano 350 270; 
+        ADD Volcano 350 270;
         `,
         par: 5,
     },
@@ -455,10 +456,100 @@ var levelData = [
             HEIGHT = 1134: rect 50, 200, 45, 20;
             
         `,
-        obstacles: `
+        obstacles: `   `,
+        par: 5,
+    },
+  {
+        ballPosition: [25, 150],  
+        holePosition: [20,25], 
+        area: `
+             //the corse and the rects the cut the middle out;
+            ADD rect 0, 0, 300, 300;
+            SUB rect 50, 50, 200, 200;
+            SUB rect 0, 50, 100, 75;
+            
+            //the ramp at the bottom;
+            HEIGHT + .5: ramp 250, 270, 5, 270, 27;
+            HEIGHT = 0.5: rect 5, 130, 50, 170;
+            //water at the bottom;
+            HEIGHT = -843: oval 290, 285, 13, 15; 
+            HEIGHT = -843: oval 290, 15, 13, 15; 
+        
+        `,
+        obstacles:`
+         ADD Windmill 150 91;
             
         `,
-        par: 5,
+        par:3
+    },
+    {
+        // Banana Level
+        ballPosition: [30, 450],
+        holePosition: [96, -430],
+    
+        area: `
+        add oval 0, 0, 250, 500;
+        sub oval 0, -100, 100, 520;
+        sub rect -330, -500, 330, 1200;
+
+        HEIGHT = -843: oval 270, 100, 85, 40;
+        HEIGHT = -843: oval 130, -250, 30, 30;
+        HEIGHT = -843: oval 70, 90, 50, 108;
+
+        HEIGHT = 1134: oval 110, 260, 30, 50;
+        HEIGHT = 1134: oval 79, -400, 40, 15;
+
+        HEIGHT + .8: hill 160, 0, 30, 25;
+        HEIGHT - .3: hill 110, -350, 24, 40;
+        `,
+        obstacles: `
+            ADD Windmill 176 400;
+            ADD Windmill 170 -100;
+        `,
+        par: 5
+},
+  {
+        ballPosition: [-60, 375],
+        holePosition: [0, -70],
+        area: `
+        ADD rect -40, -100, 80, 500;
+        ADD rect -80, 350, 160, 50;
+        ADD circ 0, -50, 100, 100;
+
+        ADD circ 60, 275, 50, 50;
+        ADD rect 0, 225, 60, 100;
+
+        ADD circ -60, 125, 50, 50;
+        ADD rect -60, 75, 50, 100;
+
+        ADD rect -80, 250, 50, 50;
+        HEIGHT = -843: rect -80, 250, 40, 50;
+        
+        ADD rect 40, 100, 40, 50;
+        HEIGHT = -843: rect 40, 100, 40, 50;
+        `,
+        obstacles: `
+        ADD Fan 0 0 1;
+        ADD Fan 60 275 2;
+        ADD Fan -60 125 0;
+        `,
+        par: 8
+    },
+    {
+        ballPosition: [30, 585],
+        holePosition: [50, 40],
+        area: `
+        ADD rect 0, 0, 100, 625;
+        HEIGHT + 1: ramp 0, 500, 0, 100, 100;
+        HEIGHT = 1: rect 0, 0, 100, 100;
+        HEIGHT = -843: oval -20, 450, 60, 100;
+        `,
+        obstacles: `
+        ADD Fan 80 600 3;
+        ADD Fan 20 320 3;
+        ADD Fan 80 220 3;
+        `,
+        par: 1 //Yes, this is possible to do in 1
     },
 ];
 
@@ -517,4 +608,3 @@ const testLevel = {
     `,
     par: 5,
 };
-
