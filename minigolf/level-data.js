@@ -53,7 +53,7 @@ var levelData = [
         obstacles: `
             // ADD Sandtrap 250 -50 50 50;
             ADD Tubes 465 215 25 225;
-            ADD Windmill 450 50;
+            ADD Windmill 450 50 -1;
         `,
         par: 5,
     },
@@ -70,7 +70,7 @@ var levelData = [
         ADD rect 21, 21, 50, 300;
         HEIGHT = 1134: oval 25, 25, 16, 16;
         `,
-        obstacles: "ADD Windmill -16 146;",
+        obstacles: "ADD Windmill -16 146 -1;",
         par: 5
     },
     {
@@ -152,7 +152,7 @@ var levelData = [
             ADD Tubes 275 25 25 225;
             ADD Tubes 275 225 25 425;
             // ADD Sandtrap 150 3 100 50;
-            ADD Windmill 150 170;
+            ADD Windmill 150 170 -1;
             // ADD Water 150 150;
 
         `,
@@ -181,8 +181,8 @@ var levelData = [
             ADD Sandtrap 80 50 10 50;
             // sandtrap is underneath tubeB, used to slow ball down so it enters hole;
             ADD Tubes 425 50 75 50;
-            ADD Windmill 150 -180;
-            ADD Windmill 150 280;
+            ADD Windmill 150 -180 -1;
+            ADD Windmill 150 280 -1;
         `,
         par: 3
     },
@@ -387,8 +387,8 @@ var levelData = [
             HEIGHT + 1: hill 200, 300, 60, 60;
         `,
         obstacles: `
-            ADD Windmill 120 400;
-            ADD Windmill 480 400;
+            ADD Windmill 120 400 -1;
+            ADD Windmill 480 400 -1;
         `,
         par: 4
     },
@@ -424,8 +424,8 @@ var levelData = [
         ADD Rock 153 310;
         ADD Rock 234 433;
         ADD Rock 125 567;
-        ADD Windmill 100 675;
-        ADD Windmill 177 235;
+        ADD Windmill 100 675 -1;
+        ADD Windmill 177 235 -1;
         ADD Tubes 400 300 25 270;
         ADD Tubes 30 720 25 25;
         ADD Volcano 350 270;
@@ -478,7 +478,7 @@ var levelData = [
         
         `,
         obstacles:`
-         ADD Windmill 150 91;
+         ADD Windmill 150 91 -1;
             
         `,
         par:3
@@ -602,7 +602,7 @@ const testLevel = {
         obstacles: `
         ADD Sandtrap 250 -50 50 50;
         ADD Tubes 465 215 25 225;
-        ADD Windmill 425 45;
+        ADD Windmill 425 45 -1;
         ADD Water 460 40;
         ADD Volcano 50 75;
         ADD Fan 745 225 0;

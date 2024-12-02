@@ -55,7 +55,7 @@ class GameObject {
                 break;
 
             case "tubes":
-                if (this.sprites[0].overlaps(ball))
+                if (this.sprites[0].overlaps(ball) && ball.vel.x <= 1.5 && ball.vel.y <= 1.5)
                 {
                     ball.x = this.sprites[1].x;
                     ball.y = this.sprites[1].y;
@@ -70,7 +70,7 @@ class GameObject {
             case "windmill":
                 ball.overlaps(this.sprites[0]);
                 for (var blade of this.sprites[1])
-                    blade.rotationSpeed = -1;
+                    blade.rotationSpeed = this.sprites[0].dir;
 
                 break;
 
@@ -79,7 +79,7 @@ class GameObject {
                 if (this.sprites[0].overlaps(ball))
                 {
                     waterSplash.play();
-
+                    
                     ball.vel.x = 0;
                     ball.vel.y = 0;
                     ball.x = lastHit.x;
@@ -93,7 +93,7 @@ class GameObject {
                 
                 // Generate Lava
                 if (frameCount % volcSpeed == 0) {
-                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(10,20));
+                    let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(5,20));
                     aLava.life = volcSpeed;
                     playLavaSound();
                     let randColor = random(0, 3);
@@ -169,7 +169,7 @@ class GameObject {
 
             case "ghost":
                 //When active float towards ball
-                this.sprites[0].rotation = 0;
+                this.sprites[0].rotationSpeed=0;
                 if (this.sprites[0].active && this.sprites[0].sg){
                     this.sprites[0].moveTowards(ball.x, ball.y, .004);
                     playJimmySound();
@@ -184,59 +184,6 @@ class GameObject {
                     ball.vel.y = 0;
                     ball.x = ballStart.x;
                     ball.y = ballStart.y;
-                }
-
-                break;
-            
-            // Fan
-            case "fan":
-                let fanDist = sqrt(((ball.x-this.sprites[0].x)**2)+((ball.y-this.sprites[0].y)**2));
-                let fanPower = 25;
-                let  fanFurthest = 100;
-
-                // East Blowing Fan
-                if(this.sprites[0].rotation == 0){
-
-                    if (ball.y >= this.sprites[0].y-25 && 
-                        ball.y <= this.sprites[0].y+25 &&
-                        ball.x >= this.sprites[0].x &&
-                        ball.x <= this.sprites[0].x + fanFurthest){
-                        
-                        ball.vel.x += abs(fanPower/fanDist);
-                    }
-                }
-
-                // South Blowing Fan
-                else if(this.sprites[0].rotation ==90){
-                    if (ball.x >= this.sprites[0].x-25 && 
-                        ball.x <= this.sprites[0].x+25 &&
-                        ball.y <= this.sprites[0].y + fanFurthest && 
-                        ball.y >= this.sprites[0].y){
-                        
-                        ball.vel.y += abs(fanPower/fanDist);
-                    }
-                }
-
-                // West Blowing Fan
-                else if(this.sprites[0].rotation == 180){
-                    if (ball.y >= this.sprites[0].y-25 && 
-                        ball.y <= this.sprites[0].y+25 &&
-                        ball.x <= this.sprites[0].x &&
-                        ball.x >= this.sprites[0].x - fanFurthest){
-                        
-                        ball.vel.x -= abs(fanPower/fanDist);
-                    }
-                }
-
-                // North Blowing Fan
-                else {
-                    if (ball.x >= this.sprites[0].x-25 && 
-                        ball.x <= this.sprites[0].x+25 &&
-                        ball.y <= this.sprites[0].y && 
-                        ball.y >= this.sprites[0].y - fanFurthest){
-                        
-                        ball.vel.y -= abs(fanPower/fanDist);
-                    }
                 }
 
                 break;
@@ -311,7 +258,7 @@ function Ball(x, y)
 function Hole(x, y)
 {
     let newHole = new Sprite(x, y);
-    newHole.diameter = 20;
+    newHole.diameter = 40;
     newHole.collider = 'kinematic';
     newHole.layer = 1;
     newHole.color = 'grey';
@@ -349,12 +296,26 @@ function Tubes(tubeaX, tubeaY, tubebX, tubebY)
     return new GameObject("tubes", [tubeA, tubeB]);
 }
 
-function Windmill(posX, posY)
+function Windmill(posX, posY, dir)
 {
     windmillBody = new Sprite([[posX, posY], [posX - 25, posY + 75], [posX + 25, posY + 75], [posX, posY]],'s');
     windmillBody.color = 'white';
     windmillBody.stroke = 'white';
     windmillBody.layer = 0;
+    
+    //Dir can be -1 (counterclockwise) or 1 (clockwise)
+    windmillBody.dir = dir
+    // Original windmill blades code
+    // windmillBlades = new Sprite(
+    //     [[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]  // Bottom
+    //     ,[posX+75, posY+12.5], [posX+75, posY-12.5], [posX, posY]  // Right
+    //     ,[posX-12.5, posY-75], [posX+12.5, posY-75], [posX, posY]  // Top
+    //     ,[posX-75, posY+12.5], [posX-75, posY-12.5], [posX, posY]] // Left
+    //     );
+    // windmillBlades.color = 'black';
+    // windmillBlades.color = "#B8860B";
+    // windmillBlades.stroke = 'black';
+    // windmillBlades.collider = 'kinematic';
 
     // Doing the blades all at once caused them to not get filled in (p5play doesn't like concave shapes).
     // If they weren't filled in, they could capture and drag the ball, especially during tests.
@@ -391,6 +352,7 @@ function Windmill(posX, posY)
     windmillBlade4.stroke = "black";
     windmillBlade4.collider = 'kinematic';
 
+    // Come back to this later;
     return new GameObject("windmill", [windmillBody,
                                     [
                                         windmillBlade1,
@@ -399,6 +361,7 @@ function Windmill(posX, posY)
                                         windmillBlade4
                                     ]
                                  ]);
+    // return [windmillBody,windmillBlade1,windmillBlade2,windmillBlade3,windmillBlade4];
 }
 
 function Water(posX, posY, shape = "square") {
@@ -428,6 +391,13 @@ function Volcano(posX, posY) {
     volcano.stroke = 'black';
     volcano.layer = 0;
     volcano.collider = 'kinematic';
+
+    // lava = new Sprite(posX,posY,10);
+    // lava.color = 'red';
+    // lava.stroke = '#8B0000';
+    // lava.layer = 0;
+    // lava.diameter = 10;
+    // lava.life = 10;
 
     return new GameObject("volcano", volcano);
 }
@@ -468,56 +438,4 @@ function Rock(posX,posY){
     rock.collider='static';
     rock.rotation = random(-90,90);
     return new GameObject("rock",rock);
-}
-// Make fan
-function Fan(posX, posY, dir){
-    let fan = new Sprite(posX, posY, 'k');
-    fan.diameter = 50;
-    // let fan = new Sprite([[posX+25,posY], [posX, posY+25], [posX, posY-25], [posX+25, posY]]);
-    fan.color = '#A9A9A9';
-    fan.layer = 0;
-
-    // Directional Arrows:
-    // 0 = east (0 degrees)
-    if (dir == 0){
-        fan.rotation = 0;
-        arrow = new Sprite([[posX+25,posY], [posX, posY+25], [posX, posY-25], [posX+25, posY]],'k');
-    }
-    // 1 = south (90 degrees)
-    else if (dir == 1 || dir == 90){
-        fan.rotation = 90;
-        arrow = new Sprite([[posX,posY+25], [posX+25, posY], [posX-25, posY], [posX, posY+25]],'k');
-    }
-    // 2 = west (180 degrees)    
-    else if (dir == 2 || dir == 180){
-        fan.rotation = 180;
-        arrow = new Sprite([[posX-25,posY], [posX, posY+25], [posX, posY-25], [posX-25, posY]],'k');
-    }
-    // 3 = north (270 degrees)
-    else{
-        fan.rotation = 270;
-        arrow = new Sprite([[posX,posY-25], [posX+25, posY], [posX-25, posY], [posX, posY-25]],'k');
-    }
-
-    arrow.color = '#A9A9A9';
-    arrow.strokeWeight = .1;
-    // fan.addCollider([[posX+25,posY], [posX, posY+25], [posX, posY-25], [posX+25, posY]]);
-    // fan.addCollider(0, 0, 50);
-    // fan.addCollider([[10,16],[123,203],[23,-23],[10,16]]);  
-
-    /*windmillBlade1 = new Sprite([[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]]);
-    fanBlade1.y= posY;
-    fanBlade1.offset.y = 50;
-    fanBlade1.color="#B8860B";
-    fanBlade1.stroke = 'black';
-    fanBlade1.collider = 'kinematic';*/
-
-    return new GameObject("fan", [fan, arrow,
-        /*[
-            fanBlade1,
-            fanBlade2,
-            fanBlade3,
-            fanBlade4
-        ]
-     */]);
 }

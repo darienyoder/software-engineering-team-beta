@@ -567,7 +567,7 @@ class Level
             case 'Tubes':
                 return Tubes(objectData.position[0], objectData.position[1], objectData.targetPosition[0], objectData.targetPosition[1]);
             case 'Windmill':
-                return Windmill(objectData.position[0], objectData.position[1]);
+                return Windmill(objectData.position[0], objectData.position[1], objectData.dir);
             case 'Volcano':
                 return Volcano(objectData.position[0],objectData.position[1]);
             case 'Water':
@@ -791,6 +791,7 @@ class Level
                         break;
                     case 'Windmill':
                         objectData.position = [Number(parts[2]), Number(parts[3])];
+                        objectData.dir = Number(parts[4]);
                         break;
                     case 'Water':
                         objectData.position = [Number(parts[2]), Number(parts[3])];
