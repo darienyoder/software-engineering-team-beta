@@ -47,7 +47,7 @@ async function loadSounds(){
     boo = loadSound('assets/boo.mp3');
     jimmy = loadSound('assets/Jimmy.mp3');
     lava = loadSound('assets/lavaNoise.mp3');
-    fizz = loudSound('assets/fizz.mp3');
+    fizz = loadSound('assets/fizz.mp3');
 }
 
 function preload()
