@@ -456,7 +456,7 @@ var levelData = [
         par:3
     },
     {
-        // Half CircleLevel
+        // Banana Level
         ballPosition: [30, 450],
         holePosition: [96, -430],
     
@@ -471,6 +471,9 @@ var levelData = [
 
         HEIGHT = 1134: oval 110, 260, 30, 50;
         HEIGHT = 1134: oval 79, -400, 40, 15;
+
+        HEIGHT + .8: hill 160, 0, 30, 25;
+        HEIGHT - .3: hill 110, -350, 24, 40;
         `,
         obstacles: `
             ADD Windmill 176 400;
