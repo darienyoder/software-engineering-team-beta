@@ -456,6 +456,32 @@ var levelData = [
         par:3
     },
     {
+        // Banana Level
+        ballPosition: [30, 450],
+        holePosition: [96, -430],
+    
+        area: `
+        add oval 0, 0, 250, 500;
+        sub oval 0, -100, 100, 520;
+        sub rect -330, -500, 330, 1200;
+
+        HEIGHT = -843: oval 270, 100, 85, 40;
+        HEIGHT = -843: oval 130, -250, 30, 30;
+        HEIGHT = -843: oval 70, 90, 50, 108;
+
+        HEIGHT = 1134: oval 110, 260, 30, 50;
+        HEIGHT = 1134: oval 79, -400, 40, 15;
+
+        HEIGHT + .8: hill 160, 0, 30, 25;
+        HEIGHT - .3: hill 110, -350, 24, 40;
+        `,
+        obstacles: `
+            ADD Windmill 176 400;
+            ADD Windmill 170 -100;
+        `,
+        par: 5
+},
+  {
         ballPosition: [-60, 375],
         holePosition: [0, -70],
         area: `
