@@ -46,6 +46,8 @@ async function loadSounds(){
     click = loadSound('assets/buttonpress.mp3');
     boo = loadSound('assets/boo.mp3');
     jimmy = loadSound('assets/Jimmy.mp3');
+    lava = loadSound('assets/lavaNoise.mp3');
+    fizz = loudSound('assets/fizz.mp3');
 }
 
 function preload()
@@ -179,6 +181,7 @@ function setMenu(newMenu) {
     
     // Level Select Menu logic
     if (newMenu == "level-select") {
+        clearSounds()
         for (var i in levelData) {
             for (var star = 0; star < 3; star++) {
                 if (starCount[i] == 0)
@@ -195,6 +198,7 @@ function setMenu(newMenu) {
     } 
     // Level Complete Menu logic
     else if (newMenu == "level-complete") {
+        clearSounds()
         for (var star = 0; star < 3; star++) {
             if (strokeCount <= levelData[level.number].par + 2 - star)
                 document.getElementById("level-complete-stars").children[star].src = "assets/menu/star_gold.png";
@@ -233,7 +237,7 @@ function playClickSound(){
     click.play();
 }
 function playBooSound(){
-    if (Math.random() > 0.999) {
+    if ((Math.random() > 0.999) && !boo.isPlaying()) {
         boo.setVolume(0.5);
         boo.play();
     }
@@ -242,6 +246,22 @@ function playJimmySound(){
     if (!jimmy.isPlaying()) {
         jimmy.play();
     }
+}
+function playLavaSound(){
+    if (!lava.isPlaying()){
+        lava.setVolume(.75);
+        lava.play()
+    }
+}
+function playFizzSound(){
+    if (!fizz.isPlaying()){
+        fizz.play()
+    }
+}
+function clearSounds(){ //wipe current playing sounds when level ends
+    lava.stop();
+    jimmy.stop()
+    boo.stop()
 }
 
 function setupLevel(levelNum) {
@@ -407,6 +427,7 @@ function drawGameOver() {
     text(`Strokes: ${totalStrokes}`, width / 2, height / 2);
     document.getElementById('mainMenuButton').style.display = 'block';
     document.getElementById('retryButton').style.display = 'block';
+    clearSounds()
 
 }
 
@@ -574,6 +595,7 @@ async function handleGamePlay() {
     // Hole functionality Ball must be going slow to get in hole
     if (hole.overlaps(ball))
     {
+        clearSounds()
         ballInGoal = true;
         holeSound.play();
         canMove = false;
@@ -585,7 +607,6 @@ async function handleGamePlay() {
             timeAtCompletion = blitzTimer; // Store the final time
             blitzTimer = 0;
         }
-
         strokeCounts.push(strokeCount);
 
         if (strokeCount <= levelData[level.number].par)

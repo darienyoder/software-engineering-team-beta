@@ -90,11 +90,12 @@ class GameObject {
 
             case "volcano":
                 let volcSpeed = 75; // CANNOT be less than 21!!
-
+                
                 // Generate Lava
                 if (frameCount % volcSpeed == 0) {
                     let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(10,20));
                     aLava.life = volcSpeed;
+                    playLavaSound();
                     let randColor = random(0, 3);
                     if (randColor < 1)
                         aLava.color = 'red';
@@ -131,9 +132,10 @@ class GameObject {
 
 
                 // Handle collisions with objects
-                // These only work for the first instance of each object :(
+                // These only work for the first instance of each object :( --What does that even mean?
                 for (let i = 0; i < lavaObjects.length; i++) {
                     if (ball.overlaps(lavaObjects[i])) {
+                        playFizzSound();
                         ball.vel.x = 0;
                         ball.vel.y = 0;
                         ball.x = ballStart.x;
