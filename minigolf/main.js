@@ -30,8 +30,13 @@ var webglContext;
 // Sound variables
 let hitSound, holeSound, waterSplash;
 
-// Blitz Mode variable
+// Blitz Mode variables
 let blitzMode = false;
+let blitzTimer = 0; // Timer in milliseconds
+let timerRunning = false; // Whether the timer is running
+let timerStart = null; // When the timer started
+
+var starCount = [];
 
 // Loading sound files
 async function loadSounds(){
@@ -43,10 +48,20 @@ async function loadSounds(){
     jimmy = loadSound('assets/Jimmy.mp3');
 }
 
+function preload()
+{
+    // Music
+    menuMusic = loadSound("assets/music/menu.mp3");
+    courseMusic = loadSound("assets/music/course.mp3");
+}
+
 // Runs once when the program starts
 async function setup()
 {
     await loadSounds();
+
+    menuMusic.loop();
+    courseMusic.loop();
 
     document.getElementById('mainMenuButton').style.display = 'none';
     document.getElementById('retryButton').style.display = 'none';
@@ -89,7 +104,7 @@ async function setup()
 
 
      // Blitz Mode toggle button setup
-     document.getElementById('blitzModeButton').addEventListener('click', () => {  // <---- ADDED
+     document.getElementById('blitzModeButton').addEventListener('click', () => { 
         blitzMode = !blitzMode;
         const blitzButton = document.getElementById('blitzModeButton');
         blitzButton.textContent = "Blitz Mode: " + (blitzMode ? "On" : "Off");
@@ -125,25 +140,78 @@ async function setup()
     // Add level select buttons to menu
     for (var i in levelData)
     {
-        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + ")'>" + (Number(i) + 1) +"</button>"
+        document.getElementById("level-select-wrapper").innerHTML += "<button class='level-select-button' onclick='level.load(" + i + "); menuMusic.stop(); courseMusic.play();'>"
+            + (Number(i) + 1)
+            + "<div class='level-select-star'></div>"
+            + "<div class='level-select-star'></div>"
+            + "<div class='level-select-star'></div>"
+        + "</button>";
+        starCount.push(0);
     }
 
-    setMenu("main-menu");
+    document.getElementById("loading-message").style.display = "none";
+    document.getElementById("loading-button").style.display = "block";
 
     createPutter();
 }
 
-var currentMenu = "";
-
-function setMenu(newMenu)
+// Runs once, when the user starts the game
+// Has to be separate from setup because music can't autoplay
+function loadMainMenu()
 {
+    setMenu("main-menu");
+    courseMusic.stop();
+    menuMusic.play();
+}
+
+var currentMenu = "loading-screen";
+
+function setMenu(newMenu) {
     currentMenu = newMenu;
-    for (var menu of document.getElementById("menus").children)
-    {
+    
+    // Loop through all menus and set display
+    for (var menu of document.getElementById("menus").children) {
         if (menu.id == newMenu)
             menu.style.display = "block";
         else
             menu.style.display = "none";
+    }
+    
+    // Level Select Menu logic
+    if (newMenu == "level-select") {
+        for (var i in levelData) {
+            for (var star = 0; star < 3; star++) {
+                if (starCount[i] == 0)
+                    document.getElementById("level-select-wrapper").children[i].children[star].style.display = "none";
+                else {
+                    document.getElementById("level-select-wrapper").children[i].children[star].style.display = "block";
+                    if (star + 1 <= starCount[i])
+                        document.getElementById("level-select-wrapper").children[i].children[star].style.backgroundImage = "url('assets/menu/star_gold.png')";
+                    else
+                        document.getElementById("level-select-wrapper").children[i].children[star].style.backgroundImage = "url('assets/menu/star_black.png')";
+                }
+            }
+        }
+    } 
+    // Level Complete Menu logic
+    else if (newMenu == "level-complete") {
+        for (var star = 0; star < 3; star++) {
+            if (strokeCount <= levelData[level.number].par + 2 - star)
+                document.getElementById("level-complete-stars").children[star].src = "assets/menu/star_gold.png";
+            else
+                document.getElementById("level-complete-stars").children[star].src = "assets/menu/star_black.png";
+        }
+
+        // Show completion time only in Blitz Mode
+        if (blitzMode) {
+            document.getElementById('completion-time').style.display = "block";
+        } else {
+            document.getElementById('completion-time').style.display = "none";
+        }
+    }
+    // When switching to any other menu, hide the completion time (regular mode)
+    else {
+        document.getElementById('completion-time').style.display = "none";
     }
 }
 
@@ -216,8 +284,16 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
-    webglCanvas.setAttribute('width', window.innerWidth);
-    webglCanvas.setAttribute('height', window.innerHeight);
+    if (webglCanvas)
+    {
+        webglCanvas.setAttribute('width', window.innerWidth);
+        webglCanvas.setAttribute('height', window.innerHeight);
+    }
+
+    if (menuMusic.isPlaying())
+        menuMusic.setVolume(Number(document.getElementById("music-volume").value));
+    if (courseMusic.isPlaying())
+        courseMusic.setVolume(Number(document.getElementById("music-volume").value));
 
     world.timeScale = (currentMenu == "level") ? 1.0 : 0.0;
 
@@ -353,7 +429,7 @@ async function handleGamePlay() {
             object.update();
 
     canvas.resize(window.innerWidth, window.innerHeight);
-    
+
     // Lerps camera zoom between just the ball and the entire level
     levelZoom = document.getElementById("zoom-slider").value;
     camera.x = lerp((level.bounds.right + level.bounds.left) / 2, ball.x, levelZoom);
@@ -424,7 +500,7 @@ async function handleGamePlay() {
         putter.rotate(90,forceMagnitude/10);    //The  /10 can be changed to whatever looks best
         await sleep(250);
         putter.rotate(-90,forceMagnitude/10);
-        // hitSound.play(); //Playing the ball hit sound
+        hitSound.play(); //Playing the ball hit sound
         await sleep(250);
 
         // Hide the putter
@@ -502,8 +578,23 @@ async function handleGamePlay() {
         holeSound.play();
         canMove = false;
         ball.moveTo(hole.position.x, hole.position.y);
+
+        let timeAtCompletion = 0; // Store the final time when the player finishes
+        if (blitzMode) {
+            timerRunning = false; // Stop the timer
+            timeAtCompletion = blitzTimer; // Store the final time
+            blitzTimer = 0;
+        }
+
         strokeCounts.push(strokeCount);
-        strokeCount = 0;
+
+        if (strokeCount <= levelData[level.number].par)
+            starCount[level.number] = 3;
+        else if (strokeCount <= levelData[level.number].par + 1)
+            starCount[level.number] = Math.max(2, starCount[level.number]);
+        else if (strokeCount <= levelData[level.number].par + 2)
+            starCount[level.number] = Math.max(1, starCount[level.number]);
+
         await sleep(2000);
 
         // clear();
@@ -513,6 +604,17 @@ async function handleGamePlay() {
         // await sleep(2000);
 
         // level.clear();
+        if (blitzMode) {
+        // Convert timeAtCompletion (in milliseconds) to minutes and seconds format
+        let seconds = Math.floor(timeAtCompletion / 1000);
+        let minutes = Math.floor(seconds / 60);
+        seconds = seconds % 60;
+        let finalTimeDisplay = `${minutes}:${nf(seconds, 2)}`; // Format as mm:ss
+        
+        // Update the HTML to show the time
+        document.getElementById('completion-time').textContent = `Time: ${finalTimeDisplay}`;
+        }
+
         setMenu("level-complete");
         ballInGoal = false;
         canMove = true;
@@ -550,6 +652,11 @@ async function handleGamePlay() {
             message = ''; //Reset the message
         }
     }
+
+    if (blitzMode && timerRunning) {
+        drawTimer();  // Draw the timer while Blitz Mode is active
+        blitzTimer = millis() - timerStart;  // Update the timer value
+    }
 }
 
 // Converts level coordinates to screen coordinates
@@ -583,9 +690,26 @@ function drawParCount()
     // text(`Par: ${par}`, 20, 20); // Draw the stroke count
 }
 
+function drawTimer() {
+    let seconds = Math.floor(blitzTimer / 1000);
+    let minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    let timerDisplay = `${minutes}:${nf(seconds, 2)}`; // Format time as 0:00
+
+    fill(0); // Black color for the text
+    textSize(32); // Adjust text size as needed
+    textAlign(LEFT, TOP); // Align text to the top left
+    text(`Time: ${timerDisplay}`, 10, 8); // Position the timer
+}
+
 function incrementShots()
 {
     strokeCount++;
+    if (blitzMode && strokeCount === 1) {
+        // Start the Blitz Mode timer on the first stroke
+        timerStart = millis();
+        timerRunning = true;
+    }
 }
 
 function drawTrajectory() {

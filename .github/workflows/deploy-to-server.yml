@@ -28,14 +28,14 @@ jobs:
 
           git pull || exit
           
-          cp -r minigolf/* ~/public_html/ || exit
+          cp -r minigolf/* ~/public_html/minigolf/ || exit
 
-          cd ~/public_html/ || exit
+          cd ~/public_html/minigolf/ || exit
 
           pid=$(lsof -t -i:9008) && if [ ! -z "$pid" ]; then kill -9 $pid; fi
 
           # Run python HTTP server in the background and redirect output to /dev/null
-          nohup python -m http.server 9008 --directory ~/public_html > /dev/null 2>&1 &
+          nohup python -m http.server 9008 --directory ~/public_html/minigolf > /dev/null 2>&1 &
 
         EOF
 
