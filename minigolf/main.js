@@ -155,7 +155,7 @@ async function setup()
     }
 
     document.getElementById("loading-bar-bounds").style.width = "500px";
-    setTimeout({
+    setTimeout(function() {
         document.getElementById("loading-bar").style.display = "none";
         document.getElementById("loading-button").style.display = "block";
     }, 1000);
