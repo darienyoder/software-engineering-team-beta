@@ -1,9 +1,9 @@
 var levelData = [
     {
-        ballPosition: [1500, 750],
-        holePosition: [25000, 75],
+        ballPosition: [50, 75],
+        holePosition: [250, 75],
         area: `
-            ADD rect 0, 0, 3000, 1500;
+            ADD rect 0, 0, 300, 150;
         `,
         obstacles: `
         `,
