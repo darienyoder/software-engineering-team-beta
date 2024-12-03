@@ -76,6 +76,12 @@ button:hover {
     background-size: cover;
 }
 
+#loading-bar-bounds {
+    height: 100px;
+    width: 1000px;
+    transition: width 1s;
+}
+
 #loading-bar-bounds > * {
     height: 100%;
     width: 100%;
@@ -87,7 +93,6 @@ button:hover {
     justify-content: center;
     align-items: center;
 
-    background-color: red;
     border: 5px solid white;
     border-radius: 25px;
     overflow: hidden;
@@ -116,6 +121,12 @@ button:hover {
     z-index: 5;
     text-shadow: 0px 0px 20px black;
     cursor: default;
+}
+
+#loading-button {
+    border-radius: 25px;
+    color: white;
+    font-size: 70px;
 }
 
 #main-menu, #level-select, #settings, {

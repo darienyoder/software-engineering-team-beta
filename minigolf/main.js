@@ -154,8 +154,11 @@ async function setup()
         starCount.push(0);
     }
 
-    document.getElementById("loading-bar").style.display = "none";
-    document.getElementById("loading-button").style.display = "block";
+    document.getElementById("loading-bar-bounds").style.width = "500px";
+    setTimeout({
+        document.getElementById("loading-bar").style.display = "none";
+        document.getElementById("loading-button").style.display = "block";
+    }, 1000);
 
     createPutter();
 }
