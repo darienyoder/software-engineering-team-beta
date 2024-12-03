@@ -110,7 +110,7 @@ button:hover {
     left: 0px;
     height: 100%;
 
-    transition: width 0.5s linear;
+    transition: width 0.1s linear;
 }
 
 #loading-bar h1 {
@@ -127,6 +127,8 @@ button:hover {
     border-radius: 25px;
     color: white;
     font-size: 70px;
+    font-weight: bold;
+    text-shadow: 0px 0px 20px black;
 }
 
 #main-menu, #level-select, #settings, {
