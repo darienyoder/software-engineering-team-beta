@@ -61,9 +61,11 @@ function preload()
 // Runs once when the program starts
 async function setup()
 {
+    loadingProgress = 1.0;
+
     await loadSounds();
 
-    loadingProgress = 1.0;
+    loadingProgress = 2.0;
 
     menuMusic.loop();
     courseMusic.loop();
@@ -180,6 +182,7 @@ function progressLoadBar()
     else
     {
         document.getElementById("loading-bar-progress").style.width = "100%";
+
     }
 }
 
