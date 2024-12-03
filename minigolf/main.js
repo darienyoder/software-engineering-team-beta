@@ -154,11 +154,7 @@ async function setup()
         starCount.push(0);
     }
 
-    document.getElementById("loading-bar-bounds").style.width = "500px";
-    setTimeout(function() {
-        document.getElementById("loading-bar").style.display = "none";
-        document.getElementById("loading-button").style.display = "block";
-    }, 1000);
+    loadingProgress = 2.0;
 
     createPutter();
 }
@@ -183,7 +179,18 @@ function progressLoadBar()
     else
     {
         document.getElementById("loading-bar-progress").style.width = "100%";
-
+        if (loadingProgress == 2.0)
+        {
+            document.getElementById("loading-bar-bounds").style.width = "500px";
+            setTimeout(function() {
+                document.getElementById("loading-bar").style.display = "none";
+                document.getElementById("loading-button").style.display = "block";
+            }, 1000);
+        }
+        else
+        {
+            setTimeout(progressLoadBar, 1);
+        }
     }
 }
 
