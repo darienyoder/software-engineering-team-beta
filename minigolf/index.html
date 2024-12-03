@@ -135,8 +135,11 @@
     <div id="menus">
         <div id="loading-screen" style="display:block">
             <div class="center-content">
-                <h1 id="loading-message" style="color:white">Loading</h1>
-                <button id="loading-button" style="display:none" onclick="loadMainMenu();" style="min-height:100px; min-width:200px; border-radius: 25px;">Start Game</button>
+                <!-- <h1 id="loading-message" style="color:white">Loading</h1> -->
+                <div id="loading-bar-bounds" style="height:100px; width:1000px">
+                    <div id="loading-bar"><div id="loading-bar-progress" style="width:0px;"></div><h1>Loading</h1></div>
+                    <button id="loading-button" style="display:none" onclick="loadMainMenu();" style="min-height:100px; min-width:200px; border-radius: 25px;">Start Game</button>
+                </div>
             </div>
         </div>
         <div id="main-menu">

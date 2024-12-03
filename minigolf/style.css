@@ -70,7 +70,56 @@ button:hover {
     scale: 1.1;
 }
 
-#main-menu, #level-select, #settings {
+#loading-screen {
+    background-image: url("assets/menu/loading_background.png");
+    background-position: center;
+    background-size: cover;
+}
+
+#loading-bar-bounds > * {
+    height: 100%;
+    width: 100%;
+}
+
+#loading-bar {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: red;
+    border: 5px solid white;
+    border-radius: 25px;
+    overflow: hidden;
+
+    background-color: black;
+    background-position: center;
+    border: solid 5px #fce4b0;
+}
+
+#loading-bar-progress {
+    background-color: #fcca5d;
+
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+
+    width: 50%;
+    transition: width 0.1s linear;
+}
+
+#loading-bar h1 {
+    font-size: 70px;
+    color: white;
+    margin: 0px;
+    padding: 0px;
+    z-index: 5;
+    text-shadow: 0px 0px 20px black;
+    cursor: default;
+}
+
+#main-menu, #level-select, #settings, {
     background-image: url("assets/menu/main_background.png");
     background-position: center;
     background-size: cover;

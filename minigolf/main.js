@@ -52,6 +52,7 @@ async function loadSounds(){
 
 function preload()
 {
+    progressLoadBar();
     // Music
     menuMusic = loadSound("assets/music/menu.mp3");
     courseMusic = loadSound("assets/music/course.mp3");
@@ -61,6 +62,8 @@ function preload()
 async function setup()
 {
     await loadSounds();
+
+    loadingProgress = 1.0;
 
     menuMusic.loop();
     courseMusic.loop();
@@ -106,7 +109,7 @@ async function setup()
 
 
      // Blitz Mode toggle button setup
-     document.getElementById('blitzModeButton').addEventListener('click', () => { 
+     document.getElementById('blitzModeButton').addEventListener('click', () => {
         blitzMode = !blitzMode;
         const blitzButton = document.getElementById('blitzModeButton');
         blitzButton.textContent = "Blitz Mode: " + (blitzMode ? "On" : "Off");
@@ -157,6 +160,29 @@ async function setup()
     createPutter();
 }
 
+var loadingProgress = 0.0;
+
+function progressLoadBar()
+{
+    if (loadingProgress < 1.0)
+    {
+        if (false && loadingProgress < 0.7)
+        {
+            loadingProgress += 0.1 * 0.1;
+        }
+        else
+        {
+            loadingProgress += (0.9 - loadingProgress) * 0.01 * 0.7;
+        }
+        document.getElementById("loading-bar-progress").style.width = (loadingProgress * 100.0).toString() + "%"
+        setTimeout(progressLoadBar, 1);
+    }
+    else
+    {
+        document.getElementById("loading-bar-progress").style.width = "100%";
+    }
+}
+
 // Runs once, when the user starts the game
 // Has to be separate from setup because music can't autoplay
 function loadMainMenu()
@@ -170,7 +196,7 @@ var currentMenu = "loading-screen";
 
 function setMenu(newMenu) {
     currentMenu = newMenu;
-    
+
     // Loop through all menus and set display
     for (var menu of document.getElementById("menus").children) {
         if (menu.id == newMenu)
@@ -178,7 +204,7 @@ function setMenu(newMenu) {
         else
             menu.style.display = "none";
     }
-    
+
     // Level Select Menu logic
     if (newMenu == "level-select") {
         clearSounds()
@@ -195,7 +221,7 @@ function setMenu(newMenu) {
                 }
             }
         }
-    } 
+    }
     // Level Complete Menu logic
     else if (newMenu == "level-complete") {
         clearSounds()
@@ -631,7 +657,7 @@ async function handleGamePlay() {
         let minutes = Math.floor(seconds / 60);
         seconds = seconds % 60;
         let finalTimeDisplay = `${minutes}:${nf(seconds, 2)}`; // Format as mm:ss
-        
+
         // Update the HTML to show the time
         document.getElementById('completion-time').textContent = `Time: ${finalTimeDisplay}`;
         }
