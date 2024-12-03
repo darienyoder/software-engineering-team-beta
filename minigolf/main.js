@@ -65,8 +65,6 @@ async function setup()
 
     await loadSounds();
 
-    loadingProgress = 2.0;
-
     menuMusic.loop();
     courseMusic.loop();
 
@@ -156,7 +154,7 @@ async function setup()
         starCount.push(0);
     }
 
-    document.getElementById("loading-message").style.display = "none";
+    document.getElementById("loading-bar").style.display = "none";
     document.getElementById("loading-button").style.display = "block";
 
     createPutter();
