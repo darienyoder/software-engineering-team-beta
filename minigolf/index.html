@@ -127,6 +127,10 @@
             right: 20px;
         }
     </style>
+    <script>
+        if (window.location.href.includes("cassini") && !window.location.href.endsWith('/'))
+            window.location.href = window.location.href + "/";
+    </script>
 </head>
 
 <body>
