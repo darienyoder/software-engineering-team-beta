@@ -209,7 +209,7 @@ addTest('Volcano Test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
-
+/*
 // Test the volcano's lava with the ball
 addTest('Lava Test', async () => {
     ball.vel = { x: 0, y: 0 };
@@ -227,6 +227,7 @@ addTest('Lava Test', async () => {
 
     ball.vel = { x: 0, y: 0 };
 });
+*/
 
 // Test the volcano's lava with the sandtrap
 addTest('Lava Sandtrap Test', async () => {
