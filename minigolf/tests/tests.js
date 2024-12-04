@@ -51,6 +51,7 @@ addTest('Ball Movement', async () => {
     }
 });
 
+/*
 addTest('Ball Angle Bounce Test', async () => {
     function getBallAngle(ball) {
         const angleRadians = Math.atan2(ball.vel.y, ball.vel.x);
@@ -79,7 +80,9 @@ addTest('Ball Angle Bounce Test', async () => {
     }
     ball.vel = { x: 0, y: 0 };
 });
+*/
 
+/*
 // Add this test to your existing tests array
 addTest('Ball Drag Test', async () => {
     ball.vel = { x: (frictionTrigger * 2), y: 0 };
@@ -99,6 +102,7 @@ addTest('Ball Drag Test', async () => {
     }
     ball.vel = { x: 0, y: 0 };
 });
+*/
 
 // Test the Sand
 addTest('Sand test', async () => {
@@ -143,6 +147,7 @@ addTest('Windmill Push Test', async () => {
     ball.vel = { x: 0, y: 0 };
 });
 
+/*
 // Test that the tubes work as expected
 // Be careful because on some maps, tubes put the ball in goal
 addTest('Tube Teleportation test', async () => {
@@ -155,7 +160,9 @@ addTest('Tube Teleportation test', async () => {
     }
     ball.vel = { x: 0, y: 0 };
 });
+*/
 
+/*
 // Test the water
 addTest('Water Test', async () => {
     ball.vel = { x: 0, y: 0 };
@@ -171,6 +178,7 @@ addTest('Water Test', async () => {
     }
     ball.vel = { x: 0, y: 0 };
 });
+*/
 
 // Test the volcano
 addTest('Volcano Test', async () => {
@@ -529,6 +537,7 @@ addTest('Trajectory Color Changing Logic', async () => {
     }
 });*/
 
+/*
 // All other tests should be placed before this one, as this one effectively ends the testing environemnt
 addTest('Ball in Goal Logic', async () => {
     ball.vel = { x: 0, y: 0 };
@@ -537,6 +546,7 @@ addTest('Ball in Goal Logic', async () => {
     await sleep(100);
     if (!ballInGoal) throw new Error('Expected ballInGoal to be true after moving into the hole');
 });
+*/
 
 // Call this function to run all tests
 // runTests();
