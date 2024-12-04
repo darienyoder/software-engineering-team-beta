@@ -303,7 +303,7 @@ function Ball(x, y)
     newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
     newBall.stillTime = 300;
     newBall.image = 'assets/golf_ball.png';
-    newBall.image.scale = 0.084388;
+    newBall.image.scale = 0.084388 * 0.5;
 
     return new GameObject("ball", newBall);
 }
