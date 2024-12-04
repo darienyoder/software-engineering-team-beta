@@ -216,6 +216,12 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
+    // if (creditsRolling)
+    // {
+    //     creditScroll += 1;
+    //     document.getElementById("crew-names").style.top = 1200 - creditScroll;
+    // }
+
     webglCanvas.setAttribute('width', window.innerWidth);
     webglCanvas.setAttribute('height', window.innerHeight);
 
@@ -723,12 +729,20 @@ async function drawPar() {
     parMsgVisible = false;
 }
 
+var creditScroll = 0;
+var creditsRolling = false;
+
 function rollCredits()
 {
     setMenu("credits");
-    document.getElementById("crew-names").style.top = -1171;
+
     setTimeout(
-        function() { setMenu("main-menu"); document.getElementById("crew-names").style.top = 1200; },
-        10000 // 10 seconds
+        function() {document.getElementById("crew-names").className = "scrolling";},
+        10
+    );
+
+    setTimeout(
+        function() { setMenu("main-menu"); document.getElementById("crew-names").className = ""; }, //document.getElementById("crew-names").style.top = 1200; },
+        30000 // 10 seconds
     );
 }

@@ -85,9 +85,15 @@ button:hover {
     margin-right: auto;
 
     position: relative;
-    top: 1200px;
+    top: 100vh;
+    z-index: 100;
 
-    transition: top 10s linear;
+    transition: top 30s linear;
+    font-size: 200%;
+}
+
+#crew-names.scrolling {
+    top: calc(-100vh - 3200px);
 }
 
 #level-select-wrapper {
