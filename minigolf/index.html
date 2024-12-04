@@ -148,10 +148,15 @@
         </div>
         <div id="main-menu">
             <div class="center-content">
-                <button onclick="setMenu('level-select'); blitzMode=true;" style="background-image:url('assets/menu/blitz.png')"></button>
-                <button id="start-button" onclick="setMenu('level-select'); blitzMode=false;" style="background-image:url('assets/menu/play.png'); width:200px; height:200px;"></button>
-                <button onclick="setMenu('settings');" style="background-image:url('assets/menu/settings.png')"></button>
-                <button onclick="rollCredits();" style="background-image:url('assets/menu/credits.png'); position:fixed; right:10px; top:10px;"></button>
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                    <img src="assets/menu/title.png" style="width:40vw;">
+                    <div>
+                        <button onclick="setMenu('level-select'); blitzMode=true;" style="background-image:url('assets/menu/blitz.png')"></button>
+                        <button id="start-button" onclick="setMenu('level-select'); blitzMode=false;" style="background-image:url('assets/menu/play.png'); width:200px; height:200px;"></button>
+                        <button onclick="setMenu('settings');" style="background-image:url('assets/menu/settings.png')"></button>
+                        <button onclick="rollCredits();" style="background-image:url('assets/menu/credits.png'); position:fixed; right:10px; top:10px;"></button>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="level-select">
