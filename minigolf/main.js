@@ -35,8 +35,26 @@ let blitzMode = false;
 let blitzTimer = 0; // Timer in milliseconds
 let timerRunning = false; // Whether the timer is running
 let timerStart = null; // When the timer started
+let timerPaused = false;
 
 var starCount = [];
+
+function resetBlitzTimer() {
+    blitzTimer = 0;       // Reset timer value
+    timerRunning = false; // Stop the timer
+}
+
+// Function to pause the timer
+function pauseTimer() {
+    timerRunning = false;  // Stop the timer
+    blitzTimer = millis() - timerStart;  // Store the time at the moment of pause
+}
+
+// Function to resume the timer
+function resumeTimer() {
+    timerStart = millis() - blitzTimer;  // Reset the start time to the time at pause
+    timerRunning = true;  // Start the timer again
+}
 
 // Loading sound files
 async function loadSounds(){
@@ -232,6 +250,7 @@ function setMenu(newMenu) {
                 }
             }
         }
+        resetBlitzTimer();
     }
     // Level Complete Menu logic
     else if (newMenu == "level-complete") {
@@ -711,7 +730,7 @@ async function handleGamePlay() {
         }
     }
 
-    if (blitzMode && timerRunning) {
+    if (blitzMode && timerRunning && !timerPaused) {
         drawTimer();  // Draw the timer while Blitz Mode is active
         blitzTimer = millis() - timerStart;  // Update the timer value
     }

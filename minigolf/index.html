@@ -127,6 +127,10 @@
             right: 20px;
         }
     </style>
+    <script>
+        if (window.location.href.includes("cassini") && !window.location.href.endsWith('/'))
+            window.location.href = window.location.href + "/";
+    </script>
 </head>
 
 <body>
@@ -157,13 +161,13 @@
         </div>
         <div id="level">
             <input type="range" min="0.0" max="1.0" step="0.01" value="0.0" class="slider" id="zoom-slider" orient="vertical">
-            <button class="pause-button" onclick="setMenu('pause'); courseMusic.pause();"></button>
+            <button class="pause-button" onclick="setMenu('pause'); courseMusic.pause(); pauseTimer();"></button>
         </div>
         <div id="pause">
             <div class="center-content">
                 <div class="menu-panel">
                     <h1>Paused</h1>
-                    <button onclick="setMenu('level'); courseMusic.play();">Resume</button>
+                    <button onclick="setMenu('level'); courseMusic.play(); resumeTimer();">Resume</button>
                     <button onclick="setMenu('level'); level.load(level.number); courseMusic.stop(); courseMusic.play();">Restart</button>
                     <button onclick="setMenu('settings');">Settings</button>
                     <button onclick="setMenu('level-select'); level.clear(); courseMusic.stop(); menuMusic.play();">Quit</button>
