@@ -151,6 +151,7 @@
                 <button onclick="setMenu('level-select'); blitzMode=true;" style="background-image:url('assets/menu/blitz.png')"></button>
                 <button id="start-button" onclick="setMenu('level-select'); blitzMode=false;" style="background-image:url('assets/menu/play.png'); width:200px; height:200px;"></button>
                 <button onclick="setMenu('settings');" style="background-image:url('assets/menu/settings.png')"></button>
+                <button onclick="rollCredits();" style="background-image:url('assets/menu/credits.png'); position:fixed; right:10px; top:10px;"></button>
             </div>
         </div>
         <div id="level-select">
@@ -218,6 +219,42 @@
                     </h2>
                 </div>
             </div>
+        </div>
+        <div id="credits">
+            <div id="credits-wrapper">
+                <div id="crew-names">
+                    <h1>CREDITS</h1>
+                    <h2>Project Manager</h2>
+                        <p>Darien Yoder</p>
+                    <h2>Level Designers</h2>
+                        <p>Kai Steel</p>
+                        <p>Avery Wallace</p>
+                        <p>Darien Yoder</p>
+                        <p>Anthony Dietz</p>
+                        <p>Jay Eichmuller</p>
+                        <p>Sage Hardiman</p>
+                        <p>Hunter Jones</p>
+                    <h2>Obstacle Designers</h2>
+                        <p>Sage Hardiman</p>
+                        <p>Anthony Dietz</p>
+                    <h2>Gameplay Programmers</h2>
+                        <p>Darien Yoder</p>
+                        <p>Sage Hardiman</p>
+                        <p>Gabriel Mingle</p>
+                        <p>Kai Steel</p>
+                        <p>Anthony Dietz</p>
+                        <p>Jay Eichmuller</p>
+                        <p>Xavier Jeffy</p>
+                        <p>Hunter Jones</p>
+                        <p>Vincent Scicchitano</p>
+                    <h2>Deployment Engineer</h2>
+                        <p>Gabriel Mingle</p>
+                    <h2>Playtester</h2>
+                        <p>Logan Horvath</p>
+                    <h3 id="class-message">This game is a student project made at Kent State University for the Software Engineering course with Dr. Gregory DeLozier.</h3>
+                </div>
+            </div>
+            <button onclick="setMenu('main-menu'); clearTimeout(endCredits); document.getElementById('crew-names').className='';" style="background-image:url('assets/menu/exit.png'); position:fixed; right:10px; top:10px; width:10%; aspect-ratio:1; margin:20px;"></button>
         </div>
     </div>
 

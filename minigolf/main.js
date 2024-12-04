@@ -923,3 +923,22 @@ async function drawPar() {
     }
     parMsgVisible = false;
 }
+
+var creditScroll = 0;
+var creditsRolling = false;
+var endCredits;
+
+function rollCredits()
+{
+    setMenu("credits");
+
+    setTimeout(
+        function() {document.getElementById("crew-names").className = "scrolling";},
+        10
+    );
+
+    endCredits = setTimeout(
+        function() { setMenu("main-menu"); document.getElementById("crew-names").className = ""; }, //document.getElementById("crew-names").style.top = 1200; },
+        24000 // 10 seconds
+    );
+}

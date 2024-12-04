@@ -131,7 +131,7 @@ button:hover {
     text-shadow: 0px 0px 20px black;
 }
 
-#main-menu, #level-select, #settings {
+#main-menu, #level-select, #settings, credits {
     background-image: url("assets/menu/main_background.png");
     background-position: center;
     background-size: cover;
@@ -141,6 +141,37 @@ button:hover {
     width: 10%;
     aspect-ratio: 1;
     margin: 20px;
+}
+
+#credits-wrapper {
+    background-color: #f2ece3;
+    padding-left: 30px;
+    padding-right: 30px;
+    text-align: center;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    border: solid 5px black;
+    border-top: solid 0px transparent;
+    border-bottom: solid 0px transparent;
+}
+
+#crew-names {
+    text-align: center;
+    /* width: 50%;
+    margin-left: auto;
+    margin-right: auto; */
+
+    position: relative;
+    top: 100vh;
+    z-index: 100;
+
+    transition: top 30s linear;
+    font-size: 200%;
+}
+
+#crew-names.scrolling {
+    top: calc(-100vh - 2810px);
 }
 
 #level-select-wrapper {
