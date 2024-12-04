@@ -30,19 +30,6 @@ function setupTestEnvironment() {
     level.loadLevelFromDict(testLevel);
 };
 
-// Test that menu works
-// Test only runs if it starts on 'menu' screen
-// Needs keyPress simulation
-/*addTest('Test Menu', async () => {
-    // Test only works if we start from menu screen
-    if (gameState === 'menu'){
-        // Simulate pressing 'Enter'
-
-        await sleep(1000);
-        if (gameState !== 0) throw new Error(`Expected gameState to be playing but got ${gameState} instead.`);
-    }
-});*/
-
 
 // Example Tests
 addTest('Initial Stroke Count', async () => {
@@ -270,7 +257,7 @@ addTest('Lava Tubes Test', async () => {
 
     lavaObjects[0].x = getObjectsByType("tubes")[0].sprites[0].x;
     lavaObjects[0].y = getObjectsByType("tubes")[0].sprites[0].y;
-    await sleep (100);
+    await sleep (300);
 
     // Check that it's inside the sandtrap and not outside of it
     if (lavaObjects[0].x > getObjectsByType("tubes")[0].sprites[1].x+50
@@ -315,6 +302,183 @@ addTest('Lava Windmill Test', async () => {
     stopLava.remove();
     lavaObjects[0].life = 1;
 });
+
+// Test fan movement
+addTest('East Fan Move Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x + 50;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 0;
+    await sleep (500);
+
+    // Check that it moved and has velocity
+    if (ball.x <= startFanX) { // Check coordinates
+        throw new Error(`Expected ball x to be greater than ${startFanX} but it is at ${ball.x}`);
+    }
+    if (ball.vel.x <= 0) { // Check vel
+        throw new Error(`Expected ball.vel.x to be greater than ${0}, but got ${ball.vel.x}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan's max distance (100)
+addTest('East Fan Furthest Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x+125;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 0;
+    await sleep (500);
+
+    // Check that it stayed still
+    if (ball.x != startFanX || ball.y != startFanY) { // Check coordinates
+        throw new Error(`Expected ball coordinates to be (${startFanX},${startFanY}), but got (${ball.x},${ball.y})`);
+    }
+    if (ball.vel.x != 0 || ball.vel.y != 0) { // Check Vel
+        throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan movement
+addTest('South Fan Move Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y+50;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 90;
+    await sleep (500);
+
+    // Check that it moved and has velocity
+    if (ball.y <= startFanY) { // Check coordinates
+        throw new Error(`Expected ball y to be greater than ${startFanY} but it is at ${ball.y}`);
+    }
+    if (ball.vel.y <= 0) { // Check vel
+        throw new Error(`Expected ball.vel.y to be greater than ${0}, but got ${ball.vel.y}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan's max distance (100)
+addTest('South Fan Furthest Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y+125;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 180;
+    await sleep (500);
+
+    // Check that it stayed still
+    if (ball.x != startFanX || ball.y != startFanY) { // Check coordinates
+        throw new Error(`Expected ball coordinates to be (${startFanX},${startFanY}), but got (${ball.x},${ball.y})`);
+    }
+    if (ball.vel.x != 0 || ball.vel.y != 0) { // Check Vel
+        throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan movement
+addTest('West Fan Move Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x-50;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 180;
+    await sleep (500);
+
+    // Check that it moved and has velocity
+    if (ball.x >= startFanX) { // Check coordinates
+        throw new Error(`Expected ball x to be greater than ${startFanX} but it is at ${ball.x}`);
+    }
+    if (ball.vel.x >= 0) { // Check vel
+        throw new Error(`Expected ball.vel.x to be less than ${0}, but got ${ball.vel.x}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan's max distance (100)
+addTest('West Fan Furthest Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x-125;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 180;
+    await sleep (500);
+
+    // Check that it stayed still
+    if (ball.x != startFanX || ball.y != startFanY) { // Check coordinates
+        throw new Error(`Expected ball coordinates to be (${startFanX},${startFanY}), but got (${ball.x},${ball.y})`);
+    }
+    if (ball.vel.x != 0 || ball.vel.y != 0) { // Check Vel
+        throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan movement
+addTest('North Fan Move Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y-50;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 270;
+    await sleep (500);
+
+    // Check that it moved and has velocity
+    if (ball.y >= startFanY) { // Check coordinates
+        throw new Error(`Expected ball y to be less than ${startFanY} but it is at ${ball.y}`);
+    }
+    if (ball.vel.y >= 0) { // Check vel
+        throw new Error(`Expected ball.vel.y to be less than ${0}, but got ${ball.vel.y}`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
+// Test fan's max distance (100)
+addTest('North Fan Furthest Test', async () => {
+    startFanX = getObjectsByType("fan")[0].sprites[0].x;
+    startFanY = getObjectsByType("fan")[0].sprites[0].y-125;
+    ball.vel = { x: 0, y: 0 };
+    ball.x = startFanX;
+    ball.y = startFanY;
+    getObjectsByType("fan")[0].sprites[0].rotation = 270;
+    await sleep (500);
+
+    // Check that it stayed still
+    if (ball.x != startFanX || ball.y != startFanY) { // Check coordinates
+        throw new Error(`Expected ball coordinates to be (${startFanX},${startFanY}), but got (${ball.x},${ball.y})`);
+    }
+    if (ball.vel.x != 0 || ball.vel.y != 0) { // Check Vel
+        throw new Error(`Expected ball.vel to be (0,0), but it got (${ball.vel.x},${ball.vel.y})`);
+    }
+
+    ball.vel = { x: 0, y: 0 };
+
+});
+
 
 addTest('Sound Load Test', async () => {
     const sounds = [hitSound, holeSound, waterSplash];

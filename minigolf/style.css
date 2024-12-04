@@ -2,6 +2,10 @@
     font-family: sans-serif;
 }
 
+#p5_loading, #p5play-intro {
+    display: none !important;
+}
+
 #menus {
     position: fixed;
     top: 0px;
@@ -66,7 +70,68 @@ button:hover {
     scale: 1.1;
 }
 
-#main-menu, #level-select, #settings, #credits {
+#loading-screen {
+    background-image: url("assets/menu/loading_background.png");
+    background-position: center;
+    background-size: cover;
+}
+
+#loading-bar-bounds {
+    height: 100px;
+    width: 1000px;
+    transition: width 1s;
+}
+
+#loading-bar-bounds > * {
+    height: 100%;
+    width: 100%;
+}
+
+#loading-bar {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 5px solid white;
+    border-radius: 25px;
+    overflow: hidden;
+
+    background-color: black;
+    background-position: center;
+    border: solid 5px #fce4b0;
+}
+
+#loading-bar-progress {
+    background-color: #fcca5d;
+
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+
+    transition: width 0.1s linear;
+}
+
+#loading-bar h1 {
+    font-size: 70px;
+    color: white;
+    margin: 0px;
+    padding: 0px;
+    z-index: 5;
+    text-shadow: 0px 0px 20px black;
+    cursor: default;
+}
+
+#loading-button {
+    border-radius: 25px;
+    color: white;
+    font-size: 70px;
+    font-weight: bold;
+    text-shadow: 0px 0px 20px black;
+}
+
+#main-menu, #level-select, #settings, credits {
     background-image: url("assets/menu/main_background.png");
     background-position: center;
     background-size: cover;
@@ -127,6 +192,42 @@ button:hover {
     border-radius: 25%;
 
     font-size: 50px;
+
+    position: relative;
+}
+
+.level-select-star {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    /* background-color: red; */
+    z-index: 3;
+    background-image: url("assets/menu/star_black.png");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.level-select-button:hover .level-select-star {
+    z-index: 10;
+}
+
+.level-select-button > .level-select-star {
+    left: 60px;
+    top: 50px;
+    z-index: 10;
+}
+
+.level-select-star:nth-child(1) {
+    left: -10px;
+    top: 50px;
+    z-index: 10;
+}
+
+.level-select-star:nth-child(2) {
+    left: 25px;
+    top: 65px;
+    z-index: 15;
 }
 
 .pause-button {

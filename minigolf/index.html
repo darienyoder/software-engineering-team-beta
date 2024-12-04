@@ -127,12 +127,25 @@
             right: 20px;
         }
     </style>
+    <script>
+        if (window.location.href.includes("cassini") && !window.location.href.endsWith('/'))
+            window.location.href = window.location.href + "/";
+    </script>
 </head>
 
 <body>
     <main></main>
 
     <div id="menus">
+        <div id="loading-screen" style="display:block">
+            <div class="center-content">
+                <!-- <h1 id="loading-message" style="color:white">Loading</h1> -->
+                <div id="loading-bar-bounds">
+                    <div id="loading-bar"><div id="loading-bar-progress" style="width:0px;"></div><h1>Loading</h1></div>
+                    <button id="loading-button" style="display:none" onclick="loadMainMenu();" style="min-height:100px; min-width:200px; border-radius: 25px;">Start Game</button>
+                </div>
+            </div>
+        </div>
         <div id="main-menu">
             <div class="center-content">
                 <button onclick="setMenu('level-select'); blitzMode=true;" style="background-image:url('assets/menu/blitz.png')"></button>
@@ -149,16 +162,16 @@
         </div>
         <div id="level">
             <input type="range" min="0.0" max="1.0" step="0.01" value="0.0" class="slider" id="zoom-slider" orient="vertical">
-            <button class="pause-button" onclick="setMenu('pause');"></button>
+            <button class="pause-button" onclick="setMenu('pause'); courseMusic.pause(); pauseTimer();"></button>
         </div>
         <div id="pause">
             <div class="center-content">
                 <div class="menu-panel">
                     <h1>Paused</h1>
-                    <button onclick="setMenu('level');">Resume</button>
-                    <button onclick="setMenu('level'); level.load(level.number);">Restart</button>
+                    <button onclick="setMenu('level'); courseMusic.play(); resumeTimer();">Resume</button>
+                    <button onclick="setMenu('level'); level.load(level.number); courseMusic.stop(); courseMusic.play();">Restart</button>
                     <button onclick="setMenu('settings');">Settings</button>
-                    <button onclick="setMenu('level-select');level.clear();">Quit</button>
+                    <button onclick="setMenu('level-select'); level.clear(); courseMusic.stop(); menuMusic.play();">Quit</button>
                 </div>
             </div>
         </div>
@@ -166,9 +179,15 @@
             <div class="center-content">
                 <div class="menu-panel">
                     <h1>Great Job!</h1>
+                    <h2 id="completion-time"></h2>
+                    <div id="level-complete-stars">
+                        <img height="150" width="150">
+                        <img height="150" width="150">
+                        <img height="150" width="150">
+                    </div>
                     <div class="spaced-row">
-                        <button onclick="level.clear(); setMenu('level-select');" style="background-image:url('assets/menu/home.png')"></button>
-                        <button onclick="if (level.number == levelData.length - 1) {level.clear(); setMenu('level-select');} else level.nextLevel();" style="background-image:url('assets/menu/forward_arrow.png')"></button>
+                        <button onclick="level.clear(); setMenu('level-select'); courseMusic.stop(); menuMusic.play();" style="background-image:url('assets/menu/home.png')"></button>
+                        <button onclick="if (level.number == levelData.length - 1) {level.clear(); setMenu('level-select'); courseMusic.stop(); menuMusic.play();} else level.nextLevel();" style="background-image:url('assets/menu/forward_arrow.png')"></button>
                     </div>
                 </div>
             </div>
@@ -181,12 +200,12 @@
                     <!-- Music Volume -->
                     <h2>Music Volume</h2>
                     <div class="full-width">
-                        <input class="full-width" type="range" min="0.0" max="2.0" step="0.1" value="1.0" class="slider">
+                        <input id="music-volume" class="full-width" type="range" min="0.0" max="2.0" step="0.1" value="1.0" class="slider">
                     </div>
                     <!-- Sound Effect Volume -->
                     <h2>Sound Effect Volume</h2>
                     <div class="full-width">
-                        <input class="full-width" type="range" min="0.0" max="2.0" step="0.1" value="1.0" class="slider">
+                        <input id="sound-effect-volume" class="full-width" type="range" min="0.0" max="2.0" step="0.1" value="1.0" class="slider">
                     </div>
                     <!-- Show Topography -->
                     <h2>

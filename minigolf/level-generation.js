@@ -5,7 +5,7 @@ const SUB = 1;
 var showTopography = 0;
 var checkeredGrass = 1;
 
-var ballStart, lastHit, levelZoom = 0.0;
+var ballStart, lastHit, levelZoom = 0.0, strokeCount;
 
 var floorColor = "#408040";
 var minFloorColor = "#264c26";
@@ -442,6 +442,9 @@ class Level
         {
             gameObjects.pop().delete();
         }
+        for (let i = 0; i < lavaObjects.length; i++){
+            lavaObjects[i].life = 1;
+        }
         this.heightModifiers = [];
 
         // Erase terrain shader
@@ -528,7 +531,9 @@ class Level
             slope = slope.sub(createVector(x, y).mult(this.getHeight(pointX + x * 5, pointY + y * 5)));
         }
 
-        return slope.normalize().mult(0.1);
+        if (slope.mag() > 0.001)
+            return slope.normalize().mult(0.07);
+        return createVector();
 
         // return (   createVector(x + 0.5, y, this.getHeight(x + 0.5, y)).sub(createVector(x - 0.5, y, this.getHeight(x - 0.5, y))).normalize()   ).cross(   createVector(x, y + 0.5, this.getHeight(x, y + 0.5)).sub(createVector(x, y - 0.5, this.getHeight(x, y - 0.5))).normalize()   );
     }
@@ -573,6 +578,8 @@ class Level
                 return Button(objectData.position[0], objectData.position[1]);
             case 'Rock':
                 return Rock(objectData.position[0], objectData.position[1]);
+            case 'Fan':
+                return Fan(objectData.position[0], objectData.position[1], objectData.wind);
             default:
                 console.warn(`Unknown object type: ${objectData.type}`);
                 return null;
@@ -584,6 +591,7 @@ class Level
         // Show level UI
         setMenu("level");
         document.getElementById("zoom-slider").value = 0.0;
+        strokeCount = 0;
 
         // Delete any existing level
         this.clear();
@@ -688,7 +696,7 @@ class Level
 
         par = levelDict.par;
 
-        this.maxHeight = 1;
+        this.maxHeight = 0.5;
         this.minHeight = -1;
 
         // Draw shader
@@ -800,6 +808,11 @@ class Level
                         break;
                     case 'Rock':
                         objectData.position =[Number(parts[2]), Number(parts[3])];
+                        break;
+                    case 'Fan':
+                        objectData.position = [Number(parts[2]), Number(parts[3])];
+                        objectData.wind = Number(parts[4]);
+                        break;
                     // Add more cases for other object types as needed
                 }
 
