@@ -316,8 +316,8 @@ function Hole(x, y)
     newHole.layer = 1;
     newHole.color = 'grey';
     newHole.stroke = 'yellow';
-    newBall.image = 'assets/the_hole.png';
-    newBall.image.scale = 0.133333;
+    newHole.image = 'assets/the_hole.png';
+    newHole.image.scale = 0.133333;
 
     return new GameObject("hole", newHole);
 }
