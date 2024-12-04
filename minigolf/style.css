@@ -85,7 +85,7 @@ button:hover {
     margin-right: auto;
 
     position: relative;
-    top: 100vh;
+    top: 1200px;
 
     transition: top 10s linear;
 }
