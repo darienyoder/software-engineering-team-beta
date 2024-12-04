@@ -454,32 +454,32 @@ var levelData = [
 
             HEIGHT = 1134: rect -10, 230, 15, 20;
             HEIGHT = 1134: rect 50, 200, 45, 20;
-            
+
         `,
-        obstacles: ` 
+        obstacles: `
           `,
         par: 5,
     },
   {
-        ballPosition: [25, 150],  
-        holePosition: [20,25], 
+        ballPosition: [25, 150],
+        holePosition: [20,25],
         area: `
              //the corse and the rects the cut the middle out;
             ADD rect 0, 0, 300, 300;
             SUB rect 50, 50, 200, 200;
             SUB rect 0, 50, 100, 75;
-            
+
             //the ramp at the bottom;
             HEIGHT + .5: ramp 250, 270, 5, 270, 27;
             HEIGHT = 0.5: rect 5, 130, 50, 170;
             //water at the bottom;
-            HEIGHT = -843: oval 290, 285, 13, 15; 
-            HEIGHT = -843: oval 290, 15, 13, 15; 
-        
+            HEIGHT = -843: oval 290, 285, 13, 15;
+            HEIGHT = -843: oval 290, 15, 13, 15;
+
         `,
         obstacles:`
          ADD Windmill 150 91;
-            
+
         `,
         par:3
     },
@@ -487,7 +487,7 @@ var levelData = [
         // Banana Level
         ballPosition: [30, 450],
         holePosition: [96, -430],
-    
+
         area: `
         add oval 0, 0, 250, 500;
         sub oval 0, -100, 100, 520;
@@ -525,7 +525,7 @@ var levelData = [
 
         ADD rect -80, 250, 50, 50;
         HEIGHT = -843: rect -80, 250, 40, 50;
-        
+
         ADD rect 40, 100, 40, 50;
         HEIGHT = -843: rect 40, 100, 40, 50;
         `,
@@ -553,8 +553,8 @@ var levelData = [
         par: 1 //Yes, this is possible to do in 1
     },
     {
-        ballPosition: [100, 25],  
-        holePosition: [340,450], 
+        ballPosition: [100, 25],
+        holePosition: [340,450],
         area: `
             // Greens;
             ADD poly (0, 50), (50, 0), (450, 0), (500, 50), (500, 450), (450, 500), (50, 500), (0, 450);
@@ -562,8 +562,8 @@ var levelData = [
             HEIGHT = -843: oval 7, 245, 7, 175;
             HEIGHT = -843: oval 493, 245, 7, 175;
             // Water spots;
-            HEIGHT = -843: oval 200, 150, 17, 14; 
-            HEIGHT = -843: oval 400, 160, 10, 12; 
+            HEIGHT = -843: oval 200, 150, 17, 14;
+            HEIGHT = -843: oval 400, 160, 10, 12;
             HEIGHT = -843: oval 340, 300, 14, 14;
             HEIGHT = -843: oval 250, 400, 12, 13;
             HEIGHT = -843: oval 460, 480, 16, 14;
@@ -571,7 +571,7 @@ var levelData = [
             // Sandtrap;
             HEIGHT = 1134: oval 300, 200, 18, 18;
             HEIGHT = 1134: oval 230, 240, 18, 18;
-               
+
         `,
         obstacles:`
             ADD Rock 172 172;
