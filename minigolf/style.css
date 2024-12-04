@@ -131,7 +131,7 @@ button:hover {
     text-shadow: 0px 0px 20px black;
 }
 
-#main-menu, #level-select, #settings, credits {
+#main-menu, #level-select, #settings, #credits {
     background-image: url("assets/menu/main_background.png");
     background-position: center;
     background-size: cover;
