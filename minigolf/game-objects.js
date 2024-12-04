@@ -341,7 +341,7 @@ function Tubes(tubeaX, tubeaY, tubebX, tubebY)
     tubeA.stroke = '#4f2956';
     tubeA.image = 'assets/portal.png';
     tubeA.image.scale = 0.2;
-    tubeA.rotationSpeed = 10;
+    tubeA.rotationSpeed = 2;
 
     let tubeB = new Sprite(tubebX, tubebY, 50, 50);
     tubeB.collider = 'kinematic';
@@ -350,7 +350,7 @@ function Tubes(tubeaX, tubeaY, tubebX, tubebY)
     tubeB.stroke = '#4f2956';
     tubeB.image = 'assets/portal.png';
     tubeB.image.scale = 0.2;
-    tubeB.rotationSpeed = 10;
+    tubeB.rotationSpeed = -2;
 
     return new GameObject("tubes", [tubeA, tubeB]);
 }
