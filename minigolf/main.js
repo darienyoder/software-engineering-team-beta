@@ -728,7 +728,7 @@ function rollCredits()
     setMenu("credits");
     document.getElementById("crew-names").style.top = -1171;
     setTimeout(
-        function() { setMenu("main"); document.getElementById("crew-names").style.top = "100vh"; },
+        function() { setMenu("main-menu"); document.getElementById("crew-names").style.top = "100vh"; },
         10000 // 10 seconds
     );
 }
