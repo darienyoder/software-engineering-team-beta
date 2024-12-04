@@ -138,7 +138,7 @@ button:hover {
 }
 
 #main-menu button {
-    width: 10%;
+    width: 120px;
     aspect-ratio: 1;
     margin: 20px;
 }

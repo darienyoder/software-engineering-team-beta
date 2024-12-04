@@ -2,9 +2,9 @@ import time
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.firefox.service import Service  # Changed for Firefox
+from selenium.webdriver.firefox.options import Options  # Changed for Firefox
+from webdriver_manager.firefox import GeckoDriverManager  # Changed to GeckoDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys  # Import Keys for keyboard actions
@@ -19,7 +19,6 @@ PORT = 8000
 HTML_FILE = "index.html"  # Update to your actual file name
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Absolute path of the script
 DIRECTORY = os.path.join(os.path.dirname(SCRIPT_DIR))  # Adjust if your HTML is in the 'minigolf' subdirectory
-  # Correct the path separator
 
 # Function to start the local HTTP server in a separate thread
 def start_server(port, directory):
@@ -46,17 +45,17 @@ def wait_for_server(timeout=45):
             time.sleep(1)  # Wait a moment before retrying
     return False
 
-# Setup Chrome options
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # Run in headless mode
-chrome_options.add_argument("--no-sandbox")  # Required for CI environments
-chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+# Setup Firefox options
+firefox_options = Options()
+firefox_options.add_argument("--headless")  # Run in headless mode
+firefox_options.add_argument("--no-sandbox")  # Required for CI environments
+firefox_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
 
-# Automatically download and configure ChromeDriver
-service = Service(ChromeDriverManager().install())
+# Automatically download and configure GeckoDriver (Firefox's WebDriver)
+service = Service(GeckoDriverManager().install())
 
-# Initialize the WebDriver
-driver = webdriver.Chrome(service=service, options=chrome_options)
+# Initialize the WebDriver for Firefox
+driver = webdriver.Firefox(service=service, options=firefox_options)
 
 # Function to wait for element to be clickable
 def wait_for_clickable(element, timeout=45):
