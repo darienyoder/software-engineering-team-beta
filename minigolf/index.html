@@ -128,7 +128,7 @@
         }
     </style>
     <script>
-        if (!window.location.href.endsWith('/'))
+        if (window.location.href.includes("cassini") && !window.location.href.endsWith('/'))
             window.location.href = window.location.href + "/";
     </script>
 </head>
