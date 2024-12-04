@@ -216,6 +216,8 @@ async function draw()
     // Erase what was drawn the last frame
     clear();
 
+    document.getElementById("class-message")
+
     // if (creditsRolling)
     // {
     //     creditScroll += 1;
@@ -731,6 +733,7 @@ async function drawPar() {
 
 var creditScroll = 0;
 var creditsRolling = false;
+var endCredits;
 
 function rollCredits()
 {
@@ -741,8 +744,8 @@ function rollCredits()
         10
     );
 
-    setTimeout(
+    endCredits = setTimeout(
         function() { setMenu("main-menu"); document.getElementById("crew-names").className = ""; }, //document.getElementById("crew-names").style.top = 1200; },
-        30000 // 10 seconds
+        24000 // 10 seconds
     );
 }

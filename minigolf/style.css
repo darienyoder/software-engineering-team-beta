@@ -78,11 +78,24 @@ button:hover {
     margin: 20px;
 }
 
-#crew-names {
+#credits-wrapper {
+    background-color: #f2ece3;
+    padding-left: 30px;
+    padding-right: 30px;
     text-align: center;
     width: 50%;
     margin-left: auto;
     margin-right: auto;
+    border: solid 5px black;
+    border-top: solid 0px transparent;
+    border-bottom: solid 0px transparent;
+}
+
+#crew-names {
+    text-align: center;
+    /* width: 50%;
+    margin-left: auto;
+    margin-right: auto; */
 
     position: relative;
     top: 100vh;
@@ -93,7 +106,7 @@ button:hover {
 }
 
 #crew-names.scrolling {
-    top: calc(-100vh - 3200px);
+    top: calc(-100vh - 2810px);
 }
 
 #level-select-wrapper {
