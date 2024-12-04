@@ -90,7 +90,7 @@ class GameObject {
 
             case "volcano":
                 let volcSpeed = 75; // CANNOT be less than 21!!
-                
+
                 // Generate Lava
                 if (frameCount % volcSpeed == 0) {
                     let aLava = new Sprite(this.sprites[0].x, this.sprites[0].y-55, random(10,20));
@@ -187,7 +187,7 @@ class GameObject {
                 }
 
                 break;
-            
+
             // Fan
             case "fan":
                 let fanDist = sqrt(((ball.x-this.sprites[0].x)**2)+((ball.y-this.sprites[0].y)**2));
@@ -197,44 +197,44 @@ class GameObject {
                 // East Blowing Fan
                 if(this.sprites[0].rotation == 0){
 
-                    if (ball.y >= this.sprites[0].y-25 && 
+                    if (ball.y >= this.sprites[0].y-25 &&
                         ball.y <= this.sprites[0].y+25 &&
                         ball.x >= this.sprites[0].x &&
                         ball.x <= this.sprites[0].x + fanFurthest){
-                        
+
                         ball.vel.x += abs(fanPower/fanDist);
                     }
                 }
 
                 // South Blowing Fan
                 else if(this.sprites[0].rotation ==90){
-                    if (ball.x >= this.sprites[0].x-25 && 
+                    if (ball.x >= this.sprites[0].x-25 &&
                         ball.x <= this.sprites[0].x+25 &&
-                        ball.y <= this.sprites[0].y + fanFurthest && 
+                        ball.y <= this.sprites[0].y + fanFurthest &&
                         ball.y >= this.sprites[0].y){
-                        
+
                         ball.vel.y += abs(fanPower/fanDist);
                     }
                 }
 
                 // West Blowing Fan
                 else if(this.sprites[0].rotation == 180){
-                    if (ball.y >= this.sprites[0].y-25 && 
+                    if (ball.y >= this.sprites[0].y-25 &&
                         ball.y <= this.sprites[0].y+25 &&
                         ball.x <= this.sprites[0].x &&
                         ball.x >= this.sprites[0].x - fanFurthest){
-                        
+
                         ball.vel.x -= abs(fanPower/fanDist);
                     }
                 }
 
                 // North Blowing Fan
                 else {
-                    if (ball.x >= this.sprites[0].x-25 && 
+                    if (ball.x >= this.sprites[0].x-25 &&
                         ball.x <= this.sprites[0].x+25 &&
-                        ball.y <= this.sprites[0].y && 
+                        ball.y <= this.sprites[0].y &&
                         ball.y >= this.sprites[0].y - fanFurthest){
-                        
+
                         ball.vel.y -= abs(fanPower/fanDist);
                     }
                 }
@@ -302,8 +302,8 @@ function Ball(x, y)
     newBall.drag = friction.reg;
     newBall.lastPos = createVector(newBall.pos.x, newBall.pos.y);
     newBall.stillTime = 300;
-    newBall.image = 'assets/ball.png'
-    newBall.image.scale = .012
+    newBall.image = 'assets/golf_ball.png';
+    newBall.image.scale = 0.084388;
 
     return new GameObject("ball", newBall);
 }
@@ -488,7 +488,7 @@ function Fan(posX, posY, dir){
         fan.rotation = 90;
         arrow = new Sprite([[posX,posY+25], [posX+25, posY], [posX-25, posY], [posX, posY+25]],'k');
     }
-    // 2 = west (180 degrees)    
+    // 2 = west (180 degrees)
     else if (dir == 2 || dir == 180){
         fan.rotation = 180;
         arrow = new Sprite([[posX-25,posY], [posX, posY+25], [posX, posY-25], [posX-25, posY]],'k');
@@ -503,7 +503,7 @@ function Fan(posX, posY, dir){
     arrow.strokeWeight = .1;
     // fan.addCollider([[posX+25,posY], [posX, posY+25], [posX, posY-25], [posX+25, posY]]);
     // fan.addCollider(0, 0, 50);
-    // fan.addCollider([[10,16],[123,203],[23,-23],[10,16]]);  
+    // fan.addCollider([[10,16],[123,203],[23,-23],[10,16]]);
 
     /*windmillBlade1 = new Sprite([[posX,posY], [posX-12.5, posY+75], [posX+12.5, posY+75], [posX, posY]]);
     fanBlade1.y= posY;
