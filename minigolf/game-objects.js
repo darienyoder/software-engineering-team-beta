@@ -339,12 +339,18 @@ function Tubes(tubeaX, tubeaY, tubebX, tubebY)
     tubeA.layer = 1;
     tubeA.color = '#4f2956';
     tubeA.stroke = '#4f2956';
+    tubeA.image = 'assets/portal.png';
+    tubeA.image.scale = 0.2;
+    tubeA.rotationSpeed = 10;
 
     let tubeB = new Sprite(tubebX, tubebY, 50, 50);
     tubeB.collider = 'kinematic';
     tubeB.layer = 1;
     tubeB.color = '#4f2956';
     tubeB.stroke = '#4f2956';
+    tubeB.image = 'assets/portal.png';
+    tubeB.image.scale = 0.2;
+    tubeB.rotationSpeed = 10;
 
     return new GameObject("tubes", [tubeA, tubeB]);
 }
