@@ -353,7 +353,7 @@ async function handleGamePlay() {
             object.update();
 
     canvas.resize(window.innerWidth, window.innerHeight);
-    
+
     // Lerps camera zoom between just the ball and the entire level
     levelZoom = document.getElementById("zoom-slider").value;
     camera.x = lerp((level.bounds.right + level.bounds.left) / 2, ball.x, levelZoom);
@@ -725,5 +725,10 @@ async function drawPar() {
 
 function rollCredits()
 {
+    setMenu("credits");
     document.getElementById("crew-names").style.top = -1171;
+    setTimeout(
+        function() { setMenu("main"); document.getElementById("crew-names").style.top = "100vh"; },
+        10000 // 10 seconds
+    );
 }
